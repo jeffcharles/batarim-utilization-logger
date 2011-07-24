@@ -32,3 +32,11 @@ under the root of the repository
 if you are using Visual Studio
 * If you wish to clear the build, you can either delete the `build` directory
 or run `clear.bat` under`cmake_scripts`
+
+Coding conventions
+------------------
+
+* Use spaces instead of tabs
+* Each tabstop should be 4 spaces
+* Header files should use guard definitions in the form of 
+`GUARD_<header_name>_h`
