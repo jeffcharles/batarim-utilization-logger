@@ -3,4 +3,5 @@
 **.c = native
 .hgeol = native
 .hgignore = native
+**.md = native
 **.txt = native
