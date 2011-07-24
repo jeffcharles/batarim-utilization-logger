@@ -1,0 +1,6 @@
+[patterns]
+**.bat = CRLF
+**.c = native
+.hgeol = native
+.hgignore = native
+**.txt = native
