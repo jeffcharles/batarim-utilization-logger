@@ -1,5 +1,6 @@
 @echo off
+cd ..
 mkdir build
 cd build
 cmake-gui ..
-cd ..
+cd ..\cmake_scripts
