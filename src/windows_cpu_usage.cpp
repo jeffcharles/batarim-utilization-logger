@@ -97,9 +97,8 @@ void clean_up_wmi(IWbemLocator*& loc, IWbemServices*& svc)
     CoUninitialize();
 }
 
-void query_wmi(IWbemServices *svc, vector<pair<wstring, int> >& usage_percentages)
+void exec_query(IWbemServices *svc, IEnumWbemClassObject*& result_enum)
 {
-    IEnumWbemClassObject* result_enum;
     HRESULT hr = svc->ExecQuery(
         _bstr_t("WQL"),
         _bstr_t(
@@ -116,11 +115,66 @@ void query_wmi(IWbemServices *svc, vector<pair<wstring, int> >& usage_percentage
             hr
         );
     }
+}
 
+void get_wstring_property_from_record(
+    const string& property_name, 
+    IWbemClassObject*& record, 
+    wstring& out
+)
+{
+    VARIANT prop;
+    HRESULT hr = record->Get(
+        _bstr_t(property_name.c_str()),
+        0, // reserved
+        &prop, // output
+        NULL, // type of property (optional)
+        NULL // information about origin of property (optional)
+    );
+    if(FAILED(hr)) {
+        throw wmi_exception(
+            "Error extracting processor " + property_name + " while "
+            "retrieving processor utilization percentage", 
+            hr
+        );
+    }
+    out = prop.bstrVal;
+    VariantClear(&prop);
+}
+
+void get_uint64_property_from_record(
+    const string& property_name, 
+    IWbemClassObject*& record, 
+    long& out
+)
+{
+    VARIANT prop;
+    HRESULT hr = record->Get(
+        _bstr_t(property_name.c_str()),
+        0, // reserved
+        &prop, // output
+        NULL, // type of property (optional)
+        NULL // information about origin of property (optional)
+    );
+    if(FAILED(hr)) {
+        throw wmi_exception(
+            "Error extracting processor " + property_name + " while "
+            "retrieving processor utilization percentage", 
+            hr
+        );
+    }
+    VarI4FromStr(prop.bstrVal, NULL, 0, &out);
+    VariantClear(&prop);
+}
+
+void query_wmi(IWbemServices *svc, vector<pair<wstring, int> >& usage_percentages)
+{
+    IEnumWbemClassObject* result_enum;
+    exec_query(svc, result_enum);
     while(result_enum) {
         IWbemClassObject* record;
         ULONG num_objects_returned;
-        HRESULT enum_result = result_enum->Next(
+        HRESULT hr = result_enum->Next(
             WBEM_INFINITE, // max amount of time to wait for result
             1, // number of requested objects
             &record,
@@ -129,49 +183,22 @@ void query_wmi(IWbemServices *svc, vector<pair<wstring, int> >& usage_percentage
         if(num_objects_returned == 0) {
             break;
         }
-        if(FAILED(enum_result)) {
+        if(FAILED(hr)) {
             throw wmi_exception(
                 "Could not advance enumerator for processor utilization "
                 "percentage.",
-                enum_result
+                hr
             );
         }
-        VARIANT name;
-        HRESULT record_result_name = record->Get(
-            L"Name", // property name
-            0, // reserved
-            &name, // output
-            NULL, // type of property (optional)
-            NULL // information about origin of property (optional)
-        );
-        if(FAILED(record_result_name)) {
-            throw wmi_exception(
-                "Error extracting processor name while retrieving processor "
-                "utilization percentage.", 
-                record_result_name
-            );
-        }
-        VARIANT percent_processor_time;
-        HRESULT record_result_proc_time = record->Get(
-            L"PercentProcessorTime", // property name
-            0, // reserved
-            &percent_processor_time, // output
-            NULL, // type of property (optional)
-            NULL // information about origin of property (optional)
-        );
-        if(FAILED(record_result_proc_time)) {
-            throw wmi_exception(
-                "Error extracting processor utilization percentage", 
-                record_result_proc_time
-            );
-        }
-        wstring strName = name.bstrVal;
-        VariantClear(&name);
+        
+        wstring name;
+        get_wstring_property_from_record("Name", record, name);
         long l_usage_percentage;
-        VarI4FromStr(percent_processor_time.bstrVal, NULL, 0, &l_usage_percentage);
-        VariantClear(&percent_processor_time);
+        get_uint64_property_from_record("PercentProcessorTime", record, l_usage_percentage);
+        
         record->Release();
-        pair<wstring, int> processor_info (strName, (int)l_usage_percentage);
+        
+        pair<wstring, int> processor_info (name, (int)l_usage_percentage);
         usage_percentages.push_back(processor_info);
     }
 }
