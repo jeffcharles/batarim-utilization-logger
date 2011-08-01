@@ -18,9 +18,7 @@ void initialize_com_interface()
 {
     HRESULT hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED);
     if(FAILED(hr)) {
-        cerr << "Failed to initialize COM interface. Error code = 0x"
-            << hex << hr << endl;
-        throw com_setup_exception();
+        throw com_setup_exception("Failed to initialize COM interface.", hr);
     }
 }
 
@@ -38,9 +36,7 @@ void initialize_com_security()
         NULL
     );
     if(FAILED(hr)) {
-        cerr << "Failed to initialize COM security. Error code = 0x"
-            << hex << hr << endl;
-        throw com_setup_exception();
+        throw com_setup_exception("Failed to initialize COM security.", hr);
     }
 }
 
@@ -49,10 +45,10 @@ void create_connection_to_wmi_namespace(IWbemLocator*& pLoc)
     HRESULT hr = CoCreateInstance(CLSID_WbemLocator, NULL, 
         CLSCTX_INPROC_SERVER, IID_IWbemLocator, (LPVOID*)&pLoc);
     if(FAILED(hr)) {
-        cerr << "Failed to create connection to WMI namespace. Error code = 0x"
-            << hex << hr << endl;
-        CoUninitialize();
-        throw wmi_exception();
+        throw wmi_exception(
+            "Failed to create connection to WMI namespace.", 
+            hr
+        );
     }
 }
 
@@ -69,11 +65,7 @@ void get_wmi_proxy(IWbemLocator* pLoc, IWbemServices*& pSvc)
         &pSvc // pointer bound to IWbemServices object in specified namespace
     );
     if(FAILED(hr)) {
-        cerr << "Could not get WMI proxy. Error code = 0x"
-            << hex << hr << endl;
-        pLoc->Release();
-        CoUninitialize();
-        throw wmi_exception();
+        throw wmi_exception("Could not get WMI proxy.", hr);
     }
 }
 
@@ -90,12 +82,7 @@ void set_wmi_security(IWbemLocator* pLoc, IWbemServices* pSvc)
         EOAC_NONE // capabilities of the proxy
     );
     if(FAILED(hr)) {
-        cerr << "Could not set WMI proxy security. Error code = 0x"
-            << hex << hr << endl;
-        pSvc->Release();
-        pLoc->Release();
-        CoUninitialize();
-        throw wmi_exception();
+        throw wmi_exception("Could not set WMI proxy security.", hr);
     }
 }
 
@@ -124,9 +111,10 @@ void query_wmi(IWbemServices *svc, vector<pair<wstring, int> >& usage_percentage
         &result_enum
     );
     if(FAILED(hr)) {
-        cerr << "Could not query WMI for processor utilization percentage. "
-            << "Error code = 0x" << hex << hr << endl;
-        throw wmi_exception();
+        throw wmi_exception(
+            "Could not query WMI for processor utilization percentage.", 
+            hr
+        );
     }
 
     while(result_enum) {
@@ -142,9 +130,11 @@ void query_wmi(IWbemServices *svc, vector<pair<wstring, int> >& usage_percentage
             break;
         }
         if(FAILED(enum_result)) {
-            cerr << "Could not advance enumerator for processor utilization "
-                << "percentage. Error code = 0x" << hex << enum_result << endl;
-            throw wmi_exception();
+            throw wmi_exception(
+                "Could not advance enumerator for processor utilization "
+                "percentage.",
+                enum_result
+            );
         }
         VARIANT name;
         HRESULT record_result_name = record->Get(
@@ -155,10 +145,11 @@ void query_wmi(IWbemServices *svc, vector<pair<wstring, int> >& usage_percentage
             NULL // information about origin of property (optional)
         );
         if(FAILED(record_result_name)) {
-            cerr << "Error extracting processor name while retrieving "
-                << "processor utilization percentage. Error code = 0x"
-                << hex << record_result_name << endl;
-            throw wmi_exception();
+            throw wmi_exception(
+                "Error extracting processor name while retrieving processor "
+                "utilization percentage.", 
+                record_result_name
+            );
         }
         VARIANT percent_processor_time;
         HRESULT record_result_proc_time = record->Get(
@@ -169,9 +160,10 @@ void query_wmi(IWbemServices *svc, vector<pair<wstring, int> >& usage_percentage
             NULL // information about origin of property (optional)
         );
         if(FAILED(record_result_proc_time)) {
-            cerr << "Error extracting processor utilization percentage"
-                << hex << record_result_proc_time << endl;
-            throw wmi_exception();
+            throw wmi_exception(
+                "Error extracting processor utilization percentage", 
+                record_result_proc_time
+            );
         }
         wstring strName = name.bstrVal;
         VariantClear(&name);
@@ -197,9 +189,11 @@ void get_cpu_usage(vector<pair<wstring, int> >& usage_percentages)
         query_wmi(svc, usage_percentages);
         clean_up_wmi(loc, svc);
     } catch(com_setup_exception& e) {
-        // TODO: log exception details
+        cerr << e.what() << endl;
+        clog << e.what() << endl;
     } catch(wmi_exception& e) {
-        // TODO: log exception details
+        cerr << e.what() << endl;
+        clog << e.what() << endl;
         clean_up_wmi(loc, svc);
     }
 }
