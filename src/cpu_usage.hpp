@@ -1,7 +1,10 @@
 #ifndef GUARD_cpu_usage_h
 #define GUARD_cpu_usage_h
 
-// Sets the provided integer to the percentage of current CPU utilization
-void get_cpu_usage(int*);
+#include <string>
+#include <vector>
+
+// Returns a list of processor percent utilizations
+void get_cpu_usage(std::vector<std::pair<std::wstring, int> >&);
 
 #endif

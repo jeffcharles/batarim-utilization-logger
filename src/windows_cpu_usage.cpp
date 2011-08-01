@@ -7,6 +7,9 @@ using namespace std;
 # pragma comment(lib, "wbemuuid.lib")
 // -----------------------------------------
 
+#include <string>
+#include <vector>
+
 #include "cpu_usage.hpp"
 #include "windows_com_setup_exception.hpp"
 #include "windows_wmi_exception.hpp"
@@ -107,13 +110,13 @@ void clean_up_wmi(IWbemLocator*& loc, IWbemServices*& svc)
     CoUninitialize();
 }
 
-void query_wmi(IWbemServices *svc, int* usage_percentage)
+void query_wmi(IWbemServices *svc, vector<pair<wstring, int> >& usage_percentages)
 {
     IEnumWbemClassObject* result_enum;
     HRESULT hr = svc->ExecQuery(
         _bstr_t("WQL"),
         _bstr_t(
-            "SELECT PercentProcessorTime "
+            "SELECT Name, PercentProcessorTime "
             "FROM Win32_PerfFormattedData_PerfOS_Processor"
         ),
         WBEM_FLAG_FORWARD_ONLY, // return forward-only enumerator
@@ -168,89 +171,129 @@ void query_wmi(IWbemServices *svc, int* usage_percentage)
             throw wmi_exception();
     }
 
-    IWbemClassObject* record;
-    ULONG num_objects_returned;
-    HRESULT enum_result = result_enum->Next(
-        WBEM_INFINITE, // max amount of time to wait for result
-        1, // number of requested objects
-        &record,
-        &num_objects_returned
-    );
-    switch(enum_result) {
-        case WBEM_E_INVALID_PARAMETER:
-            cerr << "One or more invalid parameters were supplied in the call "
-                << "to the processor utilization query enumerator" << endl;
-            throw wmi_exception();
-        case WBEM_E_OUT_OF_MEMORY:
-            cerr << "There was not enough memory to complete the enumeration "
-                << "when trying to view the processor utilization percentage"
-                << endl;
-            throw wmi_exception();
-        case WBEM_E_UNEXPECTED:
-            cerr << "An object in the enumeration for viewing the processor "
-                << "utilization percentage has been deleted" << endl;
-            throw wmi_exception();
-        case WBEM_E_TRANSPORT_FAILURE:
-            cerr << "A Remote Procedure Call to advance the enumberator for "
-                << "viewing the processor utilization percentage has failed"
-                << endl;
-            throw wmi_exception();
-        case WBEM_S_NO_ERROR:
+    while(result_enum) {
+        IWbemClassObject* record;
+        ULONG num_objects_returned;
+        HRESULT enum_result = result_enum->Next(
+            WBEM_INFINITE, // max amount of time to wait for result
+            1, // number of requested objects
+            &record,
+            &num_objects_returned
+        );
+        if(num_objects_returned == 0) {
             break;
-        case WBEM_S_FALSE:
-            cerr << "Unable to obtain processor utilization percentage from "
-                << "enumerator" << endl;
-            throw wmi_exception();
-        case WBEM_S_TIMEDOUT:
-            cerr << "Advancing enumerator timed out when trying to view "
-                << "processor utilization percentage" << endl;
-            throw wmi_exception();
-        default:
-            cerr << "Unkown error occurred when trying to advance enumerator "
-                << "when trying to view processor utilization percentage"
-                << endl;
-            throw wmi_exception();
+        }
+        switch(enum_result) {
+            case WBEM_E_INVALID_PARAMETER:
+                cerr << "One or more invalid parameters were supplied in the call "
+                    << "to the processor utilization query enumerator" << endl;
+                throw wmi_exception();
+            case WBEM_E_OUT_OF_MEMORY:
+                cerr << "There was not enough memory to complete the enumeration "
+                    << "when trying to view the processor utilization percentage"
+                    << endl;
+                throw wmi_exception();
+            case WBEM_E_UNEXPECTED:
+                cerr << "An object in the enumeration for viewing the processor "
+                    << "utilization percentage has been deleted" << endl;
+                throw wmi_exception();
+            case WBEM_E_TRANSPORT_FAILURE:
+                cerr << "A Remote Procedure Call to advance the enumberator for "
+                    << "viewing the processor utilization percentage has failed"
+                    << endl;
+                throw wmi_exception();
+            case WBEM_S_NO_ERROR:
+                break;
+            case WBEM_S_FALSE:
+                cerr << "Unable to obtain processor utilization percentage from "
+                    << "enumerator" << endl;
+                throw wmi_exception();
+            case WBEM_S_TIMEDOUT:
+                cerr << "Advancing enumerator timed out when trying to view "
+                    << "processor utilization percentage" << endl;
+                throw wmi_exception();
+            default:
+                cerr << "Unkown error occurred when trying to advance enumerator "
+                    << "when trying to view processor utilization percentage"
+                    << endl;
+                throw wmi_exception();
+        }
+        VARIANT name;
+        HRESULT record_result_name = record->Get(
+            L"Name", // property name
+            0, // reserved
+            &name, // output
+            NULL, // type of property (optional)
+            NULL // information about origin of property (optional)
+        );
+        switch(record_result_name) {
+            case WBEM_E_FAILED:
+                cerr << "There was a general failure when trying to extract "
+                    << "the processor name" << endl;
+                throw wmi_exception();
+            case WBEM_E_INVALID_PARAMETER:
+                cerr << "One or more parameters was not valid when trying to "
+                    << "extract the processor name" << endl;
+                throw wmi_exception();
+            case WBEM_S_NO_ERROR:
+                break;
+            case WBEM_E_NOT_FOUND:
+                cerr << "The specified property was not found when trying to "
+                    << "extract the processor name" << endl;
+                throw wmi_exception();
+            case WBEM_E_OUT_OF_MEMORY:
+                cerr << "There was not enough memory to complete the operation to "
+                    << "extract the processor name" << endl;
+                throw wmi_exception();
+            default:
+                cerr << "An unknown error occurred when trying to extract the "
+                    << "processor name" << endl;
+                throw wmi_exception();
+        }
+        VARIANT percent_processor_time;
+        HRESULT record_result_proc_time = record->Get(
+            L"PercentProcessorTime", // property name
+            0, // reserved
+            &percent_processor_time, // output
+            NULL, // type of property (optional)
+            NULL // information about origin of property (optional)
+        );
+        switch(record_result_proc_time) {
+            case WBEM_E_FAILED:
+                cerr << "There was a general failure when trying to extract "
+                    << "the processor utilization percentage" << endl;
+                throw wmi_exception();
+            case WBEM_E_INVALID_PARAMETER:
+                cerr << "One or more parameters was not valid when trying to "
+                    << "extract the processor utilization percentage" << endl;
+                throw wmi_exception();
+            case WBEM_S_NO_ERROR:
+                break;
+            case WBEM_E_NOT_FOUND:
+                cerr << "The specified property was not found when trying to "
+                    << "extract the processor utilization percentage" << endl;
+                throw wmi_exception();
+            case WBEM_E_OUT_OF_MEMORY:
+                cerr << "There was not enough memory to complete the operation to "
+                    << "extract the processor utilization percentage" << endl;
+                throw wmi_exception();
+            default:
+                cerr << "An unknown error occurred when trying to extract the "
+                    << "processor utilization percentage" << endl;
+                throw wmi_exception();
+        }
+        wstring strName = name.bstrVal;
+        VariantClear(&name);
+        long l_usage_percentage;
+        VarI4FromStr(percent_processor_time.bstrVal, NULL, 0, &l_usage_percentage);
+        VariantClear(&percent_processor_time);
+        record->Release();
+        pair<wstring, int> processor_info (strName, (int)l_usage_percentage);
+        usage_percentages.push_back(processor_info);
     }
-    VARIANT percent_processor_time;
-    HRESULT record_result = record->Get(
-        L"PercentProcessorTime", // property name
-        0, // reserved
-        &percent_processor_time, // output
-        NULL, // type of property (optional)
-        NULL // information about origin of property (optional)
-    );
-    switch(record_result) {
-        case WBEM_E_FAILED:
-            cerr << "There was a general failure when trying to extract "
-                << "the processor utilization percentage" << endl;
-            throw wmi_exception();
-        case WBEM_E_INVALID_PARAMETER:
-            cerr << "One or more parameters was not valid when trying to "
-                << "extract the processor utilization percentage" << endl;
-            throw wmi_exception();
-        case WBEM_S_NO_ERROR:
-            break;
-        case WBEM_E_NOT_FOUND:
-            cerr << "The specified property was not found when trying to "
-                << "extract the processor utilization percentage" << endl;
-            throw wmi_exception();
-        case WBEM_E_OUT_OF_MEMORY:
-            cerr << "There was not enough memory to complete the operation to "
-                << "extract the processor utilization percentage" << endl;
-            throw wmi_exception();
-        default:
-            cerr << "An unknown error occurred when trying to extract the "
-                << "processor utilization percentage" << endl;
-            throw wmi_exception();
-    }
-    long l_usage_percentage;
-    VarI4FromStr(percent_processor_time.bstrVal, NULL, 0, &l_usage_percentage);
-    VariantClear(&percent_processor_time);
-    record->Release();
-    *usage_percentage = (int)l_usage_percentage;
 }
 
-void get_cpu_usage(int* usage_percentage)
+void get_cpu_usage(vector<pair<wstring, int> >& usage_percentages)
 {
     IWbemLocator* loc = NULL;
     IWbemServices* svc = NULL;
@@ -260,7 +303,7 @@ void get_cpu_usage(int* usage_percentage)
         create_connection_to_wmi_namespace(loc);
         get_wmi_proxy(loc, svc);
         set_wmi_security(loc, svc);
-        query_wmi(svc, usage_percentage);
+        query_wmi(svc, usage_percentages);
         clean_up_wmi(loc, svc);
     } catch(com_setup_exception& e) {
         // TODO: log exception details
