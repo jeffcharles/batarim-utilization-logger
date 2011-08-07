@@ -3,6 +3,7 @@
 
 #include "active_window.hpp"
 
+using std::string;
 using std::wstring;
 
 wstring get_wstring_from_tchar(TCHAR* buffer, int buffer_size)
@@ -33,6 +34,28 @@ wstring get_active_window_name()
     }
 }
 
+wstring get_filename_from_win32_path(wstring& path)
+{
+    wstring stripped_exe_path;
+    bool path_ends_with_exe = path.length() >= 4 && 
+        path.compare(path.length()-5, 4, L".exe") == 0;
+    stripped_exe_path = path_ends_with_exe ? 
+        path.substr(0, path.length()-5) : path;
+    
+    wstring::size_type last_backslash_location = -1;
+    if(stripped_exe_path.length() > 1) {
+        for(wstring::size_type i = stripped_exe_path.length()-2; i >= 0; --i) {
+            if(stripped_exe_path[i] == '\\') {
+                last_backslash_location = i;
+                break;
+            }
+        }
+    }
+    return (last_backslash_location > 0) ? 
+        stripped_exe_path.substr(last_backslash_location+1) : 
+        stripped_exe_path;
+}
+
 wstring get_active_window_process_name()
 {
     HWND active_window = GetForegroundWindow();
@@ -60,6 +83,7 @@ wstring get_active_window_process_name()
     if(!query_success || buffer_size == 0) {
         return L"";
     } else {
-        return get_wstring_from_tchar(process_name, buffer_size);
+        return get_filename_from_win32_path(
+            get_wstring_from_tchar(process_name, buffer_size));
     }
 }
