@@ -18,10 +18,13 @@ int main()
     ram_usage_struct ram_usage;
     get_ram_usage(&ram_usage);
     
-    for(vector<pair<wstring, int> >::const_iterator iter = cpu_usage_percentages.begin();
+    typedef vector<pair<wstring, int> >::const_iterator const_iterator;
+    for(const_iterator iter = cpu_usage_percentages.begin();
         iter != cpu_usage_percentages.end(); iter++) {
         
-        wcout << L"CPU " << iter->first << L" usage: " << iter->second << L"%" << endl;
+        wcout << L"CPU " << iter->first << L" usage: " << iter->second << L"%" 
+            << endl;
     }
-    wcout << L"Current RAM usage: " << ram_usage.percentage_usage << L"%" << endl;
+    wcout << L"Current RAM usage: " << ram_usage.percentage_usage << L"%" 
+        << endl;
 }
