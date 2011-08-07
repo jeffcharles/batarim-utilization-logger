@@ -20,6 +20,7 @@ int main()
     get_ram_usage(&ram_usage);
 
     wstring active_window_name = get_active_window_name();
+    wstring active_window_process_name = get_active_window_process_name();
     
     typedef vector<pair<wstring, int> >::const_iterator const_iterator;
     for(const_iterator iter = cpu_usage_percentages.begin();
@@ -31,4 +32,5 @@ int main()
     wcout << L"Current RAM usage: " << ram_usage.percentage_usage << L"%" 
         << endl;
     wcout << L"Active window: " << active_window_name << endl;
+    wcout << L"Active window process: " << active_window_process_name << endl;
 }
