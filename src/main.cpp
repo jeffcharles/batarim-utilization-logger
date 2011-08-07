@@ -16,8 +16,7 @@ int main()
     vector<pair<wstring, int> > cpu_usage_percentages;
     get_cpu_usage(cpu_usage_percentages);
     
-    ram_usage_struct ram_usage;
-    get_ram_usage(&ram_usage);
+    int ram_usage = get_ram_usage();
 
     wstring active_window_name = get_active_window_name();
     wstring active_window_process_name = get_active_window_process_name();
@@ -29,8 +28,7 @@ int main()
         wcout << L"CPU " << iter->first << L" usage: " << iter->second << L"%" 
             << endl;
     }
-    wcout << L"Current RAM usage: " << ram_usage.percentage_usage << L"%" 
-        << endl;
+    wcout << L"Current RAM usage: " << ram_usage << L"%" << endl;
     wcout << L"Active window: " << active_window_name << endl;
     wcout << L"Active window process: " << active_window_process_name << endl;
 }
