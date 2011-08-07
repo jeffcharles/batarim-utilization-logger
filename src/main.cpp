@@ -1,8 +1,8 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include "cpu_usage.hpp"
-#include "ram_usage.hpp"
+#include "cpu_usage/cpu_usage.hpp"
+#include "ram_usage/ram_usage.hpp"
 
 using std::endl;
 using std::pair;
