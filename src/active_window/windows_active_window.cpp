@@ -53,7 +53,7 @@ wstring get_active_window_process_name()
         NULL, // use Win32 path format
         process_name,
         &buffer_size
-    );
+    ) != 0;
 
     CloseHandle(process_handle);
 
