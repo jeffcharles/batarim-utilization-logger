@@ -203,6 +203,40 @@ void query_wmi(IWbemServices *svc, vector<pair<wstring, int> >& usage_percentage
     }
 }
 
+wstring get_human_readable_name(wstring wmi_name)
+{
+    int num;
+    wstringstream wss;
+    wss << wmi_name;
+    
+    bool is_number = (bool)(wss >> num);
+    if(is_number) {
+        wstringstream wss2;
+        wss2 << ++num;
+        
+        wstring ret;
+        wss2 >> ret;
+        return ret;
+    }
+    
+    if(wmi_name[0] == '_') {
+        return wmi_name.substr(1);
+    } else {
+        return wmi_name;
+    }
+}
+
+void convert_names_to_human_readable(
+    vector<pair<wstring, int> >& usage_percentages)
+{
+    typedef vector<pair<wstring, int> >::iterator list_iterator;
+    for(list_iterator iter = usage_percentages.begin(); 
+        iter != usage_percentages.end(); iter++) {
+
+        iter->first = get_human_readable_name(iter->first);
+    }
+}
+
 void get_cpu_usage(vector<pair<wstring, int> >& usage_percentages)
 {
     IWbemLocator* loc = NULL;
@@ -215,6 +249,7 @@ void get_cpu_usage(vector<pair<wstring, int> >& usage_percentages)
         set_wmi_security(loc, svc);
         query_wmi(svc, usage_percentages);
         clean_up_wmi(loc, svc);
+        convert_names_to_human_readable(usage_percentages);
     } catch(com_setup_exception& e) {
         cerr << e.what() << endl;
         clog << e.what() << endl;
