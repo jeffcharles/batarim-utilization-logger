@@ -209,7 +209,7 @@ wstring get_human_readable_name(wstring wmi_name)
     wstringstream wss;
     wss << wmi_name;
     
-    bool is_number = (bool)(wss >> num);
+    bool is_number = wss >> num != 0;
     if(is_number) {
         wstringstream wss2;
         wss2 << ++num;
