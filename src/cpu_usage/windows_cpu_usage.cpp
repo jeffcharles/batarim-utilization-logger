@@ -1,207 +1,23 @@
-// references and statements required by COM
-#define _WIN32_DCOM
-#include <iostream>
-using namespace std;
-#include <comutil.h>
-#include <Wbemidl.h>
-# pragma comment(lib, "wbemuuid.lib")
-// -----------------------------------------
+// Needed for using PDH
+#include <windows.h>
+#include <pdh.h>
+#include <pdhmsg.h>
+// --------------------
 
+#include <iostream>
+#include <sstream>
 #include <string>
 #include <vector>
 
 #include "cpu_usage.hpp"
-#include "windows_com_setup_exception.hpp"
-#include "windows_wmi_exception.hpp"
 
-void initialize_com_interface()
-{
-    HRESULT hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED);
-    if(FAILED(hr)) {
-        throw com_setup_exception("Failed to initialize COM interface.", hr);
-    }
-}
-
-void initialize_com_security()
-{
-    HRESULT hr = CoInitializeSecurity(
-        NULL, // Security descriptor
-        -1, // COM negotiates authentication service
-        NULL, // Authentication services
-        NULL, // Reserved
-        RPC_C_AUTHN_LEVEL_DEFAULT, // Default authentication level for proxies
-        RPC_C_IMP_LEVEL_IMPERSONATE, // Default impersonation level for proxies
-        NULL, // Authentication info
-        EOAC_NONE, // Additional capabilities of the client or server
-        NULL
-    );
-    if(FAILED(hr)) {
-        throw com_setup_exception("Failed to initialize COM security.", hr);
-    }
-}
-
-void create_connection_to_wmi_namespace(IWbemLocator*& pLoc)
-{
-    HRESULT hr = CoCreateInstance(CLSID_WbemLocator, NULL, 
-        CLSCTX_INPROC_SERVER, IID_IWbemLocator, (LPVOID*)&pLoc);
-    if(FAILED(hr)) {
-        throw wmi_exception(
-            "Failed to create connection to WMI namespace.", 
-            hr
-        );
-    }
-}
-
-void get_wmi_proxy(IWbemLocator* pLoc, IWbemServices*& pSvc)
-{
-    HRESULT hr = pLoc->ConnectServer(
-        _bstr_t(L"ROOT\\CIMV2"), // local WMI network resource
-        NULL, // user (null is currently logged in user)
-        NULL, // password (null is currently logged in user)
-        NULL, // locale (null is default)
-        0, // return once connection is established
-        NULL, // domain name of user to log in as (NULL is NTLM auth of user)
-        NULL, // object required by one or more dynamic class providers
-        &pSvc // pointer bound to IWbemServices object in specified namespace
-    );
-    if(FAILED(hr)) {
-        throw wmi_exception("Could not get WMI proxy.", hr);
-    }
-}
-
-void set_wmi_security(IWbemLocator* pLoc, IWbemServices* pSvc)
-{
-    HRESULT hr = CoSetProxyBlanket(
-        pSvc, // proxy to be set
-        RPC_C_AUTHN_WINNT, // authentication service to use (NTLMSSP)
-        RPC_C_AUTHZ_NONE, // authorization service to use (none)
-        NULL, // server principal name (NULL = do not reset principal name)
-        RPC_C_AUTHN_LEVEL_CALL, // authenticate only at beginning of RPCs
-        RPC_C_IMP_LEVEL_IMPERSONATE, // impersonates client's security context
-        NULL, // establishes id of client (NULL = use currenty proxy identity)
-        EOAC_NONE // capabilities of the proxy
-    );
-    if(FAILED(hr)) {
-        throw wmi_exception("Could not set WMI proxy security.", hr);
-    }
-}
-
-void clean_up_wmi(IWbemLocator*& loc, IWbemServices*& svc)
-{
-    if(svc != NULL) {
-        svc->Release();
-    }
-    if(loc != NULL) {
-        loc->Release();
-    }
-    CoUninitialize();
-}
-
-void exec_query(IWbemServices *svc, IEnumWbemClassObject*& result_enum)
-{
-    HRESULT hr = svc->ExecQuery(
-        _bstr_t("WQL"),
-        _bstr_t(
-            "SELECT Name, PercentProcessorTime "
-            "FROM Win32_PerfFormattedData_PerfOS_Processor"
-        ),
-        WBEM_FLAG_FORWARD_ONLY, // return forward-only enumerator
-        NULL, // pointer to IWbemContext (NULL = no context required)
-        &result_enum
-    );
-    if(FAILED(hr)) {
-        throw wmi_exception(
-            "Could not query WMI for processor utilization percentage.", 
-            hr
-        );
-    }
-}
-
-void get_wstring_property_from_record(
-    const string& property_name, 
-    IWbemClassObject*& record, 
-    wstring& out
-)
-{
-    VARIANT prop;
-    HRESULT hr = record->Get(
-        _bstr_t(property_name.c_str()),
-        0, // reserved
-        &prop, // output
-        NULL, // type of property (optional)
-        NULL // information about origin of property (optional)
-    );
-    if(FAILED(hr)) {
-        throw wmi_exception(
-            "Error extracting processor " + property_name + " while "
-            "retrieving processor utilization percentage", 
-            hr
-        );
-    }
-    out = prop.bstrVal;
-    VariantClear(&prop);
-}
-
-void get_uint64_property_from_record(
-    const string& property_name, 
-    IWbemClassObject*& record, 
-    long& out
-)
-{
-    VARIANT prop;
-    HRESULT hr = record->Get(
-        _bstr_t(property_name.c_str()),
-        0, // reserved
-        &prop, // output
-        NULL, // type of property (optional)
-        NULL // information about origin of property (optional)
-    );
-    if(FAILED(hr)) {
-        throw wmi_exception(
-            "Error extracting processor " + property_name + " while "
-            "retrieving processor utilization percentage", 
-            hr
-        );
-    }
-    VarI4FromStr(prop.bstrVal, NULL, 0, &out);
-    VariantClear(&prop);
-}
-
-void query_wmi(IWbemServices *svc, vector<pair<wstring, int> >& usage_percentages)
-{
-    IEnumWbemClassObject* result_enum;
-    exec_query(svc, result_enum);
-    while(result_enum) {
-        IWbemClassObject* record;
-        ULONG num_objects_returned;
-        HRESULT hr = result_enum->Next(
-            WBEM_INFINITE, // max amount of time to wait for result
-            1, // number of requested objects
-            &record,
-            &num_objects_returned
-        );
-        if(num_objects_returned == 0) {
-            break;
-        }
-        if(FAILED(hr)) {
-            throw wmi_exception(
-                "Could not advance enumerator for processor utilization "
-                "percentage.",
-                hr
-            );
-        }
-        
-        wstring name;
-        get_wstring_property_from_record("Name", record, name);
-        long l_usage_percentage;
-        get_uint64_property_from_record("PercentProcessorTime", record, l_usage_percentage);
-        
-        record->Release();
-        
-        pair<wstring, int> processor_info (name, (int)l_usage_percentage);
-        usage_percentages.push_back(processor_info);
-    }
-}
+using std::cerr;
+using std::endl;
+using std::hex;
+using std::pair;
+using std::vector;
+using std::wstring;
+using std::wstringstream;
 
 wstring get_human_readable_name(wstring wmi_name)
 {
@@ -226,36 +42,97 @@ wstring get_human_readable_name(wstring wmi_name)
     }
 }
 
-void convert_names_to_human_readable(
-    vector<pair<wstring, int> >& usage_percentages)
-{
-    typedef vector<pair<wstring, int> >::iterator list_iterator;
-    for(list_iterator iter = usage_percentages.begin(); 
-        iter != usage_percentages.end(); iter++) {
-
-        iter->first = get_human_readable_name(iter->first);
-    }
-}
-
 void get_cpu_usage(vector<pair<wstring, int> >& usage_percentages)
 {
-    IWbemLocator* loc = NULL;
-    IWbemServices* svc = NULL;
-    try {
-        initialize_com_interface();
-        initialize_com_security();
-        create_connection_to_wmi_namespace(loc);
-        get_wmi_proxy(loc, svc);
-        set_wmi_security(loc, svc);
-        query_wmi(svc, usage_percentages);
-        clean_up_wmi(loc, svc);
-        convert_names_to_human_readable(usage_percentages);
-    } catch(com_setup_exception& e) {
-        cerr << e.what() << endl;
-        clog << e.what() << endl;
-    } catch(wmi_exception& e) {
-        cerr << e.what() << endl;
-        clog << e.what() << endl;
-        clean_up_wmi(loc, svc);
-    }
+	PDH_HQUERY query = NULL;
+    PDH_STATUS pdh_status = PdhOpenQuery(
+		NULL, // name of log file (NULL = use real-time data)
+		NULL, // user-defined value to associate with query
+		&query // handle to query
+	);
+	if(pdh_status != ERROR_SUCCESS) {
+		cerr << "PdhOpenQuery failed when trying to retreive processor "
+			<< "utilization with error 0x" << hex << pdh_status << endl;
+		return;
+	}
+
+	PDH_HCOUNTER counter;
+	pdh_status = PdhAddEnglishCounter(
+		query, // handle to query
+		"\\Processor(*)\\% Processor Time", // counter path
+		NULL, // user-defined value (part of counter information)
+		&counter // handle to counter
+	);
+	if(pdh_status != ERROR_SUCCESS) {
+		cerr << "PdhAddCounter failed when trying to retrieve processor utilization "
+			<< "with error 0x" << hex << pdh_status << endl;
+		PdhCloseQuery(query);
+		return;
+	}
+
+	pdh_status = PdhCollectQueryData(query);
+	if(pdh_status != ERROR_SUCCESS) {
+		cerr << "PdhCollectQueryData failed when trying to retrieve processor "
+			<< "utilization with error 0x" << hex << pdh_status << endl;
+		PdhCloseQuery(query);
+		return;
+	}
+
+	Sleep(1000); // need to wait at least one second before querying again
+
+	// query again to get second data point 
+	// (see http://msdn.microsoft.com/en-us/library/aa371897(v=vs.85).aspx)
+	pdh_status = PdhCollectQueryData(query);
+	if(pdh_status != ERROR_SUCCESS) {
+		cerr << "PdhCollectQueryData failed when trying to retrieve processor "
+			<< "utilization with error 0x" << hex << pdh_status << endl;
+		PdhCloseQuery(query);
+		return;
+	}
+
+	DWORD buffer_size = 0;
+	DWORD buffer_count;
+	PDH_FMT_COUNTERVALUE_ITEM empty_items;
+	pdh_status = PdhGetFormattedCounterArray(
+		counter, // handle to counter
+		PDH_FMT_LARGE, // format as 64-bit integers
+		&buffer_size, // required size of buffer
+		&buffer_count, // number of items returned
+		&empty_items // result buffer
+	);
+	if(pdh_status != PDH_MORE_DATA) {
+		cerr << "PdhGetFormattedCounterArray failed when trying to ascertain "
+			<< "number of processors when trying to retrieve processor utilization "
+			<< "with error 0x" << hex << pdh_status << endl;
+		PdhCloseQuery(query);
+		return;
+	}
+	
+	auto processor_utilizations = new PDH_FMT_COUNTERVALUE_ITEM[buffer_size];
+	pdh_status = PdhGetFormattedCounterArray(
+		counter, // handle to counter
+		PDH_FMT_LARGE, // format as 64-bit integers
+		&buffer_size, // required size of buffer
+		&buffer_count, // number of items returned
+		processor_utilizations // result buffer
+	);
+	if(pdh_status != ERROR_SUCCESS) {
+		cerr << "PdhGetFormattedCounterArray failed when trying to retrieve "
+			<< "processor utilization with error 0x" << hex << pdh_status << endl;
+		PdhCloseQuery(query);
+		return;
+	}
+	for(DWORD i = 0; i < buffer_count; ++i) {
+		std::string sname = processor_utilizations[i].szName;
+		wstring name;
+		name.assign(sname.begin(), sname.end());
+		pair<wstring, int> processor_utilization(
+			get_human_readable_name(name),
+			(int)processor_utilizations[i].FmtValue.largeValue
+		);
+		usage_percentages.push_back(processor_utilization);
+	}
+	delete processor_utilizations;
+
+	PdhCloseQuery(query);
 }
