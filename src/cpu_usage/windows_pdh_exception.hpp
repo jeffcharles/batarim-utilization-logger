@@ -10,13 +10,7 @@
 class pdh_exception: public std::exception
 {
     private:
-        char* errormsg;
-
-        void store_errormsg(const char* str)
-        {
-            errormsg = new char[strlen(str)+1];
-            strcpy(errormsg, str);
-        }
+        std::shared_ptr<char> errormsg;
     
     public:
         pdh_exception(
@@ -33,33 +27,17 @@ class pdh_exception: public std::exception
                 errstream << " Error code = 0x" << std::hex << errorcode;
             }
 
-            std::string temp_string = errstream.str();
+            const std::string temp_string = errstream.str();
             const char* temp = temp_string.c_str();
-            store_errormsg(temp);
-        }
-
-        pdh_exception(const pdh_exception& rhs)
-        {
-            store_errormsg(rhs.errormsg);
-        }
-
-        ~pdh_exception()
-        {
-            delete[] errormsg;
-        }
-
-        pdh_exception operator=(const pdh_exception rhs)
-        {
-            if(this != &rhs) {
-                delete[] errormsg;
-                store_errormsg(rhs.errormsg);
-            }
-            return *this;
+            const size_t length = strlen(temp)+1;
+            char* nonconst_temp = new char[length];
+            strcpy_s(nonconst_temp, length, temp);
+            errormsg = std::shared_ptr<char>(nonconst_temp);
         }
 
         virtual const char* what() const throw()
         {
-            return errormsg;
+            return errormsg.get();
         }
 };
 
