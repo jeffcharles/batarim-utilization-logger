@@ -12,36 +12,38 @@ using std::endl;
 using std::cerr;
 using std::clog;
 using std::ifstream;
+using std::iostream;
+using std::istream;
 using std::map;
+using std::ostream;
 using std::streamsize;
 using std::string;
 using std::stringstream;
 
-int get_ram_usage()
+void get_meminfo_stream(ostream& meminfo_stream)
 {
-    map<string, unsigned long> meminfo;
-    stringstream meminfo_string;
     ifstream meminfo_file;
-    
-    // Copy from meminfo_file into meminfo_string
     meminfo_file.open("/proc/meminfo");
     if(!meminfo_file) {
         cerr << "Could not open /proc/meminfo to retrieve ram usage" << endl;
         clog << "Could not open /proc/meminfo to retrieve ram usage" << endl;
-        return -1;
     }
 
     char c;
     while(meminfo_file.get(c)) {
-        meminfo_string.put(c);
+        meminfo_stream.put(c);
     }
 
     meminfo_file.close();
+}
 
-    // Parse from meminfo_string into meminfo
+map<string, unsigned long> get_meminfo_from_stream(istream& meminfo_stream)
+{
+    map<string, unsigned long> meminfo;
+    
     streamsize line_buffer_size = 81;
     char line_buffer[line_buffer_size];
-    while(meminfo_string.getline(line_buffer, line_buffer_size)) {
+    while(meminfo_stream.getline(line_buffer, line_buffer_size)) {
         string line(line_buffer);
         string::size_type colonpos = line.find(':');
         string varname = line.substr(0, colonpos);
@@ -66,8 +68,11 @@ int get_ram_usage()
 
         meminfo[varname] = varvalue;
     }
+    return meminfo;
+}
 
-    // Calculate free memory by subtracting used memory from total
+int get_used_ram(map<string, unsigned long>& meminfo)
+{
     unsigned long totalram = meminfo["MemTotal"];
     unsigned long freeram = meminfo["MemFree"];
     unsigned long bufferram = meminfo["Buffers"];
@@ -75,4 +80,13 @@ int get_ram_usage()
 
     unsigned long used_ram = totalram - freeram - bufferram - cacheram;
     return (double)used_ram / totalram * 100;
+}
+
+int get_ram_usage()
+{
+    stringstream meminfo_stream;
+    get_meminfo_stream(meminfo_stream);
+    map<string, unsigned long> meminfo = 
+        get_meminfo_from_stream(meminfo_stream);
+    return get_used_ram(meminfo);
 }
