@@ -37,30 +37,16 @@ map<string, unsigned long> get_meminfo_from_stream(istream& meminfo_stream)
 {
     map<string, unsigned long> meminfo;
     
-    streamsize line_buffer_size = 81;
+    const streamsize line_buffer_size = 81;
     char line_buffer[line_buffer_size];
     while(meminfo_stream.getline(line_buffer, line_buffer_size)) {
         string line(line_buffer);
         string::size_type colonpos = line.find(':');
         string varname = line.substr(0, colonpos);
-        string::size_type first_digit = 0;
-        string::size_type last_digit = 0;
-        for(string::size_type i = colonpos; line[i] != '\0'; ++i) {
-            if(isdigit(line[i]) && first_digit == 0) {
-                first_digit = i;
-            }
-            if(isdigit(line[i]) && first_digit > 0) {
-                last_digit = i;
-            }
-        }
-        bool found_digits = first_digit > 0 && last_digit > 0;
-        string varvalue_str = found_digits ?
-            line.substr(first_digit, last_digit - first_digit) :
-            "-1";
-        stringstream varvalue_converter;
-        varvalue_converter << varvalue_str;
+        
+        stringstream line_ss(line.substr(colonpos+1));
         unsigned long varvalue;
-        varvalue_converter >> varvalue;
+        line_ss >> varvalue;
 
         meminfo[varname] = varvalue;
     }
