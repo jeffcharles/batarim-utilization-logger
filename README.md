@@ -13,7 +13,7 @@ the hardware, or for any other purpose that you would like.
 Prerequisites
 -------------
 
-* CMake (version 2.6 or higher)
+* CMake (version 2.8 or higher)
 
 How to set up on Windows
 ------------------------
