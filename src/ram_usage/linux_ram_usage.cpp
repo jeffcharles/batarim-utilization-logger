@@ -68,6 +68,9 @@ int get_ram_usage()
 {
     stringstream meminfo_stream;
     get_meminfo_stream(meminfo_stream);
+    if(!meminfo_stream) {
+        return -1;
+    }
     map<string, unsigned long> meminfo = 
         get_meminfo_from_stream(meminfo_stream);
     return get_used_ram(meminfo);
