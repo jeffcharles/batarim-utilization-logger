@@ -29,11 +29,7 @@ void get_meminfo_stream(ostream& meminfo_stream)
         clog << "Could not open /proc/meminfo to retrieve ram usage" << endl;
     }
 
-    char c;
-    while(meminfo_file.get(c)) {
-        meminfo_stream.put(c);
-    }
-
+    meminfo_stream << meminfo_file.rdbuf();
     meminfo_file.close();
 }
 
