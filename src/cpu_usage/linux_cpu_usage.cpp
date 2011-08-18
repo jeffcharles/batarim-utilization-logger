@@ -19,6 +19,7 @@ using std::string;
 using std::stringstream;
 using std::vector;
 using std::wstring;
+using std::wstringstream;
 
 struct cpu_times
 {
@@ -69,7 +70,14 @@ void subtract_cpu_times(
 wstring format_identifier(wstring& identifier)
 {
     if(identifier.length() > 3) {
-        return identifier.substr(3);
+        wstring ws_identifier_number = identifier.substr(3);
+        wstringstream wss;
+        wss << ws_identifier_number;
+        int i_identifier_number;
+        wss >> i_identifier_number;
+        wstringstream wss2;
+        wss2 << ++i_identifier_number;
+        return wss2.str();
     } else {
         return L"Total";
     }
@@ -77,29 +85,38 @@ wstring format_identifier(wstring& identifier)
 
 void get_cpu_usage(vector<pair<wstring, int> >& usage_percentages)
 {
-    // TODO: need to handle multiple cpu's
     stringstream stat_stream1;
     stringstream stat_stream2;
     populate_stat_stream(stat_stream1);
     sleep(1);
     populate_stat_stream(stat_stream2);
 
-    cpu_times times1;
-    cpu_times times2;
-    populate_cpu_time_struct(stat_stream1, times1);
-    populate_cpu_time_struct(stat_stream2, times2);
+    for(;;) {
+        string stat_line1, stat_line2;
+        getline(stat_stream1, stat_line1);
+        getline(stat_stream2, stat_line2);
+        if(stat_line1.substr(0, 3) != "cpu") {
+            break;
+        }
 
-    cpu_times difference;
-    subtract_cpu_times(times1, times2, difference);
+        stringstream stat_line_stream1(stat_line1);
+        stringstream stat_line_stream2(stat_line2);
+        cpu_times times1, times2;
+        populate_cpu_time_struct(stat_line_stream1, times1);
+        populate_cpu_time_struct(stat_line_stream2, times2);
 
-    unsigned long total_time = 
-        difference.usermode + difference.lowpriority_usermode + 
-        difference.systemmode + difference.idletime;
-    int utilization = 
-        (double)(total_time - difference.idletime) / total_time * 100;
+        cpu_times difference;
+        subtract_cpu_times(times1, times2, difference);
+
+        unsigned long total_time = 
+            difference.usermode + difference.lowpriority_usermode + 
+            difference.systemmode + difference.idletime;
+        int utilization = 
+            (double)(total_time - difference.idletime) / total_time * 100;
     
-    wstring identifier = format_identifier(difference.identifier);
+        wstring identifier = format_identifier(difference.identifier);
 
-    pair<wstring, int> usage_percentage(identifier, utilization);
-    usage_percentages.push_back(usage_percentage);
+        pair<wstring, int> usage_percentage(identifier, utilization);
+        usage_percentages.push_back(usage_percentage);
+    }
 }
