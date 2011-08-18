@@ -1,44 +1,63 @@
 #include <X11/Xlib.h>
 
+#include <fstream>
+#include <sstream>
 #include <string>
 
 #include "active_window.hpp"
 
+using std::ifstream;
 using std::string;
+using std::stringstream;
 using std::wstring;
 
-wstring get_active_window_name()
+void populate_display_and_window(Display*& display, Window& window)
 {
-    Display* display = XOpenDisplay(NULL);
+    display = XOpenDisplay(NULL);
     if(display == NULL) {
-        return L"No local active window";
+        return;
+    }
+   
+    Window focused_window;
+    int revert_to_return;
+    XGetInputFocus(display, &focused_window, &revert_to_return);
+    if(window == None) {
+        return;
+    }
+    if(window == DefaultRootWindow(display)) {
+        return;
     }
     
-    Window focus_return;
-    int revert_to_return;
-    XGetInputFocus(display, &focus_return, &revert_to_return);
-    if(focus_return == 0) {
-        return L"No local active window";
-    }
-    if(focus_return == DefaultRootWindow(display)) {
-        return L"Desktop";
-    }
-
     // in Gnome, need to get parent window to get actual window title
     // TODO: figure out if KDE, XFCE work similarly
     Window root;
     Window parent;
     Window* children;
     unsigned int num_children;
-    if(!XQueryTree(display, focus_return, &root, &parent, &children, 
+    if(!XQueryTree(display, focused_window, &root, &parent, &children, 
         &num_children)) {
         
-        return L"No local active window";
+        return;
     }
     XFree(children);
+    
+    window = parent;
+}
+
+wstring get_active_window_name()
+{
+    Display* display = NULL;
+    Window window;
+    populate_display_and_window(display, window);
+    if(display == NULL) {
+        return L"No local active window";
+    }
+    if(window == None) {
+        return L"No local active window";
+    }
 
     char* window_name = NULL;
-    if(!XFetchName(display, parent, &window_name)) {
+    if(!XFetchName(display, window, &window_name)) {
         if(window_name != NULL) {
             XFree(window_name);
         }
@@ -56,6 +75,67 @@ wstring get_active_window_name()
 }
 
 wstring get_active_window_process_name()
-{
-    return L"Not implmented";
+{    
+    Display* display = NULL;
+    Window window;
+    populate_display_and_window(display, window);
+    if(display == NULL) {
+        return L"No local active window";
+    }
+    if(window == 0) {
+        return L"No local active window";
+    }
+    if(window == DefaultRootWindow(display)) {
+        return L"Desktop";
+    }
+
+    Atom pid_property = XInternAtom(display, "_NET_WM_PID", true);
+    if(pid_property == None) {
+        return L"";
+    }
+    
+    Atom actual_type;
+    int actual_format;
+    unsigned long num_items;
+    unsigned long bytes_after;
+    unsigned char* property;
+    bool pid_available = XGetWindowProperty(
+        display, 
+        window, 
+        pid_property, 
+        0, // specifies offset in specified property
+        1, // specifies length of data to retrieve
+        false, // delete property?
+        AnyPropertyType, // atom identifier associated with the property type
+        &actual_type,
+        &actual_format,
+        &num_items,
+        &bytes_after,
+        &property
+    ) == Success;
+
+    if(!pid_available) {
+        return L"";
+    }
+
+    if(actual_type == None) {
+        return L"";
+    }
+    if(actual_format != 32 || num_items < 1) {
+        return L"";
+    }
+    long pid = ((long*)property)[0];
+
+    stringstream filepath_ss;
+    filepath_ss << "/proc/" << pid << "/cmdline";
+    ifstream process_cmdline;
+    string filepath = filepath_ss.str();
+    process_cmdline.open(filepath.c_str());
+    string process_name;
+    process_cmdline >> process_name;
+    process_cmdline.close();
+
+    wstring wprocess_name;
+    wprocess_name.assign(process_name.begin(), process_name.end());
+    return wprocess_name;
 }
