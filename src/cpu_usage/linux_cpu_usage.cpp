@@ -95,7 +95,9 @@ void get_cpu_usage(vector<pair<wstring, int> >& usage_percentages)
         string stat_line1, stat_line2;
         getline(stat_stream1, stat_line1);
         getline(stat_stream2, stat_line2);
-        if(stat_line1.substr(0, 3) != "cpu") {
+        
+        bool is_cpu_line = stat_line1.substr(0, 3) == "cpu";
+        if(!is_cpu_line) {
             break;
         }
 
