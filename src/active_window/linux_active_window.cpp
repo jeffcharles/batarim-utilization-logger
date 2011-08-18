@@ -49,10 +49,7 @@ wstring get_active_window_name()
     Display* display = NULL;
     Window window;
     populate_display_and_window(display, window);
-    if(display == NULL) {
-        return L"No local active window";
-    }
-    if(window == None) {
+    if(display == NULL || window == None) {
         return L"No local active window";
     }
 
@@ -74,15 +71,37 @@ wstring get_active_window_name()
     return ret;
 }
 
+string get_process_name(long pid)
+{
+    stringstream filepath_ss;
+    filepath_ss << "/proc/" << pid << "/cmdline";
+    string filepath = filepath_ss.str();
+    
+    ifstream process_cmdline;
+    process_cmdline.open(filepath.c_str());
+    
+    string process_name;
+    process_cmdline >> process_name;
+    
+    process_cmdline.close();
+    
+    return process_name;
+}
+
+wstring get_wide_process_name(long pid)
+{
+    string process_name = get_process_name(pid);
+    wstring wprocess_name;
+    wprocess_name.assign(process_name.begin(), process_name.end());
+    return wprocess_name;
+}
+
 wstring get_active_window_process_name()
 {    
     Display* display = NULL;
     Window window;
     populate_display_and_window(display, window);
-    if(display == NULL) {
-        return L"No local active window";
-    }
-    if(window == 0) {
+    if(display == NULL || window == None) {
         return L"No local active window";
     }
     if(window == DefaultRootWindow(display)) {
@@ -114,28 +133,13 @@ wstring get_active_window_process_name()
         &property
     ) == Success;
 
-    if(!pid_available) {
+    bool valid_results = 
+        pid_available && actual_type != None && 
+        actual_format == 32 && num_items > 0;
+    if(!valid_results) {
         return L"";
     }
-
-    if(actual_type == None) {
-        return L"";
-    }
-    if(actual_format != 32 || num_items < 1) {
-        return L"";
-    }
+    
     long pid = ((long*)property)[0];
-
-    stringstream filepath_ss;
-    filepath_ss << "/proc/" << pid << "/cmdline";
-    ifstream process_cmdline;
-    string filepath = filepath_ss.str();
-    process_cmdline.open(filepath.c_str());
-    string process_name;
-    process_cmdline >> process_name;
-    process_cmdline.close();
-
-    wstring wprocess_name;
-    wprocess_name.assign(process_name.begin(), process_name.end());
-    return wprocess_name;
+    return get_wide_process_name(pid);
 }
