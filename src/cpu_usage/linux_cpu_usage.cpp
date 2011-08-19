@@ -19,14 +19,73 @@ using std::vector;
 using std::wstring;
 using std::wstringstream;
 
-struct cpu_times
+class cpu_times
 {
-    wstring identifier;
-    unsigned int usermode;
-    unsigned int lowpriority_usermode;
-    unsigned int systemmode;
-    unsigned int idletime;
+    friend cpu_times operator-(const cpu_times&, const cpu_times&);
+
+    private:
+        wstring identifier;
+        unsigned long totaltime;
+        unsigned int idletime;
+
+        cpu_times(
+            wstring identifier,
+            unsigned long totaltime,
+            unsigned int idletime
+        ): 
+            identifier(identifier),
+            totaltime(totaltime),
+            idletime(idletime) { }
+    public:
+        cpu_times(istream& stat_stream_line)
+        {
+            string s_identifier;
+            stat_stream_line >> s_identifier;
+            identifier.assign(s_identifier.begin(), s_identifier.end());
+
+            totaltime = 0;
+            unsigned long temp;
+            const int num_entries_until_idle = 3;
+            for(int i = 0; i < num_entries_until_idle; ++i) {
+                stat_stream_line >> temp;
+                totaltime += temp;
+            }
+            stat_stream_line >> temp;
+            totaltime += temp;
+            idletime = temp;
+            while(stat_stream_line) {
+                stat_stream_line >> temp;
+                totaltime += temp;
+            }
+        }
+
+        wstring get_identifier()
+        {
+            if(identifier.length() > 3) {
+                wstring ws_identifier_number = identifier.substr(3);
+                wstringstream wss;
+                wss << ws_identifier_number;
+                int i_identifier_number;
+                wss >> i_identifier_number;
+                wstringstream wss2;
+                wss2 << ++i_identifier_number;
+                return wss2.str();
+            } else {
+                return L"Total";
+            }   
+        }
+
+        unsigned long get_usedtime() { return totaltime - idletime; }
+        unsigned long get_totaltime() { return totaltime; }
 };
+
+cpu_times operator-(const cpu_times& lhs, const cpu_times& rhs)
+{
+    wstring identifier = lhs.identifier;
+    unsigned long totaltime = lhs.totaltime - rhs.totaltime;
+    unsigned int idletime = lhs.idletime - rhs.idletime;
+    return cpu_times(identifier, totaltime, idletime);
+}
 
 void populate_stat_stream(ostream& stat_stream)
 {
@@ -39,46 +98,6 @@ void populate_stat_stream(ostream& stat_stream)
     }
     stat_stream << stat_file.rdbuf();
     stat_file.close();
-}
-
-void populate_cpu_time_struct(istream& stat_stream, cpu_times& times)
-{
-    string identifier;
-    stat_stream >> identifier;
-    times.identifier.assign(identifier.begin(), identifier.end());
-    stat_stream >> times.usermode;
-    stat_stream >> times.lowpriority_usermode;
-    stat_stream >> times.systemmode;
-    stat_stream >> times.idletime;
-}
-
-void subtract_cpu_times(
-    cpu_times& times1, 
-    cpu_times& times2, 
-    cpu_times& result
-) {
-    result.identifier = times1.identifier;
-    result.usermode = times2.usermode - times1.usermode;
-    result.lowpriority_usermode = 
-        times2.lowpriority_usermode - times1.lowpriority_usermode;
-    result.systemmode = times2.systemmode - times1.systemmode;
-    result.idletime = times2.idletime - times1.idletime;
-}
-
-wstring format_identifier(wstring& identifier)
-{
-    if(identifier.length() > 3) {
-        wstring ws_identifier_number = identifier.substr(3);
-        wstringstream wss;
-        wss << ws_identifier_number;
-        int i_identifier_number;
-        wss >> i_identifier_number;
-        wstringstream wss2;
-        wss2 << ++i_identifier_number;
-        return wss2.str();
-    } else {
-        return L"Total";
-    }
 }
 
 void get_cpu_usage(vector<pair<wstring, int> >& usage_percentages)
@@ -101,22 +120,15 @@ void get_cpu_usage(vector<pair<wstring, int> >& usage_percentages)
 
         stringstream stat_line_stream1(stat_line1);
         stringstream stat_line_stream2(stat_line2);
-        cpu_times times1, times2;
-        populate_cpu_time_struct(stat_line_stream1, times1);
-        populate_cpu_time_struct(stat_line_stream2, times2);
+        cpu_times times1(stat_line_stream1);
+        cpu_times times2(stat_line_stream2);
+        cpu_times difference = times2 - times1;
 
-        cpu_times difference;
-        subtract_cpu_times(times1, times2, difference);
-
-        unsigned long total_time = 
-            difference.usermode + difference.lowpriority_usermode + 
-            difference.systemmode + difference.idletime;
-        int utilization = 
-            (double)(total_time - difference.idletime) / total_time * 100;
+        int utilization = (double)(difference.get_usedtime()) / 
+            difference.get_totaltime() * 100 + 0.5;
     
-        wstring identifier = format_identifier(difference.identifier);
-
-        pair<wstring, int> usage_percentage(identifier, utilization);
+        pair<wstring, int> usage_percentage(
+            difference.get_identifier(), utilization);
         usage_percentages.push_back(usage_percentage);
     }
 }
