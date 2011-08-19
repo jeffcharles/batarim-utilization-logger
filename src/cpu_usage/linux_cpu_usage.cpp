@@ -39,6 +39,11 @@ class cpu_times
     public:
         cpu_times(istream& stat_stream_line)
         {
+            // each CPU line in /proc/stat starts with an identifier (cpu or
+            // cpu followed by a number), followed by usermode time, low
+            // priority usermode time, system time, idle time, and then some
+            // other times as detailed in the proc manpages, we just need
+            // the identifier, the idle time, and the sum of all times
             string s_identifier;
             stat_stream_line >> s_identifier;
             identifier.assign(s_identifier.begin(), s_identifier.end());
@@ -61,6 +66,13 @@ class cpu_times
 
         wstring get_identifier()
         {
+            // CPU lines in /proc/stat start with either cpu (indicating 
+            // average cpu usage) or with cpu followed by a number starting 
+            // from 0 indicating which processor core the measurement is for,
+            // the identifier shown to the user should be "Total" for the
+            // average utilization across processor cores or just the core
+            // number (without the cpu in front) but cores should be 1-indexed
+            // not zero indexed so we need to increment that number by one
             if(identifier.length() > 3) {
                 wstring ws_identifier_number = identifier.substr(3);
                 wstringstream wss;
