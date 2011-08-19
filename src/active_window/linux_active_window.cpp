@@ -21,10 +21,10 @@ void populate_display_and_window(Display*& display, Window& window)
     Window focused_window;
     int revert_to_return;
     XGetInputFocus(display, &focused_window, &revert_to_return);
-    if(window == None) {
+    if(focused_window == None) {
         return;
     }
-    if(window == DefaultRootWindow(display)) {
+    if(focused_window == DefaultRootWindow(display)) {
         return;
     }
     
@@ -58,8 +58,10 @@ wstring get_active_window_name()
         if(window_name != NULL) {
             XFree(window_name);
         }
+        XFree(display);
         return L"No local active window";
     }
+    XFree(display);
     
     if(window_name == NULL) {
         return L"";
@@ -105,11 +107,13 @@ wstring get_active_window_process_name()
         return L"No local active window";
     }
     if(window == DefaultRootWindow(display)) {
+        XFree(display);
         return L"Desktop";
     }
 
     Atom pid_property = XInternAtom(display, "_NET_WM_PID", true);
     if(pid_property == None) {
+        XFree(display);
         return L"";
     }
     
@@ -132,6 +136,7 @@ wstring get_active_window_process_name()
         &bytes_after,
         &property
     ) == Success;
+    XFree(display);
 
     bool valid_results = 
         pid_available && actual_type != None && 
