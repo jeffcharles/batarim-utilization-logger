@@ -141,5 +141,6 @@ wstring get_active_window_process_name()
     }
     
     long pid = ((long*)property)[0];
+    XFree(property);
     return get_wide_process_name(pid);
 }
