@@ -1,3 +1,7 @@
+if (WIN32)
+    add_subdirectory (windows_pdh_wrapper)
+endif ()
+
 add_subdirectory(cpu_usage)
 add_subdirectory(ram_usage)
 add_subdirectory(active_window)
