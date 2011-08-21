@@ -4,7 +4,7 @@
 #include <vector>
 
 #include "cpu_usage.hpp"
-#include "../windows_pdh_wrapper/pdh_exception.hpp"
+#include "../windows_pdh_wrapper/PdhException.hpp"
 #include "../windows_pdh_wrapper/pdh_wrapper.hpp"
 
 using std::cerr;
@@ -72,7 +72,7 @@ void get_cpu_usage(vector<pair<wstring, int> >& usage_percentages)
             number_of_processor_entries, usage_percentages);
         
         cleanup(query, processor_utilizations);
-    } catch(pdh_exception& e) {
+    } catch(PdhException& e) {
         cerr << e.what() << endl;
         clog << e.what() << endl;
         cleanup(query, processor_utilizations);

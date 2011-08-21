@@ -9,13 +9,13 @@
 #include <sstream>
 #include <string>
 
-class pdh_exception: public std::exception
+class PdhException: public std::exception
 {
     private:
         std::shared_ptr<char> errormsg;
     
     public:
-        pdh_exception(
+        PdhException(
             const std::string& method_name,
             const std::string& context,
             PDH_STATUS errorcode = 0

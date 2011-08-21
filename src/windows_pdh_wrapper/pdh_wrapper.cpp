@@ -5,7 +5,7 @@
 // --------------------
 
 #include "pdh_wrapper.hpp"
-#include "pdh_exception.hpp"
+#include "PdhException.hpp"
 
 using std::string;
 
@@ -17,7 +17,7 @@ void populate_query(const string& context, PDH_HQUERY& query)
         &query // handle to query
     );
     if(pdh_status != ERROR_SUCCESS) {
-        throw pdh_exception("PdhOpenQuery", context, pdh_status);
+        throw PdhException("PdhOpenQuery", context, pdh_status);
     }
 }
 
@@ -34,7 +34,7 @@ void add_counter_to_query(
         &counter // handle to counter
     );
     if(pdh_status != ERROR_SUCCESS) {
-        throw pdh_exception("PdhAddEnglishCounter", context, pdh_status);
+        throw PdhException("PdhAddEnglishCounter", context, pdh_status);
     }
 }
 
@@ -42,7 +42,7 @@ void collect_query_data(const string& context, PDH_HQUERY& query)
 {
     PDH_STATUS pdh_status = PdhCollectQueryData(query);
     if(pdh_status != ERROR_SUCCESS) {
-        throw pdh_exception("PdhCollectQueryData", context, pdh_status);
+        throw PdhException("PdhCollectQueryData", context, pdh_status);
     }
 
     Sleep(1000); // need to wait at least one second before querying again
@@ -51,7 +51,7 @@ void collect_query_data(const string& context, PDH_HQUERY& query)
     // (see http://msdn.microsoft.com/en-us/library/aa371897(v=vs.85).aspx)
     pdh_status = PdhCollectQueryData(query);
     if(pdh_status != ERROR_SUCCESS) {
-        throw pdh_exception("PdhCollectQueryData", context, pdh_status);
+        throw PdhException("PdhCollectQueryData", context, pdh_status);
     }
 }
 
@@ -68,7 +68,7 @@ DWORD get_required_buffer_size(const string& context, PDH_HCOUNTER& counter)
         &empty_items // result buffer
     );
     if(pdh_status != PDH_MORE_DATA) {
-        throw pdh_exception("PdhGetFormattedCounterArray", context, 
+        throw PdhException("PdhGetFormattedCounterArray", context, 
             pdh_status);
     }
     return number_of_bytes_required;
@@ -90,7 +90,7 @@ void populate_result_set(
         result_set // result buffer
     );
     if(pdh_status != ERROR_SUCCESS) {
-        throw pdh_exception("PdhGetFormattedCounterArray", context, 
+        throw PdhException("PdhGetFormattedCounterArray", context, 
             pdh_status);
     }
 }
