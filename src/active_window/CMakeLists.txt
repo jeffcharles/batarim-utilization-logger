@@ -1,6 +1,6 @@
 if (WIN32)
     add_library (active_window STATIC 
-        active_window.hpp windows_active_window.cpp
+        ActiveWindow.hpp windows_ActiveWindow.cpp
     )
 elseif (LINUX)
     add_library (active_window STATIC

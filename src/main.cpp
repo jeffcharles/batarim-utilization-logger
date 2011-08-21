@@ -3,7 +3,7 @@
 #include <vector>
 #include "cpu_usage/cpu_usage.hpp"
 #include "ram_usage/ram_usage.hpp"
-#include "active_window/active_window.hpp"
+#include "active_window/ActiveWindow.hpp"
 
 using std::endl;
 using std::pair;
@@ -18,9 +18,9 @@ int main()
     
     int ram_usage = get_ram_usage();
 
-    active_window window;
-    wstring active_window_name = window.get_name();
-    wstring active_window_process_name = window.get_process_name();
+    ActiveWindow active_window;
+    wstring active_window_name = active_window.get_name();
+    wstring active_window_process_name = active_window.get_process_name();
     
     typedef vector<pair<wstring, int> >::const_iterator const_iterator;
     for(const_iterator iter = cpu_usage_percentages.begin();

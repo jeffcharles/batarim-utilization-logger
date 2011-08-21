@@ -3,7 +3,7 @@
 
 #include <string>
 
-class active_window
+class ActiveWindow
 {
     private:
         
@@ -15,7 +15,7 @@ class active_window
     
     public:
         
-        active_window();
+        ActiveWindow();
 
         std::wstring get_name() { return name; }
         std::wstring get_process_name();

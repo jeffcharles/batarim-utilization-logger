@@ -1,7 +1,7 @@
 #include <string>
 #include <Windows.h>
 
-#include "active_window.hpp"
+#include "ActiveWindow.hpp"
 
 using std::string;
 using std::wstring;
@@ -37,7 +37,7 @@ wstring get_filename_from_win32_path(wstring& path)
         stripped_exe_path;
 }
 
-active_window::active_window()
+ActiveWindow::ActiveWindow()
 {
     // Set PID
     HWND handle = GetForegroundWindow();
@@ -65,7 +65,7 @@ active_window::active_window()
     cpu_usage = 0;
 }
 
-wstring active_window::get_process_name()
+wstring ActiveWindow::get_process_name()
 {
     if(process_name != L"") {
         return process_name;
