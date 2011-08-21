@@ -4,6 +4,7 @@
 #include <pdhmsg.h>
 // --------------------
 
+#include "pdh_wrapper.hpp"
 #include "pdh_exception.hpp"
 
 using std::string;
@@ -103,4 +104,25 @@ void cleanup(PDH_HQUERY& query, PDH_FMT_COUNTERVALUE_ITEM*& result_set)
         free(result_set);
         result_set = NULL;
     }
+}
+
+void query_pdh(
+    const string& context,
+    PDH_HQUERY& query,
+    char* counter_path,
+    PDH_FMT_COUNTERVALUE_ITEM*& result_set,
+    DWORD& num_items_returned
+) {
+    populate_query(context, query);
+    
+    PDH_HCOUNTER counter = NULL;
+    add_counter_to_query(context, query, counter, counter_path);
+    
+    collect_query_data(context, query);
+    
+    DWORD buffer_size = get_required_buffer_size(context, counter);
+    result_set = (PDH_FMT_COUNTERVALUE_ITEM*)malloc(buffer_size);
+    
+    populate_result_set(context, counter, buffer_size, result_set,
+        num_items_returned);
 }

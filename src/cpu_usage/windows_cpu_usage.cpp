@@ -63,21 +63,11 @@ void get_cpu_usage(vector<pair<wstring, int> >& usage_percentages)
     PDH_FMT_COUNTERVALUE_ITEM* processor_utilizations = NULL;
     try {
         const string context = "retrieve processor utilization";
-
-        populate_query(context, query);
-
-        PDH_HCOUNTER counter = NULL;
-        add_counter_to_query(context, query, counter, 
-            "\\Processor(*)\\% Processor Time");
-
-        collect_query_data(context, query);
-
-        DWORD buffer_size = get_required_buffer_size(context, counter);
-        processor_utilizations = 
-            (PDH_FMT_COUNTERVALUE_ITEM*)malloc(buffer_size);
+        char* counter_path = "\\Processor(*)\\% Processor Time";
         DWORD number_of_processor_entries;
-        populate_result_set(context, counter, buffer_size, 
-            processor_utilizations, number_of_processor_entries);
+        query_pdh(context, query, counter_path, processor_utilizations,
+            number_of_processor_entries);
+
         fill_usage_percentages(processor_utilizations, 
             number_of_processor_entries, usage_percentages);
         
