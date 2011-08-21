@@ -11,9 +11,6 @@
 
 class PdhException: public std::exception
 {
-    private:
-        std::shared_ptr<char> errormsg;
-    
     public:
         PdhException(
             const std::string& method_name,
@@ -25,6 +22,9 @@ class PdhException: public std::exception
         {
             return errormsg.get();
         }
+    
+    private:
+        std::shared_ptr<char> errormsg;
 };
 
 #endif
