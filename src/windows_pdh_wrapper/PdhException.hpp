@@ -18,21 +18,8 @@ class PdhException: public std::exception
         PdhException(
             const std::string& method_name,
             const std::string& context,
-            PDH_STATUS errorcode = 0
-        ) {
-            std::stringstream errstream;
-            errstream << method_name;
-            errstream << " failed while trying to ";
-            errstream << context;
-            errstream << ". ";
-            errstream << "Error code = 0x" << std::hex << errorcode;
-
-            const std::string temp_string = errstream.str();
-            const char* temp = temp_string.c_str();
-            const size_t length = strlen(temp)+1;
-            errormsg = std::shared_ptr<char>(new char[length]);
-            strcpy_s(errormsg.get(), length, temp);
-        }
+            PDH_STATUS errorcode
+        );
 
         virtual const char* what() const throw()
         {
