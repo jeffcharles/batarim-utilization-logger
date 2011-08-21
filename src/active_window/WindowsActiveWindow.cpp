@@ -1,12 +1,12 @@
 #include <string>
 #include <Windows.h>
 
-#include "ActiveWindow.hpp"
+#include "WindowsActiveWindow.hpp"
 
 using std::string;
 using std::wstring;
 
-ActiveWindow::ActiveWindow()
+WindowsActiveWindow::WindowsActiveWindow()
 {
     // Set PID
     HWND handle = GetForegroundWindow();
@@ -34,7 +34,7 @@ ActiveWindow::ActiveWindow()
     cpu_usage_ = 0;
 }
 
-wstring ActiveWindow::get_process_name()
+wstring WindowsActiveWindow::get_process_name()
 {
     if(process_name_ != L"") {
         return process_name_;
@@ -68,7 +68,7 @@ wstring ActiveWindow::get_process_name()
     }
 }
 
-wstring ActiveWindow::get_wstring_from_tchar(TCHAR* buffer, int buffer_size)
+wstring WindowsActiveWindow::get_wstring_from_tchar(TCHAR* buffer, int buffer_size)
 {
     // wstring does not have a constructor that takes a wchar_t, therefore
     // need to copy contents from the wchar_t buffer into a wstring
@@ -77,7 +77,7 @@ wstring ActiveWindow::get_wstring_from_tchar(TCHAR* buffer, int buffer_size)
     return ret;
 }
 
-wstring ActiveWindow::get_filename_from_win32_path(wstring& path)
+wstring WindowsActiveWindow::get_filename_from_win32_path(wstring& path)
 {
     wstring stripped_exe_path;
     bool path_ends_with_exe = path.length() > 4 && 

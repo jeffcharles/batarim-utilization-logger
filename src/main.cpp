@@ -3,7 +3,11 @@
 #include <vector>
 #include "cpu_usage/cpu_usage.hpp"
 #include "ram_usage/ram_usage.hpp"
-#include "active_window/ActiveWindow.hpp"
+#include "active_window/IActiveWindow.hpp"
+
+#if WIN32
+    #include "active_window/WindowsActiveWindow.hpp"
+#endif
 
 using std::endl;
 using std::pair;
@@ -18,7 +22,9 @@ int main()
     
     int ram_usage = get_ram_usage();
 
-    ActiveWindow active_window;
+#if WIN32
+    WindowsActiveWindow active_window = WindowsActiveWindow();
+#endif
     wstring active_window_name = active_window.get_name();
     wstring active_window_process_name = active_window.get_process_name();
     
