@@ -3,10 +3,23 @@
 
 #include <string>
 
-// Returns the name of the current active window
-std::wstring get_active_window_name();
+class active_window
+{
+    private:
+        
+        unsigned int pid;
 
-// Returns the name of the application that controls the  active window
-std::wstring get_active_window_process_name();
+        std::wstring name;
+        std::wstring process_name;
+        int cpu_usage;
+    
+    public:
+        
+        active_window();
+
+        std::wstring get_name() { return name; }
+        std::wstring get_process_name();
+        int get_cpu_usage() { return cpu_usage; }
+};
 
 #endif

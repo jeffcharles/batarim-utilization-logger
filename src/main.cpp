@@ -18,8 +18,9 @@ int main()
     
     int ram_usage = get_ram_usage();
 
-    wstring active_window_name = get_active_window_name();
-    wstring active_window_process_name = get_active_window_process_name();
+    active_window window;
+    wstring active_window_name = window.get_name();
+    wstring active_window_process_name = window.get_process_name();
     
     typedef vector<pair<wstring, int> >::const_iterator const_iterator;
     for(const_iterator iter = cpu_usage_percentages.begin();

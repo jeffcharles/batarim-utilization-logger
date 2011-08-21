@@ -15,25 +15,6 @@ wstring get_wstring_from_tchar(TCHAR* buffer, int buffer_size)
     return ret;
 }
 
-wstring get_active_window_name()
-{
-    HWND active_window = GetForegroundWindow();
-    const int MAX_WINDOW_NAME_LENGTH = 255;
-    TCHAR window_name[MAX_WINDOW_NAME_LENGTH];
-    int window_text_retrieved_length = GetWindowText(
-        active_window, // handle to window to retrieve name for
-        window_name,  // non-const TCHAR string to output to
-        MAX_WINDOW_NAME_LENGTH // maximum length of text to copy
-    );
-
-    if(window_text_retrieved_length == 0) {
-        return L"";
-    } else {
-        return get_wstring_from_tchar(window_name, 
-            window_text_retrieved_length);
-    }
-}
-
 wstring get_filename_from_win32_path(wstring& path)
 {
     wstring stripped_exe_path;
@@ -56,25 +37,54 @@ wstring get_filename_from_win32_path(wstring& path)
         stripped_exe_path;
 }
 
-wstring get_active_window_process_name()
+active_window::active_window()
 {
-    HWND active_window = GetForegroundWindow();
+    // Set PID
+    HWND handle = GetForegroundWindow();
     DWORD process_id;
-    GetWindowThreadProcessId(active_window, &process_id);
+    GetWindowThreadProcessId(handle, &process_id);
+    pid = process_id;
+
+    // Set window name
+    const int MAX_WINDOW_NAME_LENGTH = 255;
+    TCHAR window_name[MAX_WINDOW_NAME_LENGTH];
+    int window_text_length = GetWindowText(
+        handle, // handle to window to retrieve name for
+        window_name,  // non-const TCHAR string to output to
+        MAX_WINDOW_NAME_LENGTH // maximum length of text to copy
+    );
+
+    if(window_text_length == 0) {
+        name = L"";
+    } else {
+        name = get_wstring_from_tchar(window_name, window_text_length);
+    }
+
+    // Null out other attributes
+    process_name = L"";
+    cpu_usage = 0;
+}
+
+wstring active_window::get_process_name()
+{
+    if(process_name != L"") {
+        return process_name;
+    }
+
     HANDLE process_handle = OpenProcess(
         PROCESS_QUERY_LIMITED_INFORMATION, // access rights to process
         false, // should processes created by this process inherit the handle
-        process_id
+        pid
     );
     
     const int MAX_PROCESS_NAME_LENGTH = 255;
-    TCHAR process_name[MAX_PROCESS_NAME_LENGTH];
+    TCHAR name[MAX_PROCESS_NAME_LENGTH];
     DWORD buffer_size = MAX_PROCESS_NAME_LENGTH;
     
     bool query_success = QueryFullProcessImageName(
         process_handle,
         NULL, // use Win32 path format
-        process_name,
+        name,
         &buffer_size
     ) != 0;
 
@@ -83,7 +93,8 @@ wstring get_active_window_process_name()
     if(!query_success || buffer_size == 0) {
         return L"";
     } else {
-        return get_filename_from_win32_path(
-            get_wstring_from_tchar(process_name, buffer_size));
+        process_name = get_filename_from_win32_path(
+            get_wstring_from_tchar(name, buffer_size));
+        return process_name;
     }
 }
