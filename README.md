@@ -40,3 +40,5 @@ Coding conventions
 * Each tabstop should be 4 spaces
 * Header files should use guard definitions in the form of 
 `GUARD_<header_name>_h`
+* Typenames should use Pascal Case
+* Other names should use lower-case letters separated by underscores
