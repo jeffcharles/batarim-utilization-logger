@@ -2,6 +2,7 @@
 #define GUARD_active_window_h
 
 #include <string>
+#include <Windows.h>
 
 class ActiveWindow
 {
@@ -18,6 +19,9 @@ class ActiveWindow
         std::wstring name_;
         std::wstring process_name_;
         int cpu_usage_;
+
+        std::wstring get_wstring_from_tchar(TCHAR* buffer, int buffer_size);
+        std::wstring get_filename_from_win32_path(std::wstring& path);
 };
 
 #endif

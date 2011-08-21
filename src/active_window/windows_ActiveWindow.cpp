@@ -6,37 +6,6 @@
 using std::string;
 using std::wstring;
 
-wstring get_wstring_from_tchar(TCHAR* buffer, int buffer_size)
-{
-    // wstring does not have a constructor that takes a wchar_t, therefore
-    // need to copy contents from the wchar_t buffer into a wstring
-    wstring ret;
-    ret.assign(&buffer[0], &buffer[buffer_size]);
-    return ret;
-}
-
-wstring get_filename_from_win32_path(wstring& path)
-{
-    wstring stripped_exe_path;
-    bool path_ends_with_exe = path.length() > 4 && 
-        path.compare(path.length()-4, 4, L".exe") == 0;
-    stripped_exe_path = path_ends_with_exe ? 
-        path.substr(0, path.length()-4) : path;
-    
-    wstring::size_type last_backslash_location = -1;
-    if(stripped_exe_path.length() > 1) {
-        for(wstring::size_type i = stripped_exe_path.length()-2; i >= 0; --i) {
-            if(stripped_exe_path[i] == '\\') {
-                last_backslash_location = i;
-                break;
-            }
-        }
-    }
-    return (last_backslash_location > 0) ? 
-        stripped_exe_path.substr(last_backslash_location+1) : 
-        stripped_exe_path;
-}
-
 ActiveWindow::ActiveWindow()
 {
     // Set PID
@@ -97,4 +66,35 @@ wstring ActiveWindow::get_process_name()
             get_wstring_from_tchar(name, buffer_size));
         return process_name_;
     }
+}
+
+wstring ActiveWindow::get_wstring_from_tchar(TCHAR* buffer, int buffer_size)
+{
+    // wstring does not have a constructor that takes a wchar_t, therefore
+    // need to copy contents from the wchar_t buffer into a wstring
+    wstring ret;
+    ret.assign(&buffer[0], &buffer[buffer_size]);
+    return ret;
+}
+
+wstring ActiveWindow::get_filename_from_win32_path(wstring& path)
+{
+    wstring stripped_exe_path;
+    bool path_ends_with_exe = path.length() > 4 && 
+        path.compare(path.length()-4, 4, L".exe") == 0;
+    stripped_exe_path = path_ends_with_exe ? 
+        path.substr(0, path.length()-4) : path;
+    
+    wstring::size_type last_backslash_location = -1;
+    if(stripped_exe_path.length() > 1) {
+        for(wstring::size_type i = stripped_exe_path.length()-2; i >= 0; --i) {
+            if(stripped_exe_path[i] == '\\') {
+                last_backslash_location = i;
+                break;
+            }
+        }
+    }
+    return (last_backslash_location > 0) ? 
+        stripped_exe_path.substr(last_backslash_location+1) : 
+        stripped_exe_path;
 }
