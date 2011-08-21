@@ -4,7 +4,7 @@
 #include <sstream>
 #include <string>
 
-#include "active_window.hpp"
+#include "ActiveWindow.hpp"
 
 using std::ifstream;
 using std::string;

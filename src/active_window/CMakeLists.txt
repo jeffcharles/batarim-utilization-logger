@@ -4,7 +4,7 @@ if (WIN32)
     )
 elseif (LINUX)
     add_library (active_window STATIC
-        active_window.hpp linux_active_window.cpp
+        ActiveWindow.hpp linux_ActiveWindow.cpp
     )
     target_link_libraries (active_window X11)
 endif ()
