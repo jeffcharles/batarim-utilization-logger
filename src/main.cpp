@@ -22,8 +22,8 @@ int main()
     wstring active_window_name = active_window.get_name();
     wstring active_window_process_name = active_window.get_process_name();
     
-    typedef vector<pair<wstring, int> >::const_iterator const_iterator;
-    for(const_iterator iter = cpu_usage_percentages.begin();
+    typedef vector<pair<wstring, int> >::const_iterator ConstIterator;
+    for(ConstIterator iter = cpu_usage_percentages.begin();
         iter != cpu_usage_percentages.end(); iter++) {
         
         wcout << L"CPU " << iter->first << L" usage: " << iter->second << L"%" 
