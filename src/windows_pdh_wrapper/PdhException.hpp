@@ -20,11 +20,11 @@ class PdhException: public std::exception
 
         virtual const char* what() const throw()
         {
-            return errormsg.get();
+            return errormsg_.get();
         }
     
     private:
-        std::shared_ptr<char> errormsg;
+        std::shared_ptr<char> errormsg_;
 };
 
 #endif

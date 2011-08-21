@@ -21,6 +21,6 @@ PdhException::PdhException(
     const string temp_string = errstream.str();
     const char* temp = temp_string.c_str();
     const size_t length = strlen(temp)+1;
-    errormsg = std::shared_ptr<char>(new char[length]);
-    strcpy_s(errormsg.get(), length, temp);
+    errormsg_ = std::shared_ptr<char>(new char[length]);
+    strcpy_s(errormsg_.get(), length, temp);
 }

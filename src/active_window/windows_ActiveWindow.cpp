@@ -43,7 +43,7 @@ ActiveWindow::ActiveWindow()
     HWND handle = GetForegroundWindow();
     DWORD process_id;
     GetWindowThreadProcessId(handle, &process_id);
-    pid = process_id;
+    pid_ = process_id;
 
     // Set window name
     const int MAX_WINDOW_NAME_LENGTH = 255;
@@ -55,26 +55,26 @@ ActiveWindow::ActiveWindow()
     );
 
     if(window_text_length == 0) {
-        name = L"";
+        name_ = L"";
     } else {
-        name = get_wstring_from_tchar(window_name, window_text_length);
+        name_ = get_wstring_from_tchar(window_name, window_text_length);
     }
 
     // Null out other attributes
-    process_name = L"";
-    cpu_usage = 0;
+    process_name_ = L"";
+    cpu_usage_ = 0;
 }
 
 wstring ActiveWindow::get_process_name()
 {
-    if(process_name != L"") {
-        return process_name;
+    if(process_name_ != L"") {
+        return process_name_;
     }
 
     HANDLE process_handle = OpenProcess(
         PROCESS_QUERY_LIMITED_INFORMATION, // access rights to process
         false, // should processes created by this process inherit the handle
-        pid
+        pid_
     );
     
     const int MAX_PROCESS_NAME_LENGTH = 255;
@@ -93,8 +93,8 @@ wstring ActiveWindow::get_process_name()
     if(!query_success || buffer_size == 0) {
         return L"";
     } else {
-        process_name = get_filename_from_win32_path(
+        process_name_ = get_filename_from_win32_path(
             get_wstring_from_tchar(name, buffer_size));
-        return process_name;
+        return process_name_;
     }
 }

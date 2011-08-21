@@ -42,4 +42,5 @@ Coding conventions
 `GUARD_<header_name>_h`
 * Typenames should use Pascal Case
 * Other names should use lower-case letters separated by underscores
+* Private and protected variables should be post-fixed with an underscore
 * Class members should be declared in the order of: public, protected, private
