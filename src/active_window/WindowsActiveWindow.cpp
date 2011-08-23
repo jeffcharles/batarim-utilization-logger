@@ -62,8 +62,8 @@ wstring WindowsActiveWindow::get_process_name()
     if(!query_success || buffer_size == 0) {
         return L"";
     } else {
-        process_name_ = get_filename_from_win32_path(
-            get_wstring_from_tchar(name, buffer_size));
+        wstring path = get_wstring_from_tchar(name, buffer_size);
+        process_name_ = get_filename_from_win32_path(path);
         return process_name_;
     }
 }
