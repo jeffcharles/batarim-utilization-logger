@@ -1,8 +1,11 @@
 #include <iostream>
+#include <memory>
 #include <string>
 #include <vector>
+
 #include "cpu_usage/cpu_usage.hpp"
 #include "ram_usage/ram_usage.hpp"
+#include "active_window/active_window_module.hpp"
 #include "active_window/IActiveWindow.hpp"
 
 #if WIN32
@@ -11,6 +14,7 @@
 
 using std::endl;
 using std::pair;
+using std::shared_ptr;
 using std::vector;
 using std::wcout;
 using std::wstring;
@@ -25,8 +29,9 @@ int main()
 #if WIN32
     WindowsActiveWindow active_window = WindowsActiveWindow();
 #endif
-    wstring active_window_name = active_window.get_name();
-    wstring active_window_process_name = active_window.get_process_name();
+    shared_ptr<IActiveWindow> active_window = get_active_window();
+    wstring active_window_name = active_window->get_name();
+    wstring active_window_process_name = active_window->get_process_name();
     
     typedef vector<pair<wstring, int> >::const_iterator ConstIterator;
     for(ConstIterator iter = cpu_usage_percentages.begin();
