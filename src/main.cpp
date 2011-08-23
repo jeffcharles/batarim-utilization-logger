@@ -8,10 +8,6 @@
 #include "active_window/active_window_module.hpp"
 #include "active_window/IActiveWindow.hpp"
 
-#if WIN32
-    #include "active_window/WindowsActiveWindow.hpp"
-#endif
-
 using std::endl;
 using std::pair;
 using std::shared_ptr;
@@ -26,9 +22,6 @@ int main()
     
     int ram_usage = get_ram_usage();
 
-#if WIN32
-    WindowsActiveWindow active_window = WindowsActiveWindow();
-#endif
     shared_ptr<IActiveWindow> active_window = get_active_window();
     wstring active_window_name = active_window->get_name();
     wstring active_window_process_name = active_window->get_process_name();
