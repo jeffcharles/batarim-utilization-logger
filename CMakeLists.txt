@@ -13,7 +13,6 @@ endif ()
 
 # FIXME: below should check if using g++, not if on Linux
 if (LINUX)
-    message ("blah")
     set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
     set (CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall")
 endif ()
