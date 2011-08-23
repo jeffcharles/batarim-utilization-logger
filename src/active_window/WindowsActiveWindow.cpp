@@ -85,7 +85,7 @@ wstring WindowsActiveWindow::get_filename_from_win32_path(wstring& path)
     stripped_exe_path = path_ends_with_exe ? 
         path.substr(0, path.length()-4) : path;
     
-    wstring::size_type last_backslash_location = -1;
+    wstring::size_type last_backslash_location = 0;
     if(stripped_exe_path.length() > 1) {
         for(wstring::size_type i = stripped_exe_path.length()-2; i >= 0; --i) {
             if(stripped_exe_path[i] == '\\') {
