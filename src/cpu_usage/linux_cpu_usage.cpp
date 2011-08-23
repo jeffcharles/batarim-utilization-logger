@@ -19,97 +19,101 @@ using std::vector;
 using std::wstring;
 using std::wstringstream;
 
-class cpu_times
-{
-    friend cpu_times operator-(const cpu_times&, const cpu_times&);
+namespace {
 
-    private:
-        wstring identifier;
-        unsigned long totaltime;
-        unsigned int idletime;
+    class cpu_times
+    {
+        friend cpu_times operator-(const cpu_times&, const cpu_times&);
 
-        cpu_times(
-            wstring identifier,
-            unsigned long totaltime,
-            unsigned int idletime
-        ): 
-            identifier(identifier),
-            totaltime(totaltime),
-            idletime(idletime) { }
-    public:
-        cpu_times(istream& stat_stream_line)
-        {
-            // each CPU line in /proc/stat starts with an identifier (cpu or
-            // cpu followed by a number), followed by usermode time, low
-            // priority usermode time, system time, idle time, and then some
-            // other times as detailed in the proc manpages, we just need
-            // the identifier, the idle time, and the sum of all times
-            string s_identifier;
-            stat_stream_line >> s_identifier;
-            identifier.assign(s_identifier.begin(), s_identifier.end());
+        private:
+            wstring identifier;
+            unsigned long totaltime;
+            unsigned int idletime;
 
-            totaltime = 0;
-            unsigned long temp;
-            const int num_entries_until_idle = 3;
-            for(int i = 0; i < num_entries_until_idle; ++i) {
+            cpu_times(
+                wstring identifier,
+                unsigned long totaltime,
+                unsigned int idletime
+            ): 
+                identifier(identifier),
+                totaltime(totaltime),
+                idletime(idletime) { }
+        public:
+            cpu_times(istream& stat_stream_line)
+            {
+                // each CPU line in /proc/stat starts with an identifier (cpu or
+                // cpu followed by a number), followed by usermode time, low
+                // priority usermode time, system time, idle time, and then some
+                // other times as detailed in the proc manpages, we just need
+                // the identifier, the idle time, and the sum of all times
+                string s_identifier;
+                stat_stream_line >> s_identifier;
+                identifier.assign(s_identifier.begin(), s_identifier.end());
+
+                totaltime = 0;
+                unsigned long temp;
+                const int num_entries_until_idle = 3;
+                for(int i = 0; i < num_entries_until_idle; ++i) {
+                    stat_stream_line >> temp;
+                    totaltime += temp;
+                }
                 stat_stream_line >> temp;
                 totaltime += temp;
+                idletime = temp;
+                while(stat_stream_line) {
+                    stat_stream_line >> temp;
+                    totaltime += temp;
+                }
             }
-            stat_stream_line >> temp;
-            totaltime += temp;
-            idletime = temp;
-            while(stat_stream_line) {
-                stat_stream_line >> temp;
-                totaltime += temp;
+
+            wstring get_identifier()
+            {
+                // CPU lines in /proc/stat start with either cpu (indicating 
+                // average cpu usage) or with cpu followed by a number starting 
+                // from 0 indicating which processor core the measurement is
+                // for, the identifier shown to the user should be "Total" for
+                // the average utilization across processor cores or just the 
+                // core number (without the cpu in front) but cores should be
+                // 1-indexed not zero indexed so we need to increment that 
+                // number by one
+                if(identifier.length() > 3) {
+                    wstring ws_identifier_number = identifier.substr(3);
+                    wstringstream wss;
+                    wss << ws_identifier_number;
+                    int i_identifier_number;
+                    wss >> i_identifier_number;
+                    wstringstream wss2;
+                    wss2 << ++i_identifier_number;
+                    return wss2.str();
+                } else {
+                    return L"Total";
+                }   
             }
-        }
 
-        wstring get_identifier()
-        {
-            // CPU lines in /proc/stat start with either cpu (indicating 
-            // average cpu usage) or with cpu followed by a number starting 
-            // from 0 indicating which processor core the measurement is for,
-            // the identifier shown to the user should be "Total" for the
-            // average utilization across processor cores or just the core
-            // number (without the cpu in front) but cores should be 1-indexed
-            // not zero indexed so we need to increment that number by one
-            if(identifier.length() > 3) {
-                wstring ws_identifier_number = identifier.substr(3);
-                wstringstream wss;
-                wss << ws_identifier_number;
-                int i_identifier_number;
-                wss >> i_identifier_number;
-                wstringstream wss2;
-                wss2 << ++i_identifier_number;
-                return wss2.str();
-            } else {
-                return L"Total";
-            }   
-        }
+            unsigned long get_usedtime() { return totaltime - idletime; }
+            unsigned long get_totaltime() { return totaltime; }
+    };
 
-        unsigned long get_usedtime() { return totaltime - idletime; }
-        unsigned long get_totaltime() { return totaltime; }
-};
-
-cpu_times operator-(const cpu_times& lhs, const cpu_times& rhs)
-{
-    wstring identifier = lhs.identifier;
-    unsigned long totaltime = lhs.totaltime - rhs.totaltime;
-    unsigned int idletime = lhs.idletime - rhs.idletime;
-    return cpu_times(identifier, totaltime, idletime);
-}
-
-void populate_stat_stream(ostream& stat_stream)
-{
-    ifstream stat_file;
-    stat_file.open("/proc/stat");
-    if(!stat_file) {
-        cerr << "Could not open /proc/stat to get cpu utilizations" << endl;
-        clog << "Could not open /proc/stat to get cpu utilizations" << endl;
-        return;
+    cpu_times operator-(const cpu_times& lhs, const cpu_times& rhs)
+    {
+        wstring identifier = lhs.identifier;
+        unsigned long totaltime = lhs.totaltime - rhs.totaltime;
+        unsigned int idletime = lhs.idletime - rhs.idletime;
+        return cpu_times(identifier, totaltime, idletime);
     }
-    stat_stream << stat_file.rdbuf();
-    stat_file.close();
+
+    void populate_stat_stream(ostream& stat_stream)
+    {
+        ifstream stat_file;
+        stat_file.open("/proc/stat");
+        if(!stat_file) {
+            cerr << "Could not open /proc/stat to get cpu utilizations" << endl;
+            clog << "Could not open /proc/stat to get cpu utilizations" << endl;
+            return;
+        }
+        stat_stream << stat_file.rdbuf();
+        stat_file.close();
+    }
 }
 
 void get_cpu_usage(vector<pair<wstring, int> >& usage_percentages)
