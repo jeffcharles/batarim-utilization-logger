@@ -11,8 +11,11 @@ Only Windows and Linux are currently supported."
     )
 endif ()
 
-# FIXME: below should check if using g++, not if on Linux
-if (LINUX)
+if (MSVC)
+    set (CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /W4")
+endif ()
+
+if(CMAKE_COMPILER_IS_GNUCXX)
     set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
     set (CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall")
 endif ()
