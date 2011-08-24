@@ -106,8 +106,10 @@ int WindowsActiveWindow::get_cpu_usage()
     return cpu_usage;
 }
 
-wstring WindowsActiveWindow::get_wstring_from_tchar(TCHAR* buffer, int buffer_size)
-{
+wstring WindowsActiveWindow::get_wstring_from_tchar(
+    TCHAR* buffer,
+    int buffer_size
+) {
     // wstring does not have a constructor that takes a wchar_t, therefore
     // need to copy contents from the wchar_t buffer into a wstring
 
