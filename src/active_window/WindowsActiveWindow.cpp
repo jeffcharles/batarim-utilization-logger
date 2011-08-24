@@ -1,4 +1,5 @@
 #include <string>
+
 #include <Windows.h>
 
 #include "WindowsActiveWindow.hpp"
@@ -31,7 +32,6 @@ WindowsActiveWindow::WindowsActiveWindow()
 
     // Null out other attributes
     process_name_ = L"";
-    cpu_usage_ = 0;
 }
 
 wstring WindowsActiveWindow::get_process_name()
@@ -68,10 +68,124 @@ wstring WindowsActiveWindow::get_process_name()
     }
 }
 
+FILETIME subtract_filetimes(FILETIME& ft1, FILETIME& ft2)
+{
+    ULARGE_INTEGER uli1, uli2, ulidiff;
+    FILETIME diff;
+
+    uli1.HighPart = ft1.dwHighDateTime;
+    uli1.LowPart = ft1.dwLowDateTime;
+    uli2.HighPart = ft2.dwHighDateTime;
+    uli2.LowPart = ft2.dwLowDateTime;
+    ulidiff.QuadPart = uli2.QuadPart - uli1.QuadPart;
+    diff.dwHighDateTime = ulidiff.HighPart;
+    diff.dwLowDateTime = ulidiff.LowPart;
+
+    return diff;
+}
+
+ULONGLONG get_ulonglong_from_filetime(FILETIME& ft)
+{
+    ULARGE_INTEGER uli;
+    uli.HighPart = ft.dwHighDateTime;
+    uli.LowPart = ft.dwLowDateTime;
+    return uli.QuadPart;
+}
+
+int WindowsActiveWindow::get_cpu_usage()
+{
+    FILETIME idle_time;
+    FILETIME creation_time, exit_time;
+    FILETIME system_kernel_time1, system_user_time1;
+    FILETIME system_kernel_time2, system_user_time2;
+    FILETIME process_kernel_time1, process_user_time1;
+    FILETIME process_kernel_time2, process_user_time2;
+
+    if(!GetSystemTimes(
+        &idle_time,
+        &system_kernel_time1,
+        &system_user_time1
+    )) {
+        return -1;
+    }
+
+    HANDLE process_handle = OpenProcess(
+        PROCESS_QUERY_LIMITED_INFORMATION, // access rights to process
+        false, // should processes created by this process inherit the handle
+        pid_
+    );
+
+    if(!GetProcessTimes(
+        process_handle,
+        &creation_time,
+        &exit_time,
+        &process_kernel_time1,
+        &process_user_time1
+    )) {
+        CloseHandle(process_handle);
+        return -1;
+    }
+
+    CloseHandle(process_handle);
+
+    Sleep(1000);
+
+    if(!GetSystemTimes(
+        &idle_time,
+        &system_kernel_time2,
+        &system_user_time2
+    )) {
+        return -1;
+    }
+
+    process_handle = OpenProcess(
+        PROCESS_QUERY_LIMITED_INFORMATION, // access rights to process
+        false, // should processes created by this process inherit the handle
+        pid_
+    );
+
+    if(!GetProcessTimes(
+        process_handle,
+        &creation_time,
+        &exit_time,
+        &process_kernel_time2,
+        &process_user_time2
+    )) {
+        CloseHandle(process_handle);
+        return -1;
+    }
+
+    CloseHandle(process_handle);
+
+    ULONGLONG skt1, skt2, sut1, sut2, pkt1, pkt2, put1, put2;
+    skt1 = get_ulonglong_from_filetime(system_kernel_time1);
+    skt2 = get_ulonglong_from_filetime(system_kernel_time2);
+    sut1 = get_ulonglong_from_filetime(system_user_time1);
+    sut2 = get_ulonglong_from_filetime(system_user_time2);
+    pkt1 = get_ulonglong_from_filetime(process_kernel_time1);
+    pkt2 = get_ulonglong_from_filetime(process_kernel_time2);
+    put1 = get_ulonglong_from_filetime(process_user_time1);
+    put2 = get_ulonglong_from_filetime(process_user_time2);
+
+    ULONGLONG system_kernel_time_diff = skt2 - skt1;
+    ULONGLONG system_user_time_diff = sut2 - sut1;
+    ULONGLONG system_time = system_kernel_time_diff + system_user_time_diff;
+
+    ULONGLONG process_kernel_time_diff = pkt2 - pkt1;
+    ULONGLONG process_user_time_diff = put2 - put1;
+    ULONGLONG process_time = process_kernel_time_diff + process_user_time_diff;
+
+    int cpu_usage = (int)((double)process_time / system_time * 100);
+
+    return cpu_usage;
+}
+
 wstring WindowsActiveWindow::get_wstring_from_tchar(TCHAR* buffer, int buffer_size)
 {
     // wstring does not have a constructor that takes a wchar_t, therefore
     // need to copy contents from the wchar_t buffer into a wstring
+
+    // FIXME: does not work properly with unicode
     wstring ret;
     ret.assign(&buffer[0], &buffer[buffer_size]);
     return ret;

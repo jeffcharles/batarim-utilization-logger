@@ -25,6 +25,7 @@ int main()
     shared_ptr<IActiveWindow> active_window = get_active_window();
     wstring active_window_name = active_window->get_name();
     wstring active_window_process_name = active_window->get_process_name();
+    int active_window_cpu_usage = active_window->get_cpu_usage();
     
     typedef vector<pair<wstring, int> >::const_iterator ConstIterator;
     for(ConstIterator iter = cpu_usage_percentages.begin();
@@ -36,4 +37,5 @@ int main()
     wcout << L"Current RAM usage: " << ram_usage << L"%" << endl;
     wcout << L"Active window: " << active_window_name << endl;
     wcout << L"Active window process: " << active_window_process_name << endl;
+    wcout << L"Active window CPU usage: " << active_window_cpu_usage << L"%" << endl;
 }

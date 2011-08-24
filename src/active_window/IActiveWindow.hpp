@@ -17,7 +17,6 @@ class IActiveWindow
 
         std::wstring name_;
         std::wstring process_name_;
-        int cpu_usage_;
 
         IActiveWindow() { }
 };
