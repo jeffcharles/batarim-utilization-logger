@@ -70,68 +70,18 @@ wstring WindowsActiveWindow::get_process_name()
 
 int WindowsActiveWindow::get_cpu_usage()
 {
-    FILETIME idle_time;
-    FILETIME creation_time, exit_time;
+    
     FILETIME system_kernel_time1, system_user_time1;
     FILETIME system_kernel_time2, system_user_time2;
     FILETIME process_kernel_time1, process_user_time1;
     FILETIME process_kernel_time2, process_user_time2;
 
-    if(!GetSystemTimes(
-        &idle_time,
-        &system_kernel_time1,
-        &system_user_time1
-    )) {
+    if(!populate_filetimes(system_kernel_time1, system_user_time1,
+        system_kernel_time2, system_user_time2, process_kernel_time1,
+        process_user_time1, process_kernel_time2, process_user_time2)) {
+
         return -1;
     }
-
-    HANDLE process_handle = OpenProcess(
-        PROCESS_QUERY_LIMITED_INFORMATION, // access rights to process
-        false, // should processes created by this process inherit the handle
-        pid_
-    );
-
-    if(!GetProcessTimes(
-        process_handle,
-        &creation_time,
-        &exit_time,
-        &process_kernel_time1,
-        &process_user_time1
-    )) {
-        CloseHandle(process_handle);
-        return -1;
-    }
-
-    CloseHandle(process_handle);
-
-    Sleep(1000);
-
-    if(!GetSystemTimes(
-        &idle_time,
-        &system_kernel_time2,
-        &system_user_time2
-    )) {
-        return -1;
-    }
-
-    process_handle = OpenProcess(
-        PROCESS_QUERY_LIMITED_INFORMATION, // access rights to process
-        false, // should processes created by this process inherit the handle
-        pid_
-    );
-
-    if(!GetProcessTimes(
-        process_handle,
-        &creation_time,
-        &exit_time,
-        &process_kernel_time2,
-        &process_user_time2
-    )) {
-        CloseHandle(process_handle);
-        return -1;
-    }
-
-    CloseHandle(process_handle);
 
     ULONGLONG skt1, skt2, sut1, sut2, pkt1, pkt2, put1, put2;
     skt1 = get_ulonglong_from_filetime(system_kernel_time1);
@@ -187,6 +137,71 @@ wstring WindowsActiveWindow::get_filename_from_win32_path(wstring& path)
     return (last_backslash_location > 0) ? 
         stripped_exe_path.substr(last_backslash_location+1) : 
         stripped_exe_path;
+}
+
+bool WindowsActiveWindow::populate_filetimes(
+    FILETIME& system_kernel_time,
+    FILETIME& system_user_time,
+    FILETIME& process_kernel_time,
+    FILETIME& process_user_time
+) {
+    FILETIME idle_time, creation_time, exit_time;
+
+    if(!GetSystemTimes(
+        &idle_time,
+        &system_kernel_time,
+        &system_user_time
+    )) {
+        return false;
+    }
+
+    HANDLE process_handle = OpenProcess(
+        PROCESS_QUERY_LIMITED_INFORMATION, // access rights to process
+        false, // should processes created by this process inherit the handle
+        pid_
+    );
+
+    if(!GetProcessTimes(
+        process_handle,
+        &creation_time,
+        &exit_time,
+        &process_kernel_time,
+        &process_user_time
+    )) {
+        CloseHandle(process_handle);
+        return false;
+    }
+
+    CloseHandle(process_handle);
+
+    return true;
+}
+
+bool WindowsActiveWindow::populate_filetimes(
+    FILETIME& system_kernel_time1,
+    FILETIME& system_user_time1,
+    FILETIME& system_kernel_time2,
+    FILETIME& system_user_time2,
+    FILETIME& process_kernel_time1,
+    FILETIME& process_user_time1,
+    FILETIME& process_kernel_time2,
+    FILETIME& process_user_time2
+) {
+    if(!populate_filetimes(system_kernel_time1, system_user_time1,
+        process_kernel_time1, process_user_time1)) {
+
+        return false;
+    }
+
+    Sleep(1000);
+
+    if(!populate_filetimes(system_kernel_time2, system_user_time2,
+        process_kernel_time2, process_user_time2)) {
+
+        return false;
+    }
+
+    return true;
 }
 
 ULONGLONG WindowsActiveWindow::get_ulonglong_from_filetime(FILETIME& ft)
