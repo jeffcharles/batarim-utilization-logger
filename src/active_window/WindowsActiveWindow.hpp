@@ -17,7 +17,6 @@ class WindowsActiveWindow : public IActiveWindow
         virtual int get_cpu_usage();
 
     private:
-        std::wstring get_wstring_from_tchar(TCHAR* buffer, int buffer_size);
         std::wstring get_filename_from_win32_path(std::wstring& path);
         bool populate_filetimes(FILETIME& system_kernel_time1,
             FILETIME& system_user_time1, FILETIME& process_kernel_time1,

@@ -48,9 +48,7 @@ namespace {
     )
     {
         for(DWORD i = 0; i < num_of_processor_entries; ++i) {
-            string sname = processor_utilizations[i].szName;
-            wstring name;
-            name.assign(sname.begin(), sname.end());
+            wstring name = processor_utilizations[i].szName;
             pair<wstring, int> processor_utilization(
                 get_human_readable_name(name),
                 (int)processor_utilizations[i].FmtValue.largeValue
@@ -67,7 +65,7 @@ void get_cpu_usage(vector<pair<wstring, int> >& usage_percentages)
     PDH_FMT_COUNTERVALUE_ITEM* processor_utilizations = NULL;
     try {
         const string context = "retrieve processor utilization";
-        char* counter_path = "\\Processor(*)\\% Processor Time";
+        WCHAR* counter_path = L"\\Processor(*)\\% Processor Time";
         DWORD number_of_processor_entries;
         query_pdh(context, query, counter_path, processor_utilizations,
             number_of_processor_entries);

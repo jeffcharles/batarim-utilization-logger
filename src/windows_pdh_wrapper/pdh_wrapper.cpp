@@ -27,7 +27,7 @@ namespace {
         const string& context,
         PDH_HQUERY& query,
         PDH_HCOUNTER& counter,
-        char* counter_path
+        WCHAR* counter_path
     ) {
         PDH_STATUS pdh_status = PdhAddEnglishCounter(
             query, // handle to query
@@ -114,7 +114,7 @@ void cleanup(PDH_HQUERY& query, PDH_FMT_COUNTERVALUE_ITEM*& result_set)
 void query_pdh(
     const string& context,
     PDH_HQUERY& query,
-    char* counter_path,
+    WCHAR* counter_path,
     PDH_FMT_COUNTERVALUE_ITEM*& result_set,
     DWORD& num_items_returned
 ) {

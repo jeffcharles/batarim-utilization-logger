@@ -10,7 +10,7 @@
 void query_pdh(
     const std::string& context,
     PDH_HQUERY& query,
-    char* counter_path,
+    WCHAR* counter_path,
     PDH_FMT_COUNTERVALUE_ITEM*& result_set,
     DWORD& num_items_returned
 );

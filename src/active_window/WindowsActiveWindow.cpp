@@ -17,7 +17,7 @@ WindowsActiveWindow::WindowsActiveWindow()
 
     // Set window name
     const int MAX_WINDOW_NAME_LENGTH = 255;
-    TCHAR window_name[MAX_WINDOW_NAME_LENGTH];
+    WCHAR window_name[MAX_WINDOW_NAME_LENGTH];
     int window_text_length = GetWindowText(
         handle, // handle to window to retrieve name for
         window_name,  // non-const TCHAR string to output to
@@ -27,7 +27,8 @@ WindowsActiveWindow::WindowsActiveWindow()
     if(window_text_length == 0) {
         name_ = L"";
     } else {
-        name_ = get_wstring_from_tchar(window_name, window_text_length);
+        name_ = window_name;
+        //name_ = get_wstring_from_tchar(window_name, window_text_length);
     }
 
     // Null out other attributes
@@ -62,7 +63,7 @@ wstring WindowsActiveWindow::get_process_name()
     if(!query_success || buffer_size == 0) {
         return L"";
     } else {
-        wstring path = get_wstring_from_tchar(name, buffer_size);
+        wstring path = name;
         process_name_ = get_filename_from_win32_path(path);
         return process_name_;
     }
@@ -104,19 +105,6 @@ int WindowsActiveWindow::get_cpu_usage()
     int cpu_usage = (int)((double)process_time / system_time * 100);
 
     return cpu_usage;
-}
-
-wstring WindowsActiveWindow::get_wstring_from_tchar(
-    TCHAR* buffer,
-    int buffer_size
-) {
-    // wstring does not have a constructor that takes a wchar_t, therefore
-    // need to copy contents from the wchar_t buffer into a wstring
-
-    // FIXME: does not work properly with unicode
-    wstring ret;
-    ret.assign(&buffer[0], &buffer[buffer_size]);
-    return ret;
 }
 
 wstring WindowsActiveWindow::get_filename_from_win32_path(wstring& path)

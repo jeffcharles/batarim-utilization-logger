@@ -12,6 +12,8 @@ Only Windows and Linux are currently supported."
 endif ()
 
 if (MSVC)
+    # Use unicode instead of multi-byte (i.e., ANSI)
+    add_definitions (-DUNICODE -D_UNICODE)
     set (CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /W4")
 endif ()
 
