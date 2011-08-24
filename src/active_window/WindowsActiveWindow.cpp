@@ -68,30 +68,6 @@ wstring WindowsActiveWindow::get_process_name()
     }
 }
 
-FILETIME subtract_filetimes(FILETIME& ft1, FILETIME& ft2)
-{
-    ULARGE_INTEGER uli1, uli2, ulidiff;
-    FILETIME diff;
-
-    uli1.HighPart = ft1.dwHighDateTime;
-    uli1.LowPart = ft1.dwLowDateTime;
-    uli2.HighPart = ft2.dwHighDateTime;
-    uli2.LowPart = ft2.dwLowDateTime;
-    ulidiff.QuadPart = uli2.QuadPart - uli1.QuadPart;
-    diff.dwHighDateTime = ulidiff.HighPart;
-    diff.dwLowDateTime = ulidiff.LowPart;
-
-    return diff;
-}
-
-ULONGLONG get_ulonglong_from_filetime(FILETIME& ft)
-{
-    ULARGE_INTEGER uli;
-    uli.HighPart = ft.dwHighDateTime;
-    uli.LowPart = ft.dwLowDateTime;
-    return uli.QuadPart;
-}
-
 int WindowsActiveWindow::get_cpu_usage()
 {
     FILETIME idle_time;
@@ -211,4 +187,12 @@ wstring WindowsActiveWindow::get_filename_from_win32_path(wstring& path)
     return (last_backslash_location > 0) ? 
         stripped_exe_path.substr(last_backslash_location+1) : 
         stripped_exe_path;
+}
+
+ULONGLONG WindowsActiveWindow::get_ulonglong_from_filetime(FILETIME& ft)
+{
+    ULARGE_INTEGER uli;
+    uli.HighPart = ft.dwHighDateTime;
+    uli.LowPart = ft.dwLowDateTime;
+    return uli.QuadPart;
 }
