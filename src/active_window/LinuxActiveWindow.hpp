@@ -22,7 +22,6 @@ class LinuxActiveWindow : public IActiveWindow
             pid_ = pid;
             name_ = L"";
             process_name_ = L"";
-            cpu_usage_ = 0;
         }
 
         virtual std::wstring get_name();

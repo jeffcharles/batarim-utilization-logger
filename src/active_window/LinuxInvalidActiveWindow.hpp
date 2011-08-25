@@ -8,12 +8,11 @@ class LinuxInvalidActiveWindow : public IActiveWindow
         {
             name_ = L"";
             process_name_ = L"";
-            cpu_usage_ = 0;
         }
 
         virtual std::wstring get_name() { return name_; }
         virtual std::wstring get_process_name() { return process_name_; }
-        virtual int get_cpu_usage() { return cpu_usage_; }
+        virtual int get_cpu_usage() { return 0; }
 };
 
 #endif
