@@ -1,3 +1,4 @@
+add_subdirectory (utilities)
 if (WIN32)
     add_subdirectory (windows_pdh_wrapper)
 endif ()

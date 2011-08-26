@@ -6,30 +6,32 @@
 #include "cpu_usage.hpp"
 #include "../windows_pdh_wrapper/PdhException.hpp"
 #include "../windows_pdh_wrapper/pdh_wrapper.hpp"
+#include "../utilities/windows_encoding_methods.hpp"
 
+using batarim::encoding_methods::convert_wstring_to_string;
 using std::cerr;
 using std::clog;
 using std::endl;
 using std::pair;
 using std::string;
+using std::stringstream;
 using std::vector;
 using std::wstring;
-using std::wstringstream;
 
 namespace {
 
-    wstring get_human_readable_name(wstring wmi_name)
+    string get_human_readable_name(string wmi_name)
     {
         int num;
-        wstringstream wss;
+        stringstream wss;
         wss << wmi_name;
     
         bool is_number = wss >> num != 0;
         if(is_number) {
-            wstringstream wss2;
+            stringstream wss2;
             wss2 << ++num;
         
-            wstring ret;
+            string ret;
             wss2 >> ret;
             return ret;
         }
@@ -44,12 +46,12 @@ namespace {
     void fill_usage_percentages(
         PDH_FMT_COUNTERVALUE_ITEM* processor_utilizations,
         DWORD num_of_processor_entries,
-        vector<pair<wstring, int> >& usage_percentages
-    )
-    {
+        vector<pair<string, int> >& usage_percentages
+    ) {
         for(DWORD i = 0; i < num_of_processor_entries; ++i) {
-            wstring name = processor_utilizations[i].szName;
-            pair<wstring, int> processor_utilization(
+            wstring wname = processor_utilizations[i].szName;
+            string name = convert_wstring_to_string(wname);
+            pair<string, int> processor_utilization(
                 get_human_readable_name(name),
                 (int)processor_utilizations[i].FmtValue.largeValue
             );
@@ -59,7 +61,7 @@ namespace {
 
 }
 
-void get_cpu_usage(vector<pair<wstring, int> >& usage_percentages)
+void get_cpu_usage(vector<pair<string, int> >& usage_percentages)
 {
     PDH_HQUERY query = NULL;
     PDH_FMT_COUNTERVALUE_ITEM* processor_utilizations = NULL;

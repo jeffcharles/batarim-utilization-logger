@@ -2,8 +2,11 @@
 
 #include <Windows.h>
 
+#include "../utilities/windows_encoding_methods.hpp"
+
 #include "WindowsActiveWindow.hpp"
 
+using batarim::encoding_methods::convert_wstring_to_string;
 using std::string;
 using std::wstring;
 
@@ -25,19 +28,18 @@ WindowsActiveWindow::WindowsActiveWindow()
     );
 
     if(window_text_length == 0) {
-        name_ = L"";
+        name_ = "";
     } else {
-        name_ = window_name;
-        //name_ = get_wstring_from_tchar(window_name, window_text_length);
+        name_ = convert_wstring_to_string(window_name);
     }
 
     // Null out other attributes
-    process_name_ = L"";
+    process_name_ = "";
 }
 
-wstring WindowsActiveWindow::get_process_name()
+string WindowsActiveWindow::get_process_name()
 {
-    if(process_name_ != L"") {
+    if(process_name_ != "") {
         return process_name_;
     }
 
@@ -61,9 +63,9 @@ wstring WindowsActiveWindow::get_process_name()
     CloseHandle(process_handle);
 
     if(!query_success || buffer_size == 0) {
-        return L"";
+        return "";
     } else {
-        wstring path = name;
+        string path = convert_wstring_to_string(name);
         process_name_ = get_filename_from_win32_path(path);
         return process_name_;
     }
@@ -107,17 +109,17 @@ int WindowsActiveWindow::get_cpu_usage()
     return cpu_usage;
 }
 
-wstring WindowsActiveWindow::get_filename_from_win32_path(wstring& path)
+string WindowsActiveWindow::get_filename_from_win32_path(string& path)
 {
-    wstring stripped_exe_path;
+    string stripped_exe_path;
     bool path_ends_with_exe = path.length() > 4 && 
-        path.compare(path.length()-4, 4, L".exe") == 0;
+        path.compare(path.length()-4, 4, ".exe") == 0;
     stripped_exe_path = path_ends_with_exe ? 
         path.substr(0, path.length()-4) : path;
     
-    wstring::size_type last_backslash_location = 0;
+    string::size_type last_backslash_location = 0;
     if(stripped_exe_path.length() > 1) {
-        for(wstring::size_type i = stripped_exe_path.length()-2; i >= 0; --i) {
+        for(string::size_type i = stripped_exe_path.length()-2; i >= 0; --i) {
             if(stripped_exe_path[i] == '\\') {
                 last_backslash_location = i;
                 break;

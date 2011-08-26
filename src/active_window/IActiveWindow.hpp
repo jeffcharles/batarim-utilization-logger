@@ -8,15 +8,15 @@ class IActiveWindow
     public:    
         virtual ~IActiveWindow() { } 
 
-        virtual std::wstring get_name() = 0;
-        virtual std::wstring get_process_name() = 0;
+        virtual std::string get_name() = 0;
+        virtual std::string get_process_name() = 0;
         virtual int get_cpu_usage() = 0;
     
     protected:
         unsigned int pid_;
 
-        std::wstring name_;
-        std::wstring process_name_;
+        std::string name_;
+        std::string process_name_;
 
         IActiveWindow() { }
 };

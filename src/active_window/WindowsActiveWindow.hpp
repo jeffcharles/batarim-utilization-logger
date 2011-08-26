@@ -12,12 +12,12 @@ class WindowsActiveWindow : public IActiveWindow
     public:
         WindowsActiveWindow();
 
-        virtual std::wstring get_name() { return name_; }
-        virtual std::wstring get_process_name();
+        virtual std::string get_name() { return name_; }
+        virtual std::string get_process_name();
         virtual int get_cpu_usage();
 
     private:
-        std::wstring get_filename_from_win32_path(std::wstring& path);
+        std::string get_filename_from_win32_path(std::string& path);
         bool populate_filetimes(FILETIME& system_kernel_time1,
             FILETIME& system_user_time1, FILETIME& process_kernel_time1,
             FILETIME& process_user_time1, FILETIME& system_kernel_time2,

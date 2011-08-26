@@ -3,6 +3,7 @@ if (WIN32)
         active_window_module.hpp IActiveWindow.hpp WindowsActiveWindow.hpp
         windows_active_window_module.cpp WindowsActiveWindow.cpp 
     )
+    target_link_libraries (active_window encoding_methods)
 elseif (LINUX)
     add_library (active_window STATIC
         active_window_module.hpp IActiveWindow.hpp LinuxActiveWindow.hpp 
