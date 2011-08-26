@@ -16,8 +16,6 @@ using std::pair;
 using std::string;
 using std::stringstream;
 using std::vector;
-using std::wstring;
-using std::wstringstream;
 
 namespace {
 
@@ -26,18 +24,18 @@ namespace {
         friend cpu_times operator-(const cpu_times&, const cpu_times&);
 
         private:
-            wstring identifier;
-            unsigned long totaltime;
-            unsigned int idletime;
+            string identifier_;
+            unsigned long totaltime_;
+            unsigned int idletime_;
 
             cpu_times(
-                wstring identifier,
+                string identifier,
                 unsigned long totaltime,
                 unsigned int idletime
             ): 
-                identifier(identifier),
-                totaltime(totaltime),
-                idletime(idletime) { }
+                identifier_(identifier),
+                totaltime_(totaltime),
+                idletime_(idletime) { }
         public:
             cpu_times(istream& stat_stream_line)
             {
@@ -46,27 +44,25 @@ namespace {
                 // priority usermode time, system time, idle time, and then some
                 // other times as detailed in the proc manpages, we just need
                 // the identifier, the idle time, and the sum of all times
-                string s_identifier;
-                stat_stream_line >> s_identifier;
-                identifier.assign(s_identifier.begin(), s_identifier.end());
+                stat_stream_line >> identifier_;
 
-                totaltime = 0;
+                totaltime_ = 0;
                 unsigned long temp;
                 const int num_entries_until_idle = 3;
                 for(int i = 0; i < num_entries_until_idle; ++i) {
                     stat_stream_line >> temp;
-                    totaltime += temp;
+                    totaltime_ += temp;
                 }
                 stat_stream_line >> temp;
-                totaltime += temp;
-                idletime = temp;
+                totaltime_ += temp;
+                idletime_ = temp;
                 while(stat_stream_line) {
                     stat_stream_line >> temp;
-                    totaltime += temp;
+                    totaltime_ += temp;
                 }
             }
 
-            wstring get_identifier()
+            string get_identifier()
             {
                 // CPU lines in /proc/stat start with either cpu (indicating 
                 // average cpu usage) or with cpu followed by a number starting 
@@ -76,29 +72,29 @@ namespace {
                 // core number (without the cpu in front) but cores should be
                 // 1-indexed not zero indexed so we need to increment that 
                 // number by one
-                if(identifier.length() > 3) {
-                    wstring ws_identifier_number = identifier.substr(3);
-                    wstringstream wss;
-                    wss << ws_identifier_number;
+                if(identifier_.length() > 3) {
+                    string s_identifier_number = identifier_.substr(3);
+                    stringstream ss;
+                    ss << s_identifier_number;
                     int i_identifier_number;
-                    wss >> i_identifier_number;
-                    wstringstream wss2;
-                    wss2 << ++i_identifier_number;
-                    return wss2.str();
+                    ss >> i_identifier_number;
+                    stringstream ss2;
+                    ss2 << ++i_identifier_number;
+                    return ss2.str();
                 } else {
-                    return L"Total";
+                    return "Total";
                 }   
             }
 
-            unsigned long get_usedtime() { return totaltime - idletime; }
-            unsigned long get_totaltime() { return totaltime; }
+            unsigned long get_usedtime() { return totaltime_ - idletime_; }
+            unsigned long get_totaltime() { return totaltime_; }
     };
 
     cpu_times operator-(const cpu_times& lhs, const cpu_times& rhs)
     {
-        wstring identifier = lhs.identifier;
-        unsigned long totaltime = lhs.totaltime - rhs.totaltime;
-        unsigned int idletime = lhs.idletime - rhs.idletime;
+        string identifier = lhs.identifier_;
+        unsigned long totaltime = lhs.totaltime_ - rhs.totaltime_;
+        unsigned int idletime = lhs.idletime_ - rhs.idletime_;
         return cpu_times(identifier, totaltime, idletime);
     }
 
@@ -116,7 +112,7 @@ namespace {
     }
 }
 
-void get_cpu_usage(vector<pair<wstring, int> >& usage_percentages)
+void get_cpu_usage(vector<pair<string, int> >& usage_percentages)
 {
     stringstream stat_stream1;
     stringstream stat_stream2;
@@ -143,7 +139,7 @@ void get_cpu_usage(vector<pair<wstring, int> >& usage_percentages)
         int utilization = (double)(difference.get_usedtime()) / 
             difference.get_totaltime() * 100 + 0.5;
     
-        pair<wstring, int> usage_percentage(
+        pair<string, int> usage_percentage(
             difference.get_identifier(), utilization);
         usage_percentages.push_back(usage_percentage);
     }

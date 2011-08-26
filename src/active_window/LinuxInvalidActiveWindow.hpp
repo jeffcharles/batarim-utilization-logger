@@ -6,12 +6,12 @@ class LinuxInvalidActiveWindow : public IActiveWindow
     public:
         LinuxInvalidActiveWindow()
         {
-            name_ = L"";
-            process_name_ = L"";
+            name_ = "";
+            process_name_ = "";
         }
 
-        virtual std::wstring get_name() { return name_; }
-        virtual std::wstring get_process_name() { return process_name_; }
+        virtual std::string get_name() { return name_; }
+        virtual std::string get_process_name() { return process_name_; }
         virtual int get_cpu_usage() { return 0; }
 };
 

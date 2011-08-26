@@ -15,11 +15,10 @@ using std::iostream;
 using std::shared_ptr;
 using std::string;
 using std::stringstream;
-using std::wstring;
 
-wstring LinuxActiveWindow::get_name()
+string LinuxActiveWindow::get_name()
 {
-    if(name_ != L"") {
+    if(name_ != "") {
         return name_;
     }
     
@@ -28,23 +27,22 @@ wstring LinuxActiveWindow::get_name()
         if(window_name != NULL) {
             XFree(window_name);
         }
-        return L"";
+        return "";
     }
     
     if(window_name == NULL) {
-        return L"";
+        return "";
     }
     
-    string s_window_name(window_name);
+    name_ = window_name;
     XFree(window_name);
-    name_.assign(s_window_name.begin(), s_window_name.end());
-
+    
     return name_;
 }
 
-wstring LinuxActiveWindow::get_process_name()
+string LinuxActiveWindow::get_process_name()
 {
-    if(process_name_ != L"") {
+    if(process_name_ != "") {
         return process_name_;
     }
 
@@ -55,12 +53,10 @@ wstring LinuxActiveWindow::get_process_name()
     ifstream process_cmdline;
     process_cmdline.open(filepath.c_str());
     
-    string process_name;
-    process_cmdline >> process_name;
+    process_cmdline >> process_name_;
     
     process_cmdline.close();
     
-    process_name_.assign(process_name.begin(), process_name.end());
     return process_name_;
 }
 

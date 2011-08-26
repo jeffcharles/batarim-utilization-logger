@@ -21,12 +21,12 @@ class LinuxActiveWindow : public IActiveWindow
             window_(window)
         {
             pid_ = pid;
-            name_ = L"";
-            process_name_ = L"";
+            name_ = "";
+            process_name_ = "";
         }
 
-        virtual std::wstring get_name();
-        virtual std::wstring get_process_name();
+        virtual std::string get_name();
+        virtual std::string get_process_name();
         virtual int get_cpu_usage();
 
     private:
