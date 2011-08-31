@@ -4,7 +4,12 @@
 #include <string>
 #include <vector>
 
+#include "../usage_reporter/IUsageReporterRequestCollectionSetter.hpp"
+
 // Returns a list of processor percent utilizations
-void get_cpu_usage(std::vector<std::pair<std::string, int> >&);
+void get_cpu_usage(
+    IUsageReporterRequestCollectionSetter& request_collection,
+    std::vector<std::pair<std::string, int> >&
+);
 
 #endif
