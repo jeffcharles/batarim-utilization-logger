@@ -2,7 +2,21 @@ cmake_minimum_required (VERSION 2.8)
 project (BatarimUL)
 
 # LINUX is true if compiling on Linux else it is false
-SET (LINUX "${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
+# Originally this used a set command against the below but that set LINUX to a
+# non-false value on Windows systems
+if ("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
+    set (LINUX TRUE)
+else ()
+    set (LINUX FALSE)
+endif ()
+
+# This is a necessary sanity check since it has failed in the past
+if (WIN32 AND LINUX)
+    message (FATAL_ERROR
+"Something is wrong with the base CMakeLists.txt file.
+WIN32 and LINUX should not both be true."
+    )
+endif ()
 
 if (NOT WIN32 AND NOT LINUX)
     message (FATAL_ERROR 
