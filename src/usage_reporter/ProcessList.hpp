@@ -15,15 +15,15 @@ namespace {
 class ProcessList
 {
     public:
-        unsigned long long get_time(unsigned int pid)
+        unsigned long long get_time(unsigned int pid) const
         {
-            ProcessInformation process = processes_[pid];
+            ProcessInformation process = processes_.at(pid);
             return process.after_time - process.before_time;
         }
         
-        unsigned long long get_ram(unsigned int pid)
+        unsigned long long get_ram(unsigned int pid) const
         {
-            return processes_[pid].ram_usage;
+            return processes_.at(pid).ram_usage;
         }
 
         void set_before_time(unsigned int pid, unsigned long long time)

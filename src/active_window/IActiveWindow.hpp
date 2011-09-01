@@ -3,7 +3,7 @@
 
 #include <string>
 
-#include "../usage_reporter/IUsageReporterRequestCollectionSetter.hpp"
+#include "../usage_reporter/IUsageResultGetter.hpp"
 
 class IActiveWindow
 {
@@ -12,10 +12,11 @@ class IActiveWindow
 
         virtual std::string get_name() = 0;
         virtual std::string get_process_name() = 0;
-        virtual void populate_cpu_usage(
-            IUsageReporterRequestCollectionSetter& request_collection,
-            int* cpu_usage
-        ) = 0;
+        
+        virtual int get_cpu_usage(IUsageResultGetter& usage_results)
+        {
+            return usage_results.get_process_cpu_usage(pid_);
+        }
     
     protected:
         unsigned int pid_;

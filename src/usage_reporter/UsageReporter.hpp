@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 
+#include "IUsageResultGetter.hpp"
 #include "ProcessList.hpp"
 #include "UsageReporterRequestCollection.hpp"
 
@@ -18,21 +19,40 @@ struct PdhData
 #define BATARIM_CPU_INFO_DATA_STRUCTURE PdhData
 #endif
 
-class UsageReporter
+class UsageReporter : public IUsageResultGetter
 {
     public:
-        // Analyzes CPU and RAM usages and populates references
-        // Will take at least one second to complete
-        // Should only be called from main method
-        bool Analyze(std::string& error_message);
-
-        UsageReporterRequestCollection& get_request_collection()
+        UsageReporter()
         {
-            return requests_;
+            std::shared_ptr<std::vector<std::pair<std::string, int>>> pu(
+                new std::vector<std::pair<std::string, int>>);
+            processor_usages_ = pu;
+        }
+
+        // Analyzes CPU and RAM usages
+        // Will take at least one second to complete
+        // Should be called first from main method
+        bool analyze(std::string& error_message);
+
+        virtual std::shared_ptr<std::vector<std::pair<std::string, int>>>
+        get_processor_usages()
+        {
+            std::shared_ptr<std::vector<std::pair<std::string, int>>>
+                proc_usage(processor_usages_);
+            return proc_usage;
+        }
+
+        virtual int get_process_cpu_usage(unsigned int pid) const
+        {
+            int cpu_usage = (int)((double)process_list_.get_time(pid) / 
+                elapsed_system_time_ * 100);
+            return cpu_usage;
         }
     
     protected:
-        UsageReporterRequestCollection requests_;
+        std::shared_ptr<std::vector<std::pair<std::string, int>>>
+        processor_usages_;
+        
         ProcessList process_list_;
         unsigned long long elapsed_system_time_;
 
@@ -65,12 +85,6 @@ class UsageReporter
         virtual std::string get_human_readable_name_for_processor_entry_(
             std::string& provided_name
         ) = 0;
-
-        std::vector<std::pair<std::string, int>>*
-        get_processor_usages_result_()
-        {
-            return requests_.get_processors_usage_result();
-        }
 };
 
 #endif

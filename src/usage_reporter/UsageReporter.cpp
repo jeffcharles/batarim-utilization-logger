@@ -8,7 +8,7 @@ using std::map;
 using std::string;
 using std::vector;
 
-bool UsageReporter::Analyze(string& error_message)
+bool UsageReporter::analyze(string& error_message)
 {
     // Populate process lists and processors usage result
     BATARIM_CPU_INFO_DATA_STRUCTURE cpu_info;
@@ -32,22 +32,6 @@ bool UsageReporter::Analyze(string& error_message)
     if(!second_populate_process_list_()) {
         error_message = "Second call to populate process list failed";
         return false;
-    }
-
-    // Populate specific process request result pointers based on process list
-    map<unsigned int, ProcessInfoOutputs> specific_requests = 
-        requests_.get_specific_process_requests();
-    typedef map<unsigned int, ProcessInfoOutputs>::const_iterator RequestIter;
-    for(RequestIter request = specific_requests.begin();
-        request != specific_requests.end(); ++request) {
-
-        unsigned int pid = request->first;
-        int cpu_usage_percentage = 
-            (double)process_list_.get_time(pid) / 
-            elapsed_system_time_ * 100;
-        *(request->second.cpu_result) = cpu_usage_percentage;
-        // TODO: make the following divide by total RAM
-        //*(process->ram_result) = process_list_.get_ram(process->pid);
     }
 
     return true;
