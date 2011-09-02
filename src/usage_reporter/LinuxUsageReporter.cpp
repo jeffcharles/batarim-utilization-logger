@@ -2,6 +2,7 @@
 #include <functional>
 #include <ios>
 #include <iostream>
+#include <memory>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -20,6 +21,7 @@ using std::istream;
 using std::ostream;
 using std::pair;
 using std::pair;
+using std::shared_ptr;
 using std::string;
 using std::stringstream;
 using std::vector;
@@ -164,6 +166,60 @@ bool LinuxUsageReporter::populate_process_list_(
     }
     closedir(proc_dir);
     return true;
+}
+
+unsigned long long LinuxUsageReporter::get_total_physical_ram_() const
+{
+    // /proc/meminfo has operating system memory usage information. The entry
+    // we want is MemTotal which is the very first entry.
+
+    ifstream meminfo_file;
+    meminfo_file.open("/proc/meminfo");
+    
+    // swallow "MemTotal:"
+    string trash;
+    meminfo_file >> trash;
+    
+    unsigned long long total_physical_ram;
+    meminfo_file >> total_physical_ram;
+
+    meminfo_file.close();
+
+    return total_physical_ram;
+}
+
+void LinuxUsageReporter::populate_process_list_ram_()
+{
+    shared_ptr<vector<unsigned int>> pids = process_list_.get_pids();
+    for(vector<unsigned int>::const_iterator iter = pids->begin();
+        iter != pids->end(); ++iter) {
+
+        stringstream filepath;
+        filepath << "/proc/" << *iter << "/status";
+        ifstream mem_status;
+        mem_status.open(filepath.str());
+        
+        // pid folder in proc may not exist if process terminates in the one
+        // second between the initial process population and method
+        if(mem_status) {
+            string field;
+            // need to check that stream is still good since some status files
+            // do not list a VmRSS field
+            while(mem_status && field != "VmRSS:") {
+                mem_status >> field;
+            }
+            if(!mem_status) {
+                mem_status.close();
+                continue;
+            }
+
+            unsigned long long ram_usage;
+            mem_status >> ram_usage;
+            process_list_.set_ram_usage(*iter, ram_usage);
+
+            mem_status.close();
+        }
+    }
 }
 
 string LinuxUsageReporter::get_human_readable_name_for_processor_entry_(

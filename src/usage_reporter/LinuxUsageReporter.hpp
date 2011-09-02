@@ -30,6 +30,10 @@ class LinuxUsageReporter : public UsageReporter
             std::function<void(
                 ProcessList&, unsigned int, unsigned long long)> set_time
         );
+
+        virtual unsigned long long get_total_physical_ram_() const;
+
+        virtual void populate_process_list_ram_();
         
         virtual std::string get_human_readable_name_for_processor_entry_(
             std::string& provided_name

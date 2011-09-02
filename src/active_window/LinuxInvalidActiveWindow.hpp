@@ -19,6 +19,11 @@ class LinuxInvalidActiveWindow : public IActiveWindow
         {
             return 0;
         }
+
+        virtual int get_ram_usage(IUsageResultGetter& usage_results)
+        {
+            return 0;
+        }
 };
 
 #endif
