@@ -13,7 +13,7 @@ class IActiveWindow
         virtual std::string get_name() = 0;
         virtual std::string get_process_name() = 0;
         
-        int get_cpu_usage(IUsageResultGetter& usage_results)
+        virtual int get_cpu_usage(IUsageResultGetter& usage_results)
         {
             return usage_results.get_process_cpu_usage(pid_);
         }
