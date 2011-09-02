@@ -37,6 +37,7 @@ int main()
     string active_window_name = active_window->get_name();
     string active_window_process_name = active_window->get_process_name();
     int active_window_cpu_usage = active_window->get_cpu_usage(*usage_reporter);
+    int active_window_ram_usage = active_window->get_ram_usage(*usage_reporter);
     
     typedef vector<pair<string, int> >::const_iterator ConstIterator;
     for(ConstIterator iter = cpu_usage_percentages->begin();
@@ -49,5 +50,7 @@ int main()
     cout << "Active window: " << active_window_name << endl;
     cout << "Active window process: " << active_window_process_name << endl;
     cout << "Active window CPU usage: " << active_window_cpu_usage << "%"
+        << endl;
+    cout << "Active window RAM usage: " << active_window_ram_usage << "%"
         << endl;
 }

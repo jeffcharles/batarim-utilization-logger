@@ -52,6 +52,13 @@ class UsageReporter : public IUsageResultGetter
                 elapsed_system_time_ * 100);
             return cpu_usage;
         }
+
+        virtual int get_process_ram_usage(unsigned int pid) const
+        {
+            unsigned long long bytes_used = process_list_.get_ram(pid);
+            int ram_usage = (double)bytes_used / total_physical_ram_ * 100;
+            return ram_usage;
+        }
     
     protected:
         std::shared_ptr<std::vector<std::pair<std::string, int>>>
@@ -59,6 +66,7 @@ class UsageReporter : public IUsageResultGetter
         
         ProcessList process_list_;
         unsigned long long elapsed_system_time_;
+        unsigned long long total_physical_ram_;
 
         virtual bool initial_cpu_sweep_(BATARIM_CPU_INFO_DATA_STRUCTURE&) = 0;
         
@@ -86,6 +94,8 @@ class UsageReporter : public IUsageResultGetter
                 ProcessList&, unsigned int, unsigned long long
                 )> set_time
         ) = 0;
+        virtual unsigned long long get_total_physical_ram_() const = 0;
+        virtual void populate_process_list_ram_() = 0;
         virtual std::string get_human_readable_name_for_processor_entry_(
             std::string& provided_name
         ) = 0;

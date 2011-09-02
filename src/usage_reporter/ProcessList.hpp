@@ -1,7 +1,10 @@
 #ifndef GUARD_ProcessList_h
 #define GUARD_ProcessList_h
 
+#include <algorithm>
 #include <map>
+#include <memory>
+#include <vector>
 
 struct ProcessInformation
 {
@@ -9,6 +12,14 @@ struct ProcessInformation
     unsigned long long after_time;
     unsigned long long ram_usage;
 };
+
+namespace {
+    unsigned int get_pid_from_pair_(
+        const std::pair<unsigned int, ProcessInformation>& proc_pair
+    ) {
+        return proc_pair.first;
+    }
+}
 
 class ProcessList
 {
@@ -24,6 +35,18 @@ class ProcessList
             return processes_.at(pid).ram_usage;
         }
 
+        std::shared_ptr<std::vector<unsigned int>> get_pids() const
+        {
+            std::shared_ptr<std::vector<unsigned int>> pids(
+                new std::vector<unsigned int>());
+            pids->resize(processes_.size());
+            
+            std::transform(processes_.begin(), processes_.end(), pids->begin(),
+                get_pid_from_pair_);
+            
+            return pids;
+        }
+
         void set_before_time(unsigned int pid, unsigned long long time)
         {
             processes_[pid].before_time = time;
@@ -32,6 +55,11 @@ class ProcessList
         void set_after_time(unsigned int pid, unsigned long long time)
         {
             processes_[pid].after_time = time;
+        }
+
+        void set_ram_usage(unsigned int pid, unsigned long long ram)
+        {
+            processes_[pid].ram_usage = ram;
         }
 
     private:

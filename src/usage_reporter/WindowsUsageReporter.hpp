@@ -41,6 +41,15 @@ class WindowsUsageReporter : public UsageReporter
                 )> set_time
         );
 
+        virtual unsigned long long get_total_physical_ram_() const
+        {
+            MEMORYSTATUS memory_status;
+            GlobalMemoryStatus(&memory_status);
+            return memory_status.dwTotalPhys;
+        }
+
+        virtual void populate_process_list_ram_();
+
         virtual std::string get_human_readable_name_for_processor_entry_(
             std::string& provided_name
         );

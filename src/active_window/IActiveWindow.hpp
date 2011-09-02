@@ -17,6 +17,11 @@ class IActiveWindow
         {
             return usage_results.get_process_cpu_usage(pid_);
         }
+
+        virtual int get_ram_usage(IUsageResultGetter& usage_results)
+        {
+            return usage_results.get_process_ram_usage(pid_);
+        }
     
     protected:
         unsigned int pid_;

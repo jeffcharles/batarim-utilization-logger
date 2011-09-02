@@ -33,6 +33,8 @@ bool UsageReporter::analyze(string& error_message)
         error_message = "Second call to populate process list failed";
         return false;
     }
+    total_physical_ram_ = get_total_physical_ram_();
+    populate_process_list_ram_();
 
     return true;
 }

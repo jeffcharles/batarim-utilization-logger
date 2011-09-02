@@ -18,6 +18,7 @@
 using batarim::encoding_methods::convert_wstring_to_string;
 using std::function;
 using std::pair;
+using std::shared_ptr;
 using std::string;
 using std::stringstream;
 using std::unique_ptr;
@@ -142,6 +143,32 @@ bool WindowsUsageReporter::populate_process_list_(
         set_time(process_list_, pids[i], process_time);
     }
     return true;
+}
+
+void WindowsUsageReporter::populate_process_list_ram_()
+{
+    shared_ptr<vector<unsigned int>> pids = process_list_.get_pids();
+    for(vector<unsigned int>::const_iterator iter = pids->begin();
+        iter != pids->end(); ++iter) {
+
+        HANDLE process_handle = OpenProcess(
+            PROCESS_QUERY_LIMITED_INFORMATION, // access rights
+            false, // should child processes inherit handle
+            *iter
+        );
+
+        PROCESS_MEMORY_COUNTERS memory_counters;
+        if(GetProcessMemoryInfo(
+            process_handle,
+            &memory_counters,
+            sizeof(memory_counters)
+        )) {
+            process_list_.set_ram_usage(*iter, 
+                memory_counters.WorkingSetSize);
+        }
+
+        CloseHandle(process_handle);
+    }
 }
 
 string WindowsUsageReporter::get_human_readable_name_for_processor_entry_(

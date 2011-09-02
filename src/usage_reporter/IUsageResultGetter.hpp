@@ -12,6 +12,8 @@ class IUsageResultGetter
         get_processor_usages() = 0;
 
         virtual int get_process_cpu_usage(unsigned int pid) const = 0;
+
+        virtual int get_process_ram_usage(unsigned int pid) const = 0;
 };
 
 #endif
