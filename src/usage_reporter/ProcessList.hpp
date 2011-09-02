@@ -3,14 +3,12 @@
 
 #include <map>
 
-namespace {
-    struct ProcessInformation
-    {
-        unsigned long long before_time;
-        unsigned long long after_time;
-        unsigned long long ram_usage;
-    };
-}
+struct ProcessInformation
+{
+    unsigned long long before_time;
+    unsigned long long after_time;
+    unsigned long long ram_usage;
+};
 
 class ProcessList
 {

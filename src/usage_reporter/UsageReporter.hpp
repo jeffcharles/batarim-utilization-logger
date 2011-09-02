@@ -7,7 +7,6 @@
 
 #include "IUsageResultGetter.hpp"
 #include "ProcessList.hpp"
-#include "UsageReporterRequestCollection.hpp"
 
 #ifdef WIN32
 #include <Pdh.h>
@@ -17,6 +16,11 @@ struct PdhData
     PDH_HCOUNTER counter;
 };
 #define BATARIM_CPU_INFO_DATA_STRUCTURE PdhData
+#endif
+
+#ifdef LINUX
+#include <sstream>
+#define BATARIM_CPU_INFO_DATA_STRUCTURE std::stringstream
 #endif
 
 class UsageReporter : public IUsageResultGetter

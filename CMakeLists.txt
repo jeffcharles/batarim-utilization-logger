@@ -6,6 +6,7 @@ project (BatarimUL)
 # non-false value on Windows systems
 if ("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
     set (LINUX TRUE)
+    add_definitions (-DLINUX)
 else ()
     set (LINUX FALSE)
 endif ()

@@ -1,4 +1,0 @@
-if (LINUX)
-    add_library (cpu_usage STATIC cpu_usage.hpp linux_cpu_usage.cpp)
-    target_link_libraries (cpu_usage usage_reporter)
-endif ()

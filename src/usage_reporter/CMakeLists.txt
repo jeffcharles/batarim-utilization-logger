@@ -7,4 +7,10 @@ if (WIN32)
         windows_usage_reporter_module.cpp
     )
     target_link_libraries(usage_reporter pdh psapi)
+elseif (LINUX)
+    add_library (usage_reporter STATIC
+        ProcessList.hpp IUsageResultGetter.hpp UsageReporter.hpp
+        LinuxUsageReporter.hpp usage_reporter_module.hpp
+        UsageReporter.cpp LinuxUsageReporter.cpp linux_usage_reporter_module.cpp
+    )
 endif ()
