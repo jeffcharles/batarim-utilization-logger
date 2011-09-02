@@ -71,13 +71,6 @@ string WindowsActiveWindow::get_process_name()
     }
 }
 
-void WindowsActiveWindow::populate_cpu_usage(
-    IUsageReporterRequestCollectionSetter& request_collection,
-    int* cpu_usage
-) {
-    request_collection.add_specific_process_cpu_request(pid_, cpu_usage);
-}
-
 string WindowsActiveWindow::get_filename_from_win32_path(string& path)
 {
     string stripped_exe_path;
