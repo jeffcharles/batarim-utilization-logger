@@ -36,8 +36,6 @@ class LinuxActiveWindow : public IActiveWindow
         unsigned long get_system_time(std::istream& stat_line);
         std::shared_ptr<std::istream> get_stat_stream();
         unsigned long get_process_cpu_time(std::istream& stat_stream);
-
-        std::string get_filename_from_path_(std::string path);
 };
 
 #endif

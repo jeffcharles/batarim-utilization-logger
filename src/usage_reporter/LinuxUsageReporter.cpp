@@ -10,8 +10,11 @@
 #include <dirent.h>
 #include <sys/types.h>
 
+#include "../utilities/linux_utilities.hpp"
+
 #include "LinuxUsageReporter.hpp"
 
+using batarim::get_filename_from_path;
 using std::cerr;
 using std::clog;
 using std::endl;
@@ -98,7 +101,7 @@ LinuxUsageReporter::get_procinfo_for_highest_cpu_usage() const
     cmdline_stream.close();
 
     shared_ptr<ProcessUsageInfo> proc_info(new ProcessUsageInfo);
-    proc_info->process_name = command;
+    proc_info->process_name = get_filename_from_path(command);
     proc_info->cpu_usage = 
         (double)process_list_.get_time(pid) / elapsed_system_time_ * 100;
     proc_info->ram_usage = 

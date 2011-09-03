@@ -10,5 +10,5 @@ elseif (LINUX)
         linux_active_window_module.cpp LinuxInvalidActiveWindow.hpp
         LinuxActiveWindow.cpp
     )
-    target_link_libraries (active_window X11 usage_reporter)
+    target_link_libraries (active_window X11 utilities usage_reporter)
 endif ()

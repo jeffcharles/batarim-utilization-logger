@@ -8,8 +8,11 @@
 #include <sstream>
 #include <string>
 
+#include "../utilities/linux_utilities.hpp"
+
 #include "LinuxActiveWindow.hpp"
 
+using batarim::get_filename_from_path;
 using std::ifstream;
 using std::istream;
 using std::iostream;
@@ -59,20 +62,6 @@ string LinuxActiveWindow::get_process_name()
     
     process_cmdline.close();
     
-    string binary_name = get_filename_from_path_(process_name_);
+    string binary_name = get_filename_from_path(process_name_);
     return binary_name;
-}
-
-string LinuxActiveWindow::get_filename_from_path_(string path)
-{
-    const char* const_c_path = path.c_str();
-    unique_ptr<char> c_path(new char[strlen(const_c_path)+1]);
-    strcpy(c_path.get(), const_c_path);
-    char* token = strtok(c_path.get(), "/");
-    char* last_token;
-    while(token) {
-        last_token = token;
-        token = strtok(NULL, "/");
-    }
-    return last_token;
 }

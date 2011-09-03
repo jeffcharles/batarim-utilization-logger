@@ -14,4 +14,5 @@ elseif (LINUX)
         ProcessList.cpp UsageReporter.cpp LinuxUsageReporter.cpp
         linux_usage_reporter_module.cpp
     )
+    target_link_libraries (usage_reporter utilities)
 endif ()
