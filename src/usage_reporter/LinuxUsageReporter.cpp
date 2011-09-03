@@ -14,7 +14,7 @@
 
 #include "LinuxUsageReporter.hpp"
 
-using batarim::get_filename_from_path;
+using batarim::get_process_name;
 using std::cerr;
 using std::clog;
 using std::endl;
@@ -92,16 +92,8 @@ LinuxUsageReporter::get_procinfo_for_highest_cpu_usage() const
 {
     unsigned int pid = process_list_.get_pid_with_highest_cpu_usage();
 
-    stringstream filepath;
-    filepath << "/proc/" << pid << "/cmdline";
-    ifstream cmdline_stream;
-    cmdline_stream.open(filepath.str());
-    string command;
-    cmdline_stream >> command;
-    cmdline_stream.close();
-
     shared_ptr<ProcessUsageInfo> proc_info(new ProcessUsageInfo);
-    proc_info->process_name = get_filename_from_path(command);
+    proc_info->process_name = get_process_name(pid);
     proc_info->cpu_usage = 
         (double)process_list_.get_time(pid) / elapsed_system_time_ * 100;
     proc_info->ram_usage = 

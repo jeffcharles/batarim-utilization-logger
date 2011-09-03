@@ -12,7 +12,6 @@
 
 #include "LinuxActiveWindow.hpp"
 
-using batarim::get_filename_from_path;
 using std::ifstream;
 using std::istream;
 using std::iostream;
@@ -50,18 +49,6 @@ string LinuxActiveWindow::get_process_name()
     if(process_name_ != "") {
         return process_name_;
     }
-
-    stringstream filepath_ss;
-    filepath_ss << "/proc/" << pid_ << "/cmdline";
-    string filepath = filepath_ss.str();
-    
-    ifstream process_cmdline;
-    process_cmdline.open(filepath.c_str());
-    
-    process_cmdline >> process_name_;
-    
-    process_cmdline.close();
-    
-    string binary_name = get_filename_from_path(process_name_);
-    return binary_name;
+    process_name_ = batarim::get_process_name(pid_);
+    return process_name_;
 }
