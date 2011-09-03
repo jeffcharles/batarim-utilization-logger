@@ -56,7 +56,8 @@ class UsageReporter : public IUsageResultGetter
         virtual int get_process_ram_usage(unsigned int pid) const
         {
             unsigned long long bytes_used = process_list_.get_ram(pid);
-            int ram_usage = (double)bytes_used / total_physical_ram_ * 100;
+            int ram_usage = (int)((double)bytes_used / 
+                total_physical_ram_ * 100);
             return ram_usage;
         }
     

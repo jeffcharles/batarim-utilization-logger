@@ -34,9 +34,11 @@ WindowsUsageReporter::get_procinfo_for_highest_cpu_usage() const
     shared_ptr<ProcessUsageInfo> proc_info(new ProcessUsageInfo);
     proc_info->process_name = get_process_name(pid);
     proc_info->cpu_usage = 
-        (double)process_list_.get_time(pid) / elapsed_system_time_ * 100;
+        (int)((double)process_list_.get_time(pid) /
+        elapsed_system_time_ * 100);
     proc_info->ram_usage = 
-        (double)process_list_.get_ram(pid) / total_physical_ram_ * 100;
+        (int)((double)process_list_.get_ram(pid) /
+        total_physical_ram_ * 100);
 
     return proc_info;
 }
@@ -49,9 +51,11 @@ WindowsUsageReporter::get_procinfo_for_highest_ram_usage() const
     shared_ptr<ProcessUsageInfo> proc_info(new ProcessUsageInfo);
     proc_info->process_name = get_process_name(pid);
     proc_info->cpu_usage =
-        (double)process_list_.get_time(pid) / elapsed_system_time_ * 100;
+        (int)((double)process_list_.get_time(pid) /
+        elapsed_system_time_ * 100);
     proc_info->ram_usage = 
-        (double)process_list_.get_ram(pid) / total_physical_ram_ * 100;
+        (int)((double)process_list_.get_ram(pid) /
+        total_physical_ram_ * 100);
 
     return proc_info;
 }
@@ -160,7 +164,7 @@ bool WindowsUsageReporter::populate_process_list_(
             &ft_exit,
             &ft_kernel,
             &ft_user
-        );
+        ) != 0;
 
         CloseHandle(process_handle);
 
