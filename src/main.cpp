@@ -42,6 +42,8 @@ int main()
 
     shared_ptr<ProcessUsageInfo> highest_cpu_proc = 
         usage_reporter->get_procinfo_for_highest_cpu_usage();
+    shared_ptr<ProcessUsageInfo> highest_ram_proc =
+        usage_reporter->get_procinfo_for_highest_ram_usage();
     
     typedef vector<pair<string, int> >::const_iterator ConstIterator;
     for(ConstIterator iter = cpu_usage_percentages->begin();
@@ -63,4 +65,10 @@ int main()
         << highest_cpu_proc->cpu_usage << "%" << endl;
     cout << "Highest CPU usage process RAM usage: "
         << highest_cpu_proc->ram_usage << "%" << endl;
+    cout << "Highest RAM usage process name: "
+        << highest_ram_proc->process_name << endl;
+    cout << "Highest RAM usage process CPU usage: "
+        << highest_ram_proc->cpu_usage << "%" << endl;
+    cout << "Highest RAM usage process RAM usage: "
+        << highest_ram_proc->ram_usage << "%" << endl;
 }

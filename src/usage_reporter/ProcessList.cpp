@@ -50,3 +50,38 @@ unsigned int ProcessList::get_pid_with_highest_cpu_usage() const
 
     return highest_cpu_usage.first;
 }
+
+unsigned int ProcessList::get_pid_with_highest_ram_usage() const
+{
+    pair<unsigned int, unsigned long long> highest_ram_usage;
+
+    typedef map<unsigned int, ProcessInformation>::const_iterator Iterator;
+
+    // Initialize highest_ram_usage to first active process
+    // NOTE: There will always be at least one active process running
+    // (i.e., this one)
+    Iterator iter;
+    for(iter = processes_.begin(); iter != processes_.end(); ++iter) {
+        if(process_is_active(iter)) {
+            highest_ram_usage = 
+                pair<unsigned int, unsigned long long>(
+                    iter->first,
+                    iter->second.ram_usage
+                );
+            ++iter;
+            break;
+        }
+    }
+    
+    // Scan through rest of processes to see if one is higher
+    for(; iter != processes_.end(); ++iter) {
+        if(process_is_active(iter)) {
+            if(iter->second.ram_usage > highest_ram_usage.second) {
+                highest_ram_usage.first = iter->first;
+                highest_ram_usage.second = iter->second.ram_usage;
+            }
+        }
+    }
+
+    return highest_ram_usage.first;
+}

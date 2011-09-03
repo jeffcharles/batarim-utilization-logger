@@ -27,6 +27,8 @@ class ProcessList
 
         unsigned int get_pid_with_highest_cpu_usage() const;
 
+        unsigned int get_pid_with_highest_ram_usage() const;
+
         unsigned long long get_time(unsigned int pid) const
         {
             ProcessInformation process = processes_.at(pid);

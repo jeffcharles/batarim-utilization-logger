@@ -13,6 +13,9 @@ class IUsageResultGetter
         virtual std::shared_ptr<ProcessUsageInfo>
         get_procinfo_for_highest_cpu_usage() const = 0;
 
+        virtual std::shared_ptr<ProcessUsageInfo>
+        get_procinfo_for_highest_ram_usage() const = 0;
+
         virtual std::shared_ptr<std::vector<std::pair<std::string, int>>>
         get_processor_usages() = 0;
 

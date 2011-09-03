@@ -41,6 +41,21 @@ WindowsUsageReporter::get_procinfo_for_highest_cpu_usage() const
     return proc_info;
 }
 
+shared_ptr<ProcessUsageInfo>
+WindowsUsageReporter::get_procinfo_for_highest_ram_usage() const
+{
+    unsigned int pid = process_list_.get_pid_with_highest_ram_usage();
+
+    shared_ptr<ProcessUsageInfo> proc_info(new ProcessUsageInfo);
+    proc_info->process_name = get_process_name(pid);
+    proc_info->cpu_usage =
+        (double)process_list_.get_time(pid) / elapsed_system_time_ * 100;
+    proc_info->ram_usage = 
+        (double)process_list_.get_ram(pid) / total_physical_ram_ * 100;
+
+    return proc_info;
+}
+
 bool WindowsUsageReporter::initial_cpu_sweep_(PdhData& pdh_data)
 {
     PDH_STATUS pdh_status = PdhOpenQuery(
