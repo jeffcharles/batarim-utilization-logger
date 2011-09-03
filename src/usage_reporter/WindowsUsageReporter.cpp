@@ -25,6 +25,40 @@ using std::unique_ptr;
 using std::vector;
 using std::wstring;
 
+shared_ptr<ProcessUsageInfo> 
+WindowsUsageReporter::get_procinfo_for_highest_cpu_usage() const
+{
+    unsigned int pid = process_list_.get_pid_with_highest_cpu_usage();
+            
+    HANDLE process_handle = OpenProcess(
+        PROCESS_QUERY_LIMITED_INFORMATION, // access rights
+        false, // child processes should not inherit handle
+        pid
+    );
+
+    const int MAX_PROCESS_NAME_LENGTH = 255;
+    WCHAR name[MAX_PROCESS_NAME_LENGTH];
+    DWORD buffer_size = MAX_PROCESS_NAME_LENGTH;
+    
+    bool query_success = QueryFullProcessImageName(
+        process_handle,
+        NULL, // use Win32 path format
+        name,
+        &buffer_size
+    ) != 0;
+
+    CloseHandle(process_handle);
+
+    shared_ptr<ProcessUsageInfo> proc_info(new ProcessUsageInfo);
+    proc_info->process_name = convert_wstring_to_string(name);
+    proc_info->cpu_usage = 
+        (double)process_list_.get_time(pid) / elapsed_system_time_ * 100;
+    proc_info->ram_usage = 
+        (double)process_list_.get_ram(pid) / total_physical_ram_ * 100;
+
+    return proc_info;
+}
+
 bool WindowsUsageReporter::initial_cpu_sweep_(PdhData& pdh_data)
 {
     PDH_STATUS pdh_status = PdhOpenQuery(
@@ -123,7 +157,7 @@ bool WindowsUsageReporter::populate_process_list_(
         );
 
         FILETIME ft_creation, ft_exit, ft_kernel, ft_user;
-        GetProcessTimes(
+        bool success = GetProcessTimes(
             process_handle,
             &ft_creation,
             &ft_exit,
@@ -133,14 +167,16 @@ bool WindowsUsageReporter::populate_process_list_(
 
         CloseHandle(process_handle);
 
-        unsigned long long kernel_time =
-            convert_filetime_to_ulonglong_(ft_kernel);
-        unsigned long long user_time =
-            convert_filetime_to_ulonglong_(ft_user);
+        if(success) {
+            unsigned long long kernel_time =
+                convert_filetime_to_ulonglong_(ft_kernel);
+            unsigned long long user_time =
+                convert_filetime_to_ulonglong_(ft_user);
 
-        unsigned long long process_time = kernel_time + user_time;
+            unsigned long long process_time = kernel_time + user_time;
 
-        set_time(process_list_, pids[i], process_time);
+            set_time(process_list_, pids[i], process_time);
+        }
     }
     return true;
 }

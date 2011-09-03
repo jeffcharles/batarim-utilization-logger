@@ -8,11 +8,19 @@
 #include <Pdh.h>
 #include <Windows.h>
 
+#include "../utilities/windows_encoding_methods.hpp"
 #include "ProcessList.hpp"
+#include "IUsageResultGetter.hpp"
+
 #include "UsageReporter.hpp"
 
 class WindowsUsageReporter : public UsageReporter
 {
+    public:
+
+        virtual std::shared_ptr<ProcessUsageInfo>
+        get_procinfo_for_highest_cpu_usage() const;
+
     protected:
         virtual bool initial_cpu_sweep_(PdhData&);
         virtual void pause_() { Sleep(1000); }

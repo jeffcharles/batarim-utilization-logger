@@ -5,6 +5,7 @@
 
 #include "usage_reporter/usage_reporter_module.hpp"
 #include "usage_reporter/UsageReporter.hpp"
+#include "usage_reporter/ProcessUsageInfo.hpp"
 #include "ram_usage/ram_usage.hpp"
 #include "active_window/active_window_module.hpp"
 #include "active_window/IActiveWindow.hpp"
@@ -38,6 +39,9 @@ int main()
     string active_window_process_name = active_window->get_process_name();
     int active_window_cpu_usage = active_window->get_cpu_usage(*usage_reporter);
     int active_window_ram_usage = active_window->get_ram_usage(*usage_reporter);
+
+    shared_ptr<ProcessUsageInfo> highest_cpu_proc = 
+        usage_reporter->get_procinfo_for_highest_cpu_usage();
     
     typedef vector<pair<string, int> >::const_iterator ConstIterator;
     for(ConstIterator iter = cpu_usage_percentages->begin();
@@ -53,4 +57,10 @@ int main()
         << endl;
     cout << "Active window RAM usage: " << active_window_ram_usage << "%"
         << endl;
+    cout << "Highest CPU usage process name: " 
+        << highest_cpu_proc->process_name << endl;
+    cout << "Highest CPU usage process CPU usage: "
+        << highest_cpu_proc->cpu_usage << "%" << endl;
+    cout << "Highest CPU usage process RAM usage: "
+        << highest_cpu_proc->ram_usage << "%" << endl;
 }
