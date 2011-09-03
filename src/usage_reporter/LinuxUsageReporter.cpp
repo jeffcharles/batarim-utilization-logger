@@ -84,6 +84,29 @@ namespace {
     }
 }
 
+shared_ptr<ProcessUsageInfo>
+LinuxUsageReporter::get_procinfo_for_highest_cpu_usage() const
+{
+    unsigned int pid = process_list_.get_pid_with_highest_cpu_usage();
+
+    stringstream filepath;
+    filepath << "/proc/" << pid << "/cmdline";
+    ifstream cmdline_stream;
+    cmdline_stream.open(filepath.str());
+    string command;
+    cmdline_stream >> command;
+    cmdline_stream.close();
+
+    shared_ptr<ProcessUsageInfo> proc_info(new ProcessUsageInfo);
+    proc_info->process_name = command;
+    proc_info->cpu_usage = 
+        (double)process_list_.get_time(pid) / elapsed_system_time_ * 100;
+    proc_info->ram_usage = 
+        (double)process_list_.get_ram(pid) / total_physical_ram_ * 100;
+
+    return proc_info;
+}
+
 bool LinuxUsageReporter::populate_processors_usage_(stringstream& before_stream)
 {
     stringstream after_stream;
