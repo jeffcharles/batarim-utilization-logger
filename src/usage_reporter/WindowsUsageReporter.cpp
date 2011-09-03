@@ -16,7 +16,7 @@
 #include "WindowsUsageReporter.hpp"
 
 using batarim::convert_wstring_to_string;
-using batarim::get_filename_from_win32_path;
+using batarim::get_process_name;
 using std::function;
 using std::pair;
 using std::shared_ptr;
@@ -30,29 +30,9 @@ shared_ptr<ProcessUsageInfo>
 WindowsUsageReporter::get_procinfo_for_highest_cpu_usage() const
 {
     unsigned int pid = process_list_.get_pid_with_highest_cpu_usage();
-            
-    HANDLE process_handle = OpenProcess(
-        PROCESS_QUERY_LIMITED_INFORMATION, // access rights
-        false, // child processes should not inherit handle
-        pid
-    );
-
-    const int MAX_PROCESS_NAME_LENGTH = 255;
-    WCHAR name[MAX_PROCESS_NAME_LENGTH];
-    DWORD buffer_size = MAX_PROCESS_NAME_LENGTH;
-    
-    bool query_success = QueryFullProcessImageName(
-        process_handle,
-        NULL, // use Win32 path format
-        name,
-        &buffer_size
-    ) != 0;
-
-    CloseHandle(process_handle);
 
     shared_ptr<ProcessUsageInfo> proc_info(new ProcessUsageInfo);
-    string proc_path = convert_wstring_to_string(name);
-    proc_info->process_name = get_filename_from_win32_path(proc_path);
+    proc_info->process_name = get_process_name(pid);
     proc_info->cpu_usage = 
         (double)process_list_.get_time(pid) / elapsed_system_time_ * 100;
     proc_info->ram_usage = 

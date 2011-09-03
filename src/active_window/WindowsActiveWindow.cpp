@@ -43,31 +43,6 @@ string WindowsActiveWindow::get_process_name()
     if(process_name_ != "") {
         return process_name_;
     }
-
-    HANDLE process_handle = OpenProcess(
-        PROCESS_QUERY_LIMITED_INFORMATION, // access rights to process
-        false, // should processes created by this process inherit the handle
-        pid_
-    );
-    
-    const int MAX_PROCESS_NAME_LENGTH = 255;
-    TCHAR name[MAX_PROCESS_NAME_LENGTH];
-    DWORD buffer_size = MAX_PROCESS_NAME_LENGTH;
-    
-    bool query_success = QueryFullProcessImageName(
-        process_handle,
-        NULL, // use Win32 path format
-        name,
-        &buffer_size
-    ) != 0;
-
-    CloseHandle(process_handle);
-
-    if(!query_success || buffer_size == 0) {
-        return "";
-    } else {
-        string path = convert_wstring_to_string(name);
-        process_name_ = get_filename_from_win32_path(path);
-        return process_name_;
-    }
+    process_name_ = batarim::get_process_name(pid_);
+    return process_name_;
 }

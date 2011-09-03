@@ -6,6 +6,7 @@
 namespace batarim {
     std::string convert_wstring_to_string(std::wstring wide_str);
     std::string get_filename_from_win32_path(std::string& path);
+    std::string get_process_name(unsigned int pid);
 }
 
 #endif

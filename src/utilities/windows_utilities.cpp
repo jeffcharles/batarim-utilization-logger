@@ -63,4 +63,30 @@ namespace batarim {
             stripped_exe_path;
     }
 
+    std::string get_process_name(unsigned int pid)
+    {
+        HANDLE process_handle = OpenProcess(
+            PROCESS_QUERY_LIMITED_INFORMATION, // access rights
+            false, // child processes should not inherit handle
+            pid
+        );
+
+        const int MAX_PROCESS_NAME_LENGTH = 255;
+        WCHAR name[MAX_PROCESS_NAME_LENGTH];
+        DWORD buffer_size = MAX_PROCESS_NAME_LENGTH;
+    
+        bool query_success = QueryFullProcessImageName(
+            process_handle,
+            NULL, // use Win32 path format
+            name,
+            &buffer_size
+        ) != 0;
+
+        CloseHandle(process_handle);
+
+        string process_path = convert_wstring_to_string(name);
+        string process_name = get_filename_from_win32_path(process_path);
+
+        return process_name;
+    }
 }
