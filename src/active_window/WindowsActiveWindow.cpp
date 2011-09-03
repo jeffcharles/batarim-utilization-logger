@@ -2,11 +2,12 @@
 
 #include <Windows.h>
 
-#include "../utilities/windows_encoding_methods.hpp"
+#include "../utilities/windows_utilities.hpp"
 
 #include "WindowsActiveWindow.hpp"
 
-using batarim::encoding_methods::convert_wstring_to_string;
+using batarim::convert_wstring_to_string;
+using batarim::get_filename_from_win32_path;
 using std::string;
 using std::wstring;
 
@@ -69,26 +70,4 @@ string WindowsActiveWindow::get_process_name()
         process_name_ = get_filename_from_win32_path(path);
         return process_name_;
     }
-}
-
-string WindowsActiveWindow::get_filename_from_win32_path(string& path)
-{
-    string stripped_exe_path;
-    bool path_ends_with_exe = path.length() > 4 && 
-        path.compare(path.length()-4, 4, ".exe") == 0;
-    stripped_exe_path = path_ends_with_exe ? 
-        path.substr(0, path.length()-4) : path;
-    
-    string::size_type last_backslash_location = 0;
-    if(stripped_exe_path.length() > 1) {
-        for(string::size_type i = stripped_exe_path.length()-2; i >= 0; --i) {
-            if(stripped_exe_path[i] == '\\') {
-                last_backslash_location = i;
-                break;
-            }
-        }
-    }
-    return (last_backslash_location > 0) ? 
-        stripped_exe_path.substr(last_backslash_location+1) : 
-        stripped_exe_path;
 }

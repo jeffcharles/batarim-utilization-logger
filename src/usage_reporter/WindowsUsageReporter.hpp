@@ -8,7 +8,6 @@
 #include <Pdh.h>
 #include <Windows.h>
 
-#include "../utilities/windows_encoding_methods.hpp"
 #include "ProcessList.hpp"
 #include "IUsageResultGetter.hpp"
 

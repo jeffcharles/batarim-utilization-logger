@@ -11,11 +11,11 @@
 // --------------------
 #include <Psapi.h>
 
-#include "../utilities/windows_encoding_methods.hpp"
+#include "../utilities/windows_utilities.hpp"
 
 #include "WindowsUsageReporter.hpp"
 
-using batarim::encoding_methods::convert_wstring_to_string;
+using batarim::convert_wstring_to_string;
 using std::function;
 using std::pair;
 using std::shared_ptr;
