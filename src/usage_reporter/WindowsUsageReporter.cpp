@@ -11,12 +11,12 @@
 // --------------------
 #include <Psapi.h>
 
+#include "../utilities/utilities.hpp"
 #include "../utilities/windows_utilities.hpp"
 
 #include "WindowsUsageReporter.hpp"
 
 using batarim::convert_wstring_to_string;
-using batarim::get_process_name;
 using std::function;
 using std::pair;
 using std::shared_ptr;
@@ -25,40 +25,6 @@ using std::stringstream;
 using std::unique_ptr;
 using std::vector;
 using std::wstring;
-
-shared_ptr<ProcessUsageInfo> 
-WindowsUsageReporter::get_procinfo_for_highest_cpu_usage() const
-{
-    unsigned int pid = process_list_.get_pid_with_highest_cpu_usage();
-
-    shared_ptr<ProcessUsageInfo> proc_info(new ProcessUsageInfo);
-    proc_info->process_name = get_process_name(pid);
-    proc_info->cpu_usage = 
-        (int)((double)process_list_.get_time(pid) /
-        elapsed_system_time_ * 100);
-    proc_info->ram_usage = 
-        (int)((double)process_list_.get_ram(pid) /
-        total_physical_ram_ * 100);
-
-    return proc_info;
-}
-
-shared_ptr<ProcessUsageInfo>
-WindowsUsageReporter::get_procinfo_for_highest_ram_usage() const
-{
-    unsigned int pid = process_list_.get_pid_with_highest_ram_usage();
-
-    shared_ptr<ProcessUsageInfo> proc_info(new ProcessUsageInfo);
-    proc_info->process_name = get_process_name(pid);
-    proc_info->cpu_usage =
-        (int)((double)process_list_.get_time(pid) /
-        elapsed_system_time_ * 100);
-    proc_info->ram_usage = 
-        (int)((double)process_list_.get_ram(pid) /
-        total_physical_ram_ * 100);
-
-    return proc_info;
-}
 
 bool WindowsUsageReporter::initial_cpu_sweep_(PdhData& pdh_data)
 {

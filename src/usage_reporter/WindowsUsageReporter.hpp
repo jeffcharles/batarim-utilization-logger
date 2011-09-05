@@ -15,14 +15,6 @@
 
 class WindowsUsageReporter : public UsageReporter
 {
-    public:
-
-        virtual std::shared_ptr<ProcessUsageInfo>
-        get_procinfo_for_highest_cpu_usage() const;
-
-        virtual std::shared_ptr<ProcessUsageInfo>
-        get_procinfo_for_highest_ram_usage() const;
-
     protected:
         virtual bool initial_cpu_sweep_(PdhData&);
         virtual void pause_() { Sleep(1000); }

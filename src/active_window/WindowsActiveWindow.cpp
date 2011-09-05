@@ -2,12 +2,12 @@
 
 #include <Windows.h>
 
+#include "../utilities/utilities.hpp"
 #include "../utilities/windows_utilities.hpp"
 
 #include "WindowsActiveWindow.hpp"
 
 using batarim::convert_wstring_to_string;
-using batarim::get_filename_from_win32_path;
 using std::string;
 using std::wstring;
 

@@ -3,6 +3,8 @@
 
 #include <Windows.h>
 
+#include "utilities.hpp"
+
 using std::string;
 using std::unique_ptr;
 using std::wstring;
@@ -41,7 +43,7 @@ namespace batarim {
         return string(multibyte_buffer.get());
     }
 
-    string get_filename_from_win32_path(string& path)
+    string get_filename_from_path(string& path)
     {
         string stripped_exe_path;
         bool path_ends_with_exe = path.length() > 4 && 
@@ -85,7 +87,7 @@ namespace batarim {
         CloseHandle(process_handle);
 
         string process_path = convert_wstring_to_string(name);
-        string process_name = get_filename_from_win32_path(process_path);
+        string process_name = get_filename_from_path(process_path);
 
         return process_name;
     }
