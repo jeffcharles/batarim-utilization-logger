@@ -4,7 +4,7 @@
 #include <sstream>
 #include <string>
 
-#include "linux_utilities.hpp"
+#include "utilities.hpp"
 
 using std::ifstream;
 using std::string;
@@ -13,7 +13,7 @@ using std::unique_ptr;
 
 namespace batarim {
 
-    string get_filename_from_path(string path)
+    string get_filename_from_path(string& path)
     {
         const char* const_c_path = path.c_str();
         unique_ptr<char> c_path(new char[strlen(const_c_path)+1]);

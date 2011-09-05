@@ -8,7 +8,7 @@
 #include <sstream>
 #include <string>
 
-#include "../utilities/linux_utilities.hpp"
+#include "../utilities/utilities.hpp"
 
 #include "LinuxActiveWindow.hpp"
 

@@ -11,11 +11,6 @@
 
 class LinuxUsageReporter : public UsageReporter
 {
-    public:
-
-        virtual std::shared_ptr<ProcessUsageInfo>
-        get_procinfo_for_highest_cpu_usage() const;
-
     protected:
         virtual bool initial_cpu_sweep_(std::stringstream& before_stream)
         {

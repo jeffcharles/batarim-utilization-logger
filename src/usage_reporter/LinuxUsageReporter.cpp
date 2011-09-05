@@ -10,7 +10,7 @@
 #include <dirent.h>
 #include <sys/types.h>
 
-#include "../utilities/linux_utilities.hpp"
+#include "../utilities/utilities.hpp"
 
 #include "LinuxUsageReporter.hpp"
 
@@ -22,7 +22,6 @@ using std::function;
 using std::ifstream;
 using std::istream;
 using std::ostream;
-using std::pair;
 using std::pair;
 using std::shared_ptr;
 using std::string;
@@ -85,21 +84,6 @@ namespace {
         unsigned int idletime = lhs.idletime_ - rhs.idletime_;
         return cpu_times(identifier, totaltime, idletime);
     }
-}
-
-shared_ptr<ProcessUsageInfo>
-LinuxUsageReporter::get_procinfo_for_highest_cpu_usage() const
-{
-    unsigned int pid = process_list_.get_pid_with_highest_cpu_usage();
-
-    shared_ptr<ProcessUsageInfo> proc_info(new ProcessUsageInfo);
-    proc_info->process_name = get_process_name(pid);
-    proc_info->cpu_usage = 
-        (double)process_list_.get_time(pid) / elapsed_system_time_ * 100;
-    proc_info->ram_usage = 
-        (double)process_list_.get_ram(pid) / total_physical_ram_ * 100;
-
-    return proc_info;
 }
 
 bool LinuxUsageReporter::populate_processors_usage_(stringstream& before_stream)
