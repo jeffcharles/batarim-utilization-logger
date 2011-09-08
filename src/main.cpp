@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-#include "usage_reporter/usage_reporter_module.hpp"
+#include "usage_reporter/UsageReporterFactory.hpp"
 #include "usage_reporter/UsageReporter.hpp"
 #include "usage_reporter/ProcessUsageInfo.hpp"
 #include "ram_usage/ram_usage.hpp"

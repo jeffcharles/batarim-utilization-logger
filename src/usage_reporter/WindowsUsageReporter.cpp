@@ -1,4 +1,3 @@
-#include <functional>
 #include <memory>
 #include <sstream>
 #include <string>
@@ -17,7 +16,6 @@
 #include "WindowsUsageReporter.hpp"
 
 using batarim::convert_wstring_to_string;
-using std::function;
 using std::pair;
 using std::shared_ptr;
 using std::string;
@@ -103,75 +101,6 @@ bool WindowsUsageReporter::populate_processors_usage_(
     }
 
     return true;
-}
-
-bool WindowsUsageReporter::populate_process_list_(
-    function<void(ProcessList&, unsigned int, unsigned long long)> set_time
-) {
-    const DWORD pid_array_length = 0x10000;
-    DWORD pids[pid_array_length];
-    DWORD bytes_returned;
-    if(!EnumProcesses(pids, pid_array_length, &bytes_returned)) {
-        return false;
-    }
-    const DWORD num_pids = bytes_returned / sizeof(DWORD);
-            
-    for(DWORD i = 0; i < num_pids; ++i) {
-        HANDLE process_handle = OpenProcess(
-            PROCESS_QUERY_LIMITED_INFORMATION, // access rights to process
-            false, // should processes created by this process inherit the handle
-            pids[i]
-        );
-
-        FILETIME ft_creation, ft_exit, ft_kernel, ft_user;
-        bool success = GetProcessTimes(
-            process_handle,
-            &ft_creation,
-            &ft_exit,
-            &ft_kernel,
-            &ft_user
-        ) != 0;
-
-        CloseHandle(process_handle);
-
-        if(success) {
-            unsigned long long kernel_time =
-                convert_filetime_to_ulonglong_(ft_kernel);
-            unsigned long long user_time =
-                convert_filetime_to_ulonglong_(ft_user);
-
-            unsigned long long process_time = kernel_time + user_time;
-
-            set_time(process_list_, pids[i], process_time);
-        }
-    }
-    return true;
-}
-
-void WindowsUsageReporter::populate_process_list_ram_()
-{
-    shared_ptr<vector<unsigned int>> pids = process_list_.get_pids();
-    for(vector<unsigned int>::const_iterator iter = pids->begin();
-        iter != pids->end(); ++iter) {
-
-        HANDLE process_handle = OpenProcess(
-            PROCESS_QUERY_LIMITED_INFORMATION, // access rights
-            false, // should child processes inherit handle
-            *iter
-        );
-
-        PROCESS_MEMORY_COUNTERS memory_counters;
-        if(GetProcessMemoryInfo(
-            process_handle,
-            &memory_counters,
-            sizeof(memory_counters)
-        )) {
-            process_list_.set_ram_usage(*iter, 
-                memory_counters.WorkingSetSize);
-        }
-
-        CloseHandle(process_handle);
-    }
 }
 
 string WindowsUsageReporter::get_human_readable_name_for_processor_entry_(

@@ -1,5 +1,5 @@
-#ifndef GUARD_usage_reporter_module_h
-#define GUARD_usage_reporter_module_h
+#ifndef GUARD_UsageReporterFactory_h
+#define GUARD_UsageReporterFactory_h
 
 #include <memory>
 

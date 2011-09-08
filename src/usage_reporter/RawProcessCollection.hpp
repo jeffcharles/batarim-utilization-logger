@@ -1,5 +1,5 @@
-#ifndef GUARD_ProcessList_h
-#define GUARD_ProcessList_h
+#ifndef GUARD_RawProcessCollection_h
+#define GUARD_RawProcessCollection_h
 
 #include <algorithm>
 #include <map>
@@ -21,9 +21,22 @@ namespace {
     }
 }
 
-class ProcessList
+class RawProcessCollection
 {
     public:
+
+        // NOTE: must call init followed by update after a one second delay
+        void init()
+        {
+            std::shared_ptr<std::vector<unsigned int>> pids = get_pids_();
+            for(std::vector<unsigned int>::const_iterator pid = pids->begin();
+                pid != pids->end(); ++pid) {
+
+                processes_[*pid].before_time = get_process_time_(*pid);
+            }
+        }
+
+        void update();
 
         unsigned int get_pid_with_highest_cpu_usage() const;
 
@@ -52,23 +65,21 @@ class ProcessList
             return pids;
         }
 
-        void set_before_time(unsigned int pid, unsigned long long time)
-        {
-            processes_[pid].before_time = time;
-        }
+    protected:
 
-        void set_after_time(unsigned int pid, unsigned long long time)
-        {
-            processes_[pid].after_time = time;
-        }
+        virtual std::shared_ptr<std::vector<unsigned int>>
+        get_pids_() const = 0;
 
-        void set_ram_usage(unsigned int pid, unsigned long long ram)
-        {
-            processes_[pid].ram_usage = ram;
-        }
+        virtual unsigned long long get_process_time_(unsigned int pid)
+        const = 0;
+
+        virtual unsigned long long get_process_ram_usage_(unsigned int pid)
+        const = 0;
 
     private:
+        
         std::map<unsigned int, ProcessInformation> processes_;
+        
 };
 
 #endif

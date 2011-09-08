@@ -1,12 +1,13 @@
 #ifndef GUARD_UsageReporter_h
 #define GUARD_UsageReporter_h
 
-#include <functional>
+#include <memory>
 #include <string>
 #include <vector>
 
 #include "IUsageResultGetter.hpp"
-#include "ProcessList.hpp"
+#include "FormattedProcessCollection.hpp"
+#include "FormattedProcessCollectionFactory.hpp"
 #include "../utilities/utilities.hpp"
 
 #ifdef WIN32
@@ -32,6 +33,8 @@ class UsageReporter : public IUsageResultGetter
             std::shared_ptr<std::vector<std::pair<std::string, int>>> pu(
                 new std::vector<std::pair<std::string, int>>);
             processor_usages_ = pu;
+
+            processes_ = get_formatted_process_collection();
         }
 
         // Analyzes CPU and RAM usages
@@ -42,27 +45,13 @@ class UsageReporter : public IUsageResultGetter
         std::shared_ptr<ProcessUsageInfo> 
         get_procinfo_for_highest_cpu_usage() const
         {
-            unsigned int pid = process_list_.get_pid_with_highest_cpu_usage();
-
-            std::shared_ptr<ProcessUsageInfo> proc_info(new ProcessUsageInfo);
-            proc_info->process_name = batarim::get_process_name(pid);
-            proc_info->cpu_usage = calculate_cpu_usage_(process_list_.get_time(pid));
-            proc_info->ram_usage = calculate_ram_usage_(process_list_.get_ram(pid));
-
-            return proc_info;
+            return processes_->get_process_with_highest_cpu_usage();
         }
 
         std::shared_ptr<ProcessUsageInfo>
         get_procinfo_for_highest_ram_usage() const
         {
-            unsigned int pid = process_list_.get_pid_with_highest_ram_usage();
-
-            std::shared_ptr<ProcessUsageInfo> proc_info(new ProcessUsageInfo);
-            proc_info->process_name = batarim::get_process_name(pid);
-            proc_info->cpu_usage = calculate_cpu_usage_(process_list_.get_time(pid));
-            proc_info->ram_usage = calculate_ram_usage_(process_list_.get_ram(pid));
-
-            return proc_info;
+            return processes_->get_process_with_highest_ram_usage();
         }
 
         virtual std::shared_ptr<std::vector<std::pair<std::string, int>>>
@@ -75,70 +64,32 @@ class UsageReporter : public IUsageResultGetter
 
         virtual int get_process_cpu_usage(unsigned int pid) const
         {
-            unsigned long long process_time = process_list_.get_time(pid);
-            int cpu_usage = calculate_cpu_usage_(process_time);
-            return cpu_usage;
+            return processes_->get_process(pid)->cpu_usage;
         }
 
         virtual int get_process_ram_usage(unsigned int pid) const
         {
-            unsigned long long bytes_used = process_list_.get_ram(pid);
-            int ram_usage = calculate_ram_usage_(bytes_used);
-            return ram_usage;
+            return processes_->get_process(pid)->ram_usage;
         }
     
     protected:
         std::shared_ptr<std::vector<std::pair<std::string, int>>>
         processor_usages_;
         
-        ProcessList process_list_;
-        unsigned long long elapsed_system_time_;
-        unsigned long long total_physical_ram_;
+        std::shared_ptr<FormattedProcessCollection> processes_;
 
         virtual bool initial_cpu_sweep_(BATARIM_CPU_INFO_DATA_STRUCTURE&) = 0;
         
-        bool initial_populate_process_list_()
-        {
-            return populate_process_list_(&ProcessList::set_before_time);
-        }
-        
         virtual void pause_() = 0;
+        
         virtual bool populate_processors_usage_(
             BATARIM_CPU_INFO_DATA_STRUCTURE& initial_data
         ) = 0;
+        
         virtual void cleanup_processors_data_(
             BATARIM_CPU_INFO_DATA_STRUCTURE& cpu_info
         ) = 0;
         
-        bool second_populate_process_list_()
-        {
-            return populate_process_list_(&ProcessList::set_after_time);
-        }
-
-        virtual unsigned long long get_current_system_time_() = 0;
-        virtual bool populate_process_list_(
-            std::function<void(
-                ProcessList&, unsigned int, unsigned long long
-                )> set_time
-        ) = 0;
-
-        int calculate_cpu_usage_(unsigned long long elapsed_process_time) const
-        {
-            int cpu_usage = (int)((double)elapsed_process_time /
-                elapsed_system_time_ * 100);
-            return cpu_usage;
-        }
-
-        virtual unsigned long long get_total_physical_ram_() const = 0;
-        virtual void populate_process_list_ram_() = 0;
-
-        int calculate_ram_usage_(unsigned long long ram_bytes_used) const
-        {
-            int ram_usage = (int)((double)ram_bytes_used /
-                total_physical_ram_ * 100);
-            return ram_usage;
-        }
-
         virtual std::string get_human_readable_name_for_processor_entry_(
             std::string& provided_name
         ) = 0;
