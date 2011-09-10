@@ -4,6 +4,6 @@ if (WIN32)
     )
 elseif (LINUX)
     add_library (utilities STATIC
-        utilities.hpp linux_utilities.hpp linux_utilities.cpp
+        utilities.hpp linux_utilities.cpp
     )
 endif ()
