@@ -13,7 +13,7 @@ using std::shared_ptr;
 const ProcessUsageInfo&
 FormattedProcessCollection::get_process_with_highest_cpu_usage() const
 {
-    pair<unsigned int, unsigned long long> highest_cpu_usage;
+    pair<unsigned int, int> highest_cpu_usage;
 
     typedef map<unsigned int, ProcessUsageInfo>::const_iterator Iter;
 
@@ -22,7 +22,7 @@ FormattedProcessCollection::get_process_with_highest_cpu_usage() const
     // (i.e., this one)
     Iter first_proc = usage_info_.begin();
     highest_cpu_usage = 
-        pair<unsigned int, unsigned long long>(
+        pair<unsigned int, int>(
             first_proc->first,
             first_proc->second.cpu_usage
         );
@@ -41,7 +41,7 @@ FormattedProcessCollection::get_process_with_highest_cpu_usage() const
 const ProcessUsageInfo&
 FormattedProcessCollection::get_process_with_highest_ram_usage() const
 {
-    pair<unsigned int, unsigned long long> highest_ram_usage;
+    pair<unsigned int, int> highest_ram_usage;
 
     typedef map<unsigned int, ProcessUsageInfo>::const_iterator Iter;
 
@@ -50,7 +50,7 @@ FormattedProcessCollection::get_process_with_highest_ram_usage() const
     // (i.e., this one)
     Iter first_proc = usage_info_.begin();
     highest_ram_usage = 
-        pair<unsigned int, unsigned long long>(
+        pair<unsigned int, int>(
             first_proc->first,
             first_proc->second.ram_usage
         );
