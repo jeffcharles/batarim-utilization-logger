@@ -24,7 +24,7 @@ namespace batarim {
             last_token = token;
             token = strtok(NULL, "/");
         }
-        return last_token;
+        return (last_token != NULL) ? last_token : "";
     }
 
     string get_process_name(unsigned int pid)
