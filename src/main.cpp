@@ -37,12 +37,12 @@ int main()
     shared_ptr<IActiveWindow> active_window = get_active_window();
     string active_window_name = active_window->get_name();
     string active_window_process_name = active_window->get_process_name();
-    int active_window_cpu_usage = active_window->get_cpu_usage(*usage_reporter);
-    int active_window_ram_usage = active_window->get_ram_usage(*usage_reporter);
+    ProcessUsageInfo active_window_usage =
+        active_window->get_usage(*usage_reporter);
 
-    shared_ptr<ProcessUsageInfo> highest_cpu_proc = 
+    ProcessUsageInfo highest_cpu_proc = 
         usage_reporter->get_procinfo_for_highest_cpu_usage();
-    shared_ptr<ProcessUsageInfo> highest_ram_proc =
+    ProcessUsageInfo highest_ram_proc =
         usage_reporter->get_procinfo_for_highest_ram_usage();
     
     typedef vector<pair<string, int> >::const_iterator ConstIterator;
@@ -55,20 +55,20 @@ int main()
     cout << "Current RAM usage: " << ram_usage << "%" << endl;
     cout << "Active window: " << active_window_name << endl;
     cout << "Active window process: " << active_window_process_name << endl;
-    cout << "Active window CPU usage: " << active_window_cpu_usage << "%"
+    cout << "Active window CPU usage: " << active_window_usage.cpu_usage << "%"
         << endl;
-    cout << "Active window RAM usage: " << active_window_ram_usage << "%"
+    cout << "Active window RAM usage: " << active_window_usage.ram_usage << "%"
         << endl;
     cout << "Highest CPU usage process name: " 
-        << highest_cpu_proc->process_name << endl;
+        << highest_cpu_proc.process_name << endl;
     cout << "Highest CPU usage process CPU usage: "
-        << highest_cpu_proc->cpu_usage << "%" << endl;
+        << highest_cpu_proc.cpu_usage << "%" << endl;
     cout << "Highest CPU usage process RAM usage: "
-        << highest_cpu_proc->ram_usage << "%" << endl;
+        << highest_cpu_proc.ram_usage << "%" << endl;
     cout << "Highest RAM usage process name: "
-        << highest_ram_proc->process_name << endl;
+        << highest_ram_proc.process_name << endl;
     cout << "Highest RAM usage process CPU usage: "
-        << highest_ram_proc->cpu_usage << "%" << endl;
+        << highest_ram_proc.cpu_usage << "%" << endl;
     cout << "Highest RAM usage process RAM usage: "
-        << highest_ram_proc->ram_usage << "%" << endl;
+        << highest_ram_proc.ram_usage << "%" << endl;
 }

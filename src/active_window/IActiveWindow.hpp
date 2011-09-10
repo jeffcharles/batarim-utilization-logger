@@ -4,6 +4,7 @@
 #include <string>
 
 #include "../usage_reporter/IUsageResultGetter.hpp"
+#include "../usage_reporter/ProcessUsageInfo.hpp"
 
 class IActiveWindow
 {
@@ -12,15 +13,10 @@ class IActiveWindow
 
         virtual std::string get_name() = 0;
         virtual std::string get_process_name() = 0;
-        
-        virtual int get_cpu_usage(IUsageResultGetter& usage_results)
-        {
-            return usage_results.get_process_cpu_usage(pid_);
-        }
 
-        virtual int get_ram_usage(IUsageResultGetter& usage_results)
+        const ProcessUsageInfo& get_usage(IUsageResultGetter& usage_results)
         {
-            return usage_results.get_process_ram_usage(pid_);
+            return usage_results.get_process_usage(pid_);
         }
     
     protected:

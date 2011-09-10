@@ -16,6 +16,12 @@ class RawProcessCollection
 {
     public:
 
+        typedef std::map<unsigned int, ProcessInformation>::const_iterator
+            const_iterator;
+
+        const_iterator begin() const { return processes_.begin(); }
+        const_iterator end() const { return processes_.end(); }
+
         // NOTE: must call init followed by update after a one second delay
         void init()
         {
@@ -28,21 +34,6 @@ class RawProcessCollection
         }
 
         void update();
-
-        unsigned int get_pid_with_highest_cpu_usage() const;
-
-        unsigned int get_pid_with_highest_ram_usage() const;
-
-        unsigned long long get_time(unsigned int pid) const
-        {
-            ProcessInformation process = processes_.at(pid);
-            return process.after_time - process.before_time;
-        }
-        
-        unsigned long long get_ram(unsigned int pid) const
-        {
-            return processes_.at(pid).ram_usage;
-        }
 
     protected:
 

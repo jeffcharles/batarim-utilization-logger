@@ -1,6 +1,7 @@
 #ifndef GUARD_FormattedPerformanceCollection_h
 #define GUARD_FormattedPerformanceCollection_h
 
+#include <map>
 #include <memory>
 
 #include "../utilities/utilities.hpp"
@@ -14,49 +15,48 @@ class FormattedProcessCollection
 
         FormattedProcessCollection()
         {
-            processes_ = get_raw_process_collection();
+            raw_process_info_ = get_raw_process_collection();
         }
 
         // NOTE: must call first init followed by update after a one
         // second delay
         void init()
         {
-            processes_->init();
+            raw_process_info_->init();
             before_system_time_ = get_current_system_time_();
         }
 
         void update()
         {
-            processes_->update();
+            raw_process_info_->update();
             elapsed_system_time_ =
                 get_current_system_time_() - before_system_time_;
             total_physical_ram_ = get_total_physical_ram_();
+
+            typedef RawProcessCollection::const_iterator Iter;
+            for(Iter iter = raw_process_info_->begin();
+                iter != raw_process_info_->end(); ++iter) {
+
+                ProcessUsageInfo proc_info;
+                proc_info.process_name = 
+                    batarim::get_process_name(iter->first);
+                unsigned long long elapsed_time =
+                    iter->second.after_time - iter->second.before_time;
+                proc_info.cpu_usage = calculate_cpu_usage_(elapsed_time);
+                unsigned long long ram_bytes_used = iter->second.ram_usage;
+                proc_info.ram_usage = calculate_ram_usage_(ram_bytes_used);
+                usage_info_[iter->first] = proc_info;
+            }
         }
 
-        std::shared_ptr<ProcessUsageInfo> get_process(unsigned int pid) const
+        const ProcessUsageInfo& get_process(unsigned int pid) const
         {
-            std::shared_ptr<ProcessUsageInfo> proc_info(new ProcessUsageInfo);
-            proc_info->process_name = batarim::get_process_name(pid);
-            unsigned long long elapsed_time = processes_->get_time(pid);
-            proc_info->cpu_usage = calculate_cpu_usage_(elapsed_time);
-            unsigned long long ram_bytes_used = processes_->get_ram(pid);
-            proc_info->ram_usage = calculate_ram_usage_(ram_bytes_used);
-            return proc_info;
+            return usage_info_.at(pid);
         }
         
-        std::shared_ptr<ProcessUsageInfo>
-        get_process_with_highest_cpu_usage() const
-        {
-            unsigned int pid = processes_->get_pid_with_highest_cpu_usage();
-            return get_process(pid);
-        }
+        const ProcessUsageInfo& get_process_with_highest_cpu_usage() const;
 
-        std::shared_ptr<ProcessUsageInfo>
-        get_process_with_highest_ram_usage() const
-        {
-            unsigned int pid = processes_->get_pid_with_highest_ram_usage();
-            return get_process(pid);
-        }
+        const ProcessUsageInfo& get_process_with_highest_ram_usage() const;
 
     protected:
 
@@ -65,7 +65,8 @@ class FormattedProcessCollection
 
     private:
         
-        std::shared_ptr<RawProcessCollection> processes_;
+        std::shared_ptr<RawProcessCollection> raw_process_info_;
+        std::map<unsigned int, ProcessUsageInfo> usage_info_;
 
         unsigned long long before_system_time_;
         unsigned long long elapsed_system_time_;

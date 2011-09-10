@@ -8,8 +8,8 @@ if (WIN32)
         IUsageResultGetter.hpp UsageReporter.hpp WindowsUsageReporter.hpp
         RawProcessCollectionFactory.cpp FormattedProcessCollectionFactory.cpp
         UsageReporterFactory.cpp RawProcessCollection.cpp
-        WindowsRawProcessCollection.cpp UsageReporter.cpp
-        WindowsUsageReporter.cpp
+        WindowsRawProcessCollection.cpp FormattedProcessCollection.cpp
+        UsageReporter.cpp WindowsUsageReporter.cpp
     )
     target_link_libraries(usage_reporter pdh psapi utilities)
 elseif (LINUX)
@@ -21,8 +21,9 @@ elseif (LINUX)
         IUsageResultGetter.hpp UsageReporter.hpp LinuxUsageReporter.hpp
         RawProcessCollectionFactory.cpp FormattedProcessCollectionFactory.cpp
         UsageReporterFactory.cpp RawProcessCollection.cpp
-        LinuxRawProcessCollection.cpp LinuxFormattedProcessCollection.cpp
-        UsageReporter.cpp LinuxUsageReporter.cpp
+        LinuxRawProcessCollection.cpp FormattedProcessCollection.cpp
+        LinuxFormattedProcessCollection.cpp UsageReporter.cpp
+        LinuxUsageReporter.cpp
     )
     target_link_libraries (usage_reporter utilities)
 endif ()

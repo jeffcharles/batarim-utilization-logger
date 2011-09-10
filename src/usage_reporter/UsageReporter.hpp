@@ -42,13 +42,13 @@ class UsageReporter : public IUsageResultGetter
         // Should be called first from main method
         bool analyze(std::string& error_message);
 
-        std::shared_ptr<ProcessUsageInfo> 
+        virtual const ProcessUsageInfo& 
         get_procinfo_for_highest_cpu_usage() const
         {
             return processes_->get_process_with_highest_cpu_usage();
         }
 
-        std::shared_ptr<ProcessUsageInfo>
+        virtual const ProcessUsageInfo&
         get_procinfo_for_highest_ram_usage() const
         {
             return processes_->get_process_with_highest_ram_usage();
@@ -62,14 +62,10 @@ class UsageReporter : public IUsageResultGetter
             return proc_usage;
         }
 
-        virtual int get_process_cpu_usage(unsigned int pid) const
+        virtual const ProcessUsageInfo&
+        get_process_usage(unsigned int pid) const
         {
-            return processes_->get_process(pid)->cpu_usage;
-        }
-
-        virtual int get_process_ram_usage(unsigned int pid) const
-        {
-            return processes_->get_process(pid)->ram_usage;
+            return processes_->get_process(pid);
         }
     
     protected:
