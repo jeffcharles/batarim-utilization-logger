@@ -1,14 +1,10 @@
 #include <fstream>
-#include <functional>
 #include <ios>
 #include <iostream>
 #include <memory>
 #include <sstream>
 #include <string>
 #include <vector>
-
-#include <dirent.h>
-#include <sys/types.h>
 
 #include "../utilities/utilities.hpp"
 
@@ -18,7 +14,6 @@ using batarim::get_process_name;
 using std::cerr;
 using std::clog;
 using std::endl;
-using std::function;
 using std::ifstream;
 using std::istream;
 using std::ostream;
@@ -121,109 +116,6 @@ bool LinuxUsageReporter::populate_processors_usage_(stringstream& before_stream)
     return true;
 }
 
-unsigned long long LinuxUsageReporter::get_current_system_time_()
-{
-    ifstream stat_file;
-    stat_file.open("/proc/stat");
-
-    string stat_line;
-    getline(stat_file, stat_line);
-    stringstream stat_stream(stat_line);
-
-    stat_file.close();
-
-    string trash;
-    stat_stream >> trash;
-    unsigned long long total_time = 0;
-    while(stat_stream) {
-        unsigned long temp;
-        stat_stream >> temp;
-        total_time += temp;
-    }
-    return total_time;
-}
-
-bool LinuxUsageReporter::populate_process_list_(
-    function<void(ProcessList&, unsigned int, unsigned long long)> set_time
-) {
-    DIR* proc_dir;
-    struct dirent* proc_dir_entry;
-    proc_dir = opendir("/proc");
-    while((proc_dir_entry = readdir(proc_dir)) != NULL) {
-        int pid;
-        if(!dir_entry_is_pid_(proc_dir_entry, &pid)) {
-            continue;
-        }
-
-        stringstream stat_file_path;
-        stat_file_path << "/proc/" << pid << "/stat";
-        ifstream proc_stat_file;
-        proc_stat_file.open(stat_file_path.str());
-        stringstream proc_stat_stream;
-        proc_stat_stream << proc_stat_file.rdbuf();
-        proc_stat_file.close();
-
-        unsigned long long cpu_time = get_process_cpu_time_(proc_stat_stream);
-        set_time(process_list_, pid, cpu_time); 
-    }
-    closedir(proc_dir);
-    return true;
-}
-
-unsigned long long LinuxUsageReporter::get_total_physical_ram_() const
-{
-    // /proc/meminfo has operating system memory usage information. The entry
-    // we want is MemTotal which is the very first entry.
-
-    ifstream meminfo_file;
-    meminfo_file.open("/proc/meminfo");
-    
-    // swallow "MemTotal:"
-    string trash;
-    meminfo_file >> trash;
-    
-    unsigned long long total_physical_ram;
-    meminfo_file >> total_physical_ram;
-
-    meminfo_file.close();
-
-    return total_physical_ram;
-}
-
-void LinuxUsageReporter::populate_process_list_ram_()
-{
-    shared_ptr<vector<unsigned int>> pids = process_list_.get_pids();
-    for(vector<unsigned int>::const_iterator iter = pids->begin();
-        iter != pids->end(); ++iter) {
-
-        stringstream filepath;
-        filepath << "/proc/" << *iter << "/status";
-        ifstream mem_status;
-        mem_status.open(filepath.str());
-        
-        // pid folder in proc may not exist if process terminates in the one
-        // second between the initial process population and method
-        if(mem_status) {
-            string field;
-            // need to check that stream is still good since some status files
-            // do not list a VmRSS field
-            while(mem_status && field != "VmRSS:") {
-                mem_status >> field;
-            }
-            if(!mem_status) {
-                mem_status.close();
-                continue;
-            }
-
-            unsigned long long ram_usage;
-            mem_status >> ram_usage;
-            process_list_.set_ram_usage(*iter, ram_usage);
-
-            mem_status.close();
-        }
-    }
-}
-
 string LinuxUsageReporter::get_human_readable_name_for_processor_entry_(
     string& provided_name
 ) {
@@ -259,35 +151,3 @@ void LinuxUsageReporter::populate_stat_stream_(ostream& stat_stream)
     stat_stream << stat_file.rdbuf();
     stat_file.close();
 }
-
-// Checks if dir_entry represents a pid and populates pid if it is
-bool LinuxUsageReporter::dir_entry_is_pid_(struct dirent* dir_entry, int* pid)
-{
-    if(dir_entry->d_type != DT_DIR) {
-        return false;
-    }
-    stringstream ss;
-    ss << dir_entry->d_name;
-    bool is_pid = ss >> *pid;
-    return is_pid;
-}
-
-unsigned long long LinuxUsageReporter::get_process_cpu_time_(
-    istream& stat_stream
-) {
-    const int num_to_processor_times = 13;
-    string trash;
-    for(int i = 0; i < num_to_processor_times; ++i) {
-        stat_stream >> trash;
-    }
-
-    unsigned long long cpu_time = 0;
-    for(int i = 0; i < 2; ++i) {
-        unsigned long temp;
-        stat_stream >> temp;
-        cpu_time += temp;
-    }
-
-    return cpu_time;
-}
-

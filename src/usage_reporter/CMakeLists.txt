@@ -14,10 +14,15 @@ if (WIN32)
     target_link_libraries(usage_reporter pdh psapi utilities)
 elseif (LINUX)
     add_library (usage_reporter STATIC
-        RawProcessCollection.hpp ProcessUsageInfo.hpp
-        FormattedProcessCollection.hpp IUsageResultGetter.hpp UsageReporter.hpp
-        LinuxUsageReporter.hpp
-        RawProcessCollection.cpp UsageReporter.cpp LinuxUsageReporter.cpp
+        RawProcessCollectionFactory.hpp FormattedProcessCollectionFactory.hpp
+        UsageReporterFactory.hpp RawProcessCollection.hpp
+        LinuxRawProcessCollection.hpp ProcessUsageInfo.hpp
+        FormattedProcessCollection.hpp LinuxFormattedProcessCollection.hpp
+        IUsageResultGetter.hpp UsageReporter.hpp LinuxUsageReporter.hpp
+        RawProcessCollectionFactory.cpp FormattedProcessCollectionFactory.cpp
+        UsageReporterFactory.cpp RawProcessCollection.cpp
+        LinuxRawProcessCollection.cpp LinuxFormattedProcessCollection.cpp
+        UsageReporter.cpp LinuxUsageReporter.cpp
     )
     target_link_libraries (usage_reporter utilities)
 endif ()
