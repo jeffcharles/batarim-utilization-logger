@@ -1,7 +1,6 @@
 #ifndef GUARD_RawProcessCollection_h
 #define GUARD_RawProcessCollection_h
 
-#include <algorithm>
 #include <map>
 #include <memory>
 #include <vector>
@@ -12,14 +11,6 @@ struct ProcessInformation
     unsigned long long after_time;
     unsigned long long ram_usage;
 };
-
-namespace {
-    unsigned int get_pid_from_pair_(
-        const std::pair<unsigned int, ProcessInformation>& proc_pair
-    ) {
-        return proc_pair.first;
-    }
-}
 
 class RawProcessCollection
 {
