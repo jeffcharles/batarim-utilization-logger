@@ -53,18 +53,6 @@ class RawProcessCollection
             return processes_.at(pid).ram_usage;
         }
 
-        std::shared_ptr<std::vector<unsigned int>> get_pids() const
-        {
-            std::shared_ptr<std::vector<unsigned int>> pids(
-                new std::vector<unsigned int>());
-            pids->resize(processes_.size());
-            
-            std::transform(processes_.begin(), processes_.end(), pids->begin(),
-                get_pid_from_pair_);
-            
-            return pids;
-        }
-
     protected:
 
         virtual std::shared_ptr<std::vector<unsigned int>>
