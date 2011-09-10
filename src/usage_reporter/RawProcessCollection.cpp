@@ -9,14 +9,6 @@ using std::pair;
 using std::shared_ptr;
 using std::vector;
 
-namespace {
-    bool process_is_active(
-        map<unsigned int, ProcessInformation>::const_iterator iter
-    ) {
-        return iter->second.after_time > 0;
-    }
-}
-
 void RawProcessCollection::update()
 {
     shared_ptr<vector<unsigned int>> pids = get_pids_();
@@ -49,34 +41,26 @@ unsigned int RawProcessCollection::get_pid_with_highest_cpu_usage() const
 {
     pair<unsigned int, unsigned long long> highest_cpu_usage;
 
-    typedef map<unsigned int, ProcessInformation>::const_iterator Iterator;
+    typedef map<unsigned int, ProcessInformation>::const_iterator Iter;
 
     // Initialize highest_cpu_usage to first active process
     // NOTE: There will always be at least one active process running
     // (i.e., this one)
-    Iterator iter;
-    for(iter = processes_.begin(); iter != processes_.end(); ++iter) {
-        if(process_is_active(iter)) {
-            highest_cpu_usage = 
-                pair<unsigned int, unsigned long long>(
-                    iter->first,
-                    iter->second.after_time - iter->second.before_time
-                );
-            ++iter;
-            break;
-        }
-    }
+    Iter first_proc = processes_.begin();
+    highest_cpu_usage = 
+        pair<unsigned int, unsigned long long>(
+            first_proc->first,
+            first_proc->second.after_time - first_proc->second.before_time
+        );
     
     // Scan through rest of processes to see if one is higher
-    for(; iter != processes_.end(); ++iter) {
+    for(Iter iter = processes_.begin(); iter != processes_.end(); ++iter) {
         unsigned long long before_time = iter->second.before_time;
         unsigned long long after_time = iter->second.after_time;
-        if(process_is_active(iter)) {
-            unsigned long long usage = after_time - before_time;
-            if(usage > highest_cpu_usage.second) {
-                highest_cpu_usage.first = iter->first;
-                highest_cpu_usage.second = usage;
-            }
+        unsigned long long usage = after_time - before_time;
+        if(usage > highest_cpu_usage.second) {
+            highest_cpu_usage.first = iter->first;
+            highest_cpu_usage.second = usage;
         }
     }
 
@@ -87,31 +71,23 @@ unsigned int RawProcessCollection::get_pid_with_highest_ram_usage() const
 {
     pair<unsigned int, unsigned long long> highest_ram_usage;
 
-    typedef map<unsigned int, ProcessInformation>::const_iterator Iterator;
+    typedef map<unsigned int, ProcessInformation>::const_iterator Iter;
 
     // Initialize highest_ram_usage to first active process
     // NOTE: There will always be at least one active process running
     // (i.e., this one)
-    Iterator iter;
-    for(iter = processes_.begin(); iter != processes_.end(); ++iter) {
-        if(process_is_active(iter)) {
-            highest_ram_usage = 
-                pair<unsigned int, unsigned long long>(
-                    iter->first,
-                    iter->second.ram_usage
-                );
-            ++iter;
-            break;
-        }
-    }
+    Iter first_proc = processes_.begin();
+    highest_ram_usage = 
+        pair<unsigned int, unsigned long long>(
+            first_proc->first,
+            first_proc->second.ram_usage
+        );
     
     // Scan through rest of processes to see if one is higher
-    for(; iter != processes_.end(); ++iter) {
-        if(process_is_active(iter)) {
-            if(iter->second.ram_usage > highest_ram_usage.second) {
-                highest_ram_usage.first = iter->first;
-                highest_ram_usage.second = iter->second.ram_usage;
-            }
+    for(Iter iter = processes_.begin(); iter != processes_.end(); ++iter) {
+        if(iter->second.ram_usage > highest_ram_usage.second) {
+            highest_ram_usage.first = iter->first;
+            highest_ram_usage.second = iter->second.ram_usage;
         }
     }
 
