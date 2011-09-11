@@ -19,5 +19,5 @@ elseif (LINUX)
         FormattedProcessCollection.cpp LinuxFormattedProcessCollection.cpp
         UsageReporter.cpp LinuxUsageReporter.cpp
     )
-    target_link_libraries (usage_reporter utilities)
+    target_link_libraries (usage_reporter raw_process_collection utilities)
 endif ()
