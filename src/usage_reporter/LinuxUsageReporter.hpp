@@ -6,7 +6,7 @@
 
 #include <unistd.h>
 
-#include "FormattedProcessCollection.hpp"
+#include "../formatted_process_collection/FormattedProcessCollection.hpp"
 #include "UsageReporter.hpp"
 
 class LinuxUsageReporter : public UsageReporter
