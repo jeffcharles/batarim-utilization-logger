@@ -7,7 +7,6 @@
 #include <Pdh.h>
 #include <Windows.h>
 
-#include "RawProcessCollection.hpp"
 #include "IUsageResultGetter.hpp"
 
 #include "UsageReporter.hpp"

@@ -5,9 +5,9 @@
 #include <memory>
 
 #include "../utilities/utilities.hpp"
+#include "../raw_process_collection/RawProcessCollectionFactory.hpp"
+#include "../raw_process_collection/RawProcessCollection.hpp"
 #include "ProcessUsageInfo.hpp"
-#include "RawProcessCollection.hpp"
-#include "RawProcessCollectionFactory.hpp"
 
 class FormattedProcessCollection
 {
