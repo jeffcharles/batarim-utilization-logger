@@ -14,9 +14,21 @@ class AggregatedProcessCollection
         // NOTE: call after calling update on FormattedProcessCollection
         void update(const FormattedProcessCollection& processes);
 
-        const ProcessUsageInfo& get_aggregate_with_highest_cpu_usage() const;
+        const ProcessUsageInfo& get_aggregate_with_highest_cpu_usage() const
+        {
+            return batarim::get_max_usage_in_map(
+                aggregated_processes_,
+                [](const ProcessUsageInfo& info) { return info.cpu_usage; }
+            );
+        }
 
-        const ProcessUsageInfo& get_aggregate_with_highest_ram_usage() const;
+        const ProcessUsageInfo& get_aggregate_with_highest_ram_usage() const
+        {
+            return batarim::get_max_usage_in_map(
+                aggregated_processes_,
+                [](const ProcessUsageInfo& info) { return info.ram_usage; }
+            );
+        }
 
     private:
         

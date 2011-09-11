@@ -3,14 +3,14 @@ if (WIN32)
         ProcessUsageInfo.hpp FormattedProcessCollection.hpp
         WindowsFormattedProcessCollection.hpp
         FormattedProcessCollectionFactory.hpp
-        FormattedProcessCollection.cpp FormattedProcessCollectionFactory.cpp
+        FormattedProcessCollectionFactory.cpp
     )
 elseif (LINUX)
     add_library (formatted_process_collection STATIC
         ProcessUsageInfo.hpp FormattedProcessCollection.hpp
         LinuxFormattedProcessCollection.hpp
         FormattedProcessCollectionFactory.hpp
-        FormattedProcessCollection.cpp LinuxFormattedProcessCollection.cpp
+        LinuxFormattedProcessCollection.cpp
         FormattedProcessCollectionFactory.cpp
     )
 endif ()
