@@ -8,6 +8,7 @@
 #include "IUsageResultGetter.hpp"
 #include "../formatted_process_collection/FormattedProcessCollection.hpp"
 #include "../formatted_process_collection/FormattedProcessCollectionFactory.hpp"
+#include "../aggregated_process_collection/AggregatedProcessCollection.hpp"
 #include "../utilities/utilities.hpp"
 
 #ifdef WIN32
@@ -35,6 +36,7 @@ class UsageReporter : public IUsageResultGetter
             processor_usages_ = pu;
 
             processes_ = get_formatted_process_collection();
+            aggregated_processes_ = AggregatedProcessCollection();
         }
 
         // Analyzes CPU and RAM usages
@@ -52,6 +54,20 @@ class UsageReporter : public IUsageResultGetter
         get_procinfo_for_highest_ram_usage() const
         {
             return processes_->get_process_with_highest_ram_usage();
+        }
+
+        virtual const ProcessUsageInfo&
+        get_procinfo_for_highest_aggregate_cpu_usage() const
+        {
+            return
+                aggregated_processes_.get_aggregate_with_highest_cpu_usage();
+        }
+
+        virtual const ProcessUsageInfo&
+        get_procinfo_for_highest_aggregate_ram_usage() const
+        {
+            return
+                aggregated_processes_.get_aggregate_with_highest_ram_usage();
         }
 
         virtual std::shared_ptr<std::vector<std::pair<std::string, int>>>
@@ -73,6 +89,7 @@ class UsageReporter : public IUsageResultGetter
         processor_usages_;
         
         std::shared_ptr<FormattedProcessCollection> processes_;
+        AggregatedProcessCollection aggregated_processes_;
 
         virtual bool initial_cpu_sweep_(BATARIM_CPU_INFO_DATA_STRUCTURE&) = 0;
         

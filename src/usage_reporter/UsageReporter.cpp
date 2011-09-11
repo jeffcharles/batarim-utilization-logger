@@ -25,6 +25,7 @@ bool UsageReporter::analyze(string& error_message)
     cleanup_processors_data_(cpu_info);
     
     processes_->update();
+    aggregated_processes_.update(*processes_);
 
     return true;
 }

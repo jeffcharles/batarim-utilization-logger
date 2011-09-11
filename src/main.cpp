@@ -44,6 +44,11 @@ int main()
         usage_reporter->get_procinfo_for_highest_cpu_usage();
     ProcessUsageInfo highest_ram_proc =
         usage_reporter->get_procinfo_for_highest_ram_usage();
+
+    ProcessUsageInfo highest_cpu_aggregate =
+        usage_reporter->get_procinfo_for_highest_aggregate_cpu_usage();
+    ProcessUsageInfo highest_ram_aggregate =
+        usage_reporter->get_procinfo_for_highest_aggregate_ram_usage();
     
     typedef vector<pair<string, int> >::const_iterator ConstIterator;
     for(ConstIterator iter = cpu_usage_percentages->begin();
@@ -71,4 +76,16 @@ int main()
         << highest_ram_proc.cpu_usage << "%" << endl;
     cout << "Highest RAM usage process RAM usage: "
         << highest_ram_proc.ram_usage << "%" << endl;
+    cout << "Highest aggregate CPU usage process name: "
+        << highest_cpu_aggregate.process_name << endl;
+    cout << "Highest aggregate CPU usage process CPU usage: "
+        << highest_cpu_aggregate.cpu_usage << "%" << endl;
+    cout << "Highest aggregate CPU usage process RAM usage: "
+        << highest_cpu_aggregate.ram_usage << "%" << endl;
+    cout << "Highest aggregate RAM usage process name: "
+        << highest_ram_aggregate.process_name << endl;
+    cout << "Highest aggregate RAM usage process CPU usage: "
+        << highest_ram_aggregate.cpu_usage << "%" << endl;
+    cout << "Highest aggregate RAM usage process RAM usage: "
+        << highest_ram_aggregate.ram_usage << "%" << endl;
 }

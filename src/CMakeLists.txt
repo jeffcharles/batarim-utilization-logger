@@ -1,6 +1,7 @@
 add_subdirectory (utilities)
 add_subdirectory (raw_process_collection)
 add_subdirectory (formatted_process_collection)
+add_subdirectory (aggregated_process_collection)
 add_subdirectory (usage_reporter)
 add_subdirectory(ram_usage)
 add_subdirectory(active_window)

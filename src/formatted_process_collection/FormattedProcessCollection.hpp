@@ -18,6 +18,12 @@ class FormattedProcessCollection
             raw_process_info_ = get_raw_process_collection();
         }
 
+        typedef std::map<unsigned int, ProcessUsageInfo>::const_iterator
+            const_iterator;
+
+        const_iterator begin() const { return usage_info_.begin(); }
+        const_iterator end() const { return usage_info_.end(); }
+
         // NOTE: must call first init followed by update after a one
         // second delay
         void init()

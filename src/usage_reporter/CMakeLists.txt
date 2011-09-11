@@ -4,8 +4,8 @@ if (WIN32)
         UsageReporterFactory.hpp 
         UsageReporterFactory.cpp UsageReporter.cpp WindowsUsageReporter.cpp
     )
-    target_link_libraries (
-        usage_reporter pdh formatted_process_collection utilities
+    target_link_libraries (usage_reporter
+        pdh formatted_process_collection aggregated_process_collection utilities
     )
 elseif (LINUX)
     add_library (usage_reporter STATIC
@@ -13,7 +13,7 @@ elseif (LINUX)
         UsageReporterFactory.hpp
         UsageReporterFactory.cpp UsageReporter.cpp LinuxUsageReporter.cpp
     )
-    target_link_libraries (
-        usage_reporter formatted_process_collection utilities
+    target_link_libraries (usage_reporter 
+        formatted_process_collection aggregated_process_collection utilities
     )
 endif ()
