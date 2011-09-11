@@ -6,8 +6,8 @@
 #include <vector>
 
 #include "IUsageResultGetter.hpp"
-#include "FormattedProcessCollection.hpp"
-#include "FormattedProcessCollectionFactory.hpp"
+#include "../formatted_process_collection/FormattedProcessCollection.hpp"
+#include "../formatted_process_collection/FormattedProcessCollectionFactory.hpp"
 #include "../utilities/utilities.hpp"
 
 #ifdef WIN32

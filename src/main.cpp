@@ -5,7 +5,7 @@
 
 #include "usage_reporter/UsageReporterFactory.hpp"
 #include "usage_reporter/UsageReporter.hpp"
-#include "usage_reporter/ProcessUsageInfo.hpp"
+#include "formatted_process_collection/ProcessUsageInfo.hpp"
 #include "ram_usage/ram_usage.hpp"
 #include "active_window/active_window_module.hpp"
 #include "active_window/IActiveWindow.hpp"

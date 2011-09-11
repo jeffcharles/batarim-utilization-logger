@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 
-#include "ProcessUsageInfo.hpp"
+#include "../formatted_process_collection/ProcessUsageInfo.hpp"
 
 class IUsageResultGetter
 {

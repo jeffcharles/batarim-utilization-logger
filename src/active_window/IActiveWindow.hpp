@@ -4,7 +4,7 @@
 #include <string>
 
 #include "../usage_reporter/IUsageResultGetter.hpp"
-#include "../usage_reporter/ProcessUsageInfo.hpp"
+#include "../formatted_process_collection/ProcessUsageInfo.hpp"
 
 class IActiveWindow
 {
