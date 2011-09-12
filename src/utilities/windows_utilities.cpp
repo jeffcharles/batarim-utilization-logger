@@ -86,8 +86,13 @@ namespace batarim {
 
         CloseHandle(process_handle);
 
-        string process_path = convert_wstring_to_string(name);
-        string process_name = get_filename_from_path(process_path);
+        string process_name;
+        if(query_success) {
+            string process_path = convert_wstring_to_string(name);
+            process_name = get_filename_from_path(process_path);
+        } else {
+            process_name = "";
+        }
 
         return process_name;
     }
