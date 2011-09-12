@@ -44,8 +44,7 @@ class FormattedProcessCollection
                 iter != raw_process_info_->end(); ++iter) {
 
                 ProcessUsageInfo proc_info;
-                proc_info.process_name = 
-                    batarim::get_process_name(iter->first);
+                proc_info.process_name = iter->second.name;
                 unsigned long long elapsed_time =
                     iter->second.after_time - iter->second.before_time;
                 proc_info.cpu_usage = calculate_cpu_usage_(elapsed_time);

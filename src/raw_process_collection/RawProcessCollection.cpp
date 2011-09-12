@@ -2,6 +2,8 @@
 #include <memory>
 #include <vector>
 
+#include "../utilities/utilities.hpp"
+
 #include "RawProcessCollection.hpp"
 
 using std::map;
@@ -15,6 +17,7 @@ void RawProcessCollection::update()
     for(vector<unsigned int>::const_iterator pid = pids->begin();
         pid != pids->end(); ++pid) {
 
+        processes_[*pid].name = batarim::get_process_name(*pid);
         processes_[*pid].after_time = get_process_time_(*pid);
         processes_[*pid].ram_usage = get_process_ram_usage_(*pid);
     }

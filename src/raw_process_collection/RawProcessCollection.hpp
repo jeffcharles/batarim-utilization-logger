@@ -3,10 +3,12 @@
 
 #include <map>
 #include <memory>
+#include <string>
 #include <vector>
 
 struct ProcessInformation
 {
+    std::string name;
     unsigned long long before_time;
     unsigned long long after_time;
     unsigned long long ram_usage;
