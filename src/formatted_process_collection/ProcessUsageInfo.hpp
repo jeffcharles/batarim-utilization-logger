@@ -21,7 +21,7 @@ namespace batarim {
     ) {
         std::pair<Key, int> highest_usage;
 
-        typedef class std::map<Key, ProcessUsageInfo>::const_iterator Iter;
+        typedef typename std::map<Key, ProcessUsageInfo>::const_iterator Iter;
 
         // Initialize highest_usage to first active process
         // NOTE: There will always be at least one active process running
