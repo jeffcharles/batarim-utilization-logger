@@ -9,6 +9,8 @@
 #include "../formatted_process_collection/FormattedProcessCollection.hpp"
 #include "../formatted_process_collection/FormattedProcessCollectionFactory.hpp"
 #include "../aggregated_process_collection/AggregatedProcessCollection.hpp"
+#include "../process_tree/ProcessTree.hpp"
+#include "../process_tree/process_tree_module.hpp"
 #include "../utilities/utilities.hpp"
 
 #ifdef WIN32
@@ -37,6 +39,7 @@ class UsageReporter : public IUsageResultGetter
 
             processes_ = get_formatted_process_collection();
             aggregated_processes_ = AggregatedProcessCollection();
+            process_tree_ = get_process_tree();
         }
 
         // Analyzes CPU and RAM usages
@@ -70,6 +73,18 @@ class UsageReporter : public IUsageResultGetter
                 aggregated_processes_.get_aggregate_with_highest_ram_usage();
         }
 
+        virtual const ProcessUsageInfo&
+        get_procinfo_for_highest_toplevel_cpu_usage() const
+        {
+            return process_tree_->get_highest_cpu_using_process_set();
+        }
+
+        virtual const ProcessUsageInfo&
+        get_procinfo_for_highest_toplevel_ram_usage() const
+        {
+            return process_tree_->get_highest_ram_using_process_set();
+        }
+
         virtual std::shared_ptr<std::vector<std::pair<std::string, int>>>
         get_processor_usages()
         {
@@ -90,6 +105,7 @@ class UsageReporter : public IUsageResultGetter
         
         std::shared_ptr<FormattedProcessCollection> processes_;
         AggregatedProcessCollection aggregated_processes_;
+        std::shared_ptr<ProcessTree> process_tree_;
 
         virtual bool initial_cpu_sweep_(BATARIM_CPU_INFO_DATA_STRUCTURE&) = 0;
         

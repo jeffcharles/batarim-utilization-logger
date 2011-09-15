@@ -6,12 +6,17 @@
 #include <string>
 #include <vector>
 
-struct ProcessInformation
+class ProcessInformation
 {
-    std::string name;
-    unsigned long long before_time;
-    unsigned long long after_time;
-    unsigned long long ram_usage;
+    public:
+        std::string name;
+        unsigned long long before_time;
+        unsigned long long after_time;
+        unsigned long long ram_usage;
+        unsigned int ppid;
+    private:
+        friend class RawProcessCollection;
+        unsigned int last_update_run_;
 };
 
 class RawProcessCollection
@@ -33,11 +38,36 @@ class RawProcessCollection
 
                 processes_[*pid].before_time = get_process_time_(*pid);
             }
+            current_update_run_ = 1;
         }
 
         void update();
 
+        bool contains_pid(unsigned int pid) const
+        {
+            return processes_.find(pid) != processes_.end();
+        }
+
+        unsigned int get_ppid(unsigned int pid) const
+        {
+            return processes_.at(pid).ppid;
+        }
+
     protected:
+
+        std::map<unsigned int, ProcessInformation> processes_;
+
+        // Used to determine which update RawProcessCollection is on.
+        // Signals expired processes to be removed from processes.
+        // Incremented on each run of update
+        unsigned int current_update_run_;
+
+        unsigned int set_last_update_run_(
+            ProcessInformation* info,
+            unsigned int last_update_run
+        ) {
+            return info->last_update_run_ = last_update_run;
+        }
 
         virtual std::shared_ptr<std::vector<unsigned int>>
         get_pids_() const = 0;
@@ -48,10 +78,8 @@ class RawProcessCollection
         virtual unsigned long long get_process_ram_usage_(unsigned int pid)
         const = 0;
 
-    private:
-        
-        std::map<unsigned int, ProcessInformation> processes_;
-        
+        // Populates entries for name, after_time, ram_usage, and ppid
+        virtual void platform_specific_update_() = 0;
 };
 
 #endif

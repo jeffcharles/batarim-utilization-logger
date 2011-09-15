@@ -22,6 +22,12 @@ class IUsageResultGetter
         virtual const ProcessUsageInfo&
         get_procinfo_for_highest_aggregate_ram_usage() const = 0;
 
+        virtual const ProcessUsageInfo&
+        get_procinfo_for_highest_toplevel_cpu_usage() const = 0;
+
+        virtual const ProcessUsageInfo&
+        get_procinfo_for_highest_toplevel_ram_usage() const = 0;
+
         virtual std::shared_ptr<std::vector<std::pair<std::string, int>>>
         get_processor_usages() = 0;
 

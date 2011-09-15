@@ -54,6 +54,16 @@ class FormattedProcessCollection
             }
         }
 
+        bool contains_pid(unsigned int pid) const
+        {
+            return raw_process_info_->contains_pid(pid);
+        }
+
+        unsigned int get_ppid(unsigned int pid) const
+        {
+            return raw_process_info_->get_ppid(pid);
+        }
+
         const ProcessUsageInfo& get_process(unsigned int pid) const
         {
             return usage_info_.at(pid);

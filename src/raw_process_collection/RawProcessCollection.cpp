@@ -13,14 +13,7 @@ using std::vector;
 
 void RawProcessCollection::update()
 {
-    shared_ptr<vector<unsigned int>> pids = get_pids_();
-    for(vector<unsigned int>::const_iterator pid = pids->begin();
-        pid != pids->end(); ++pid) {
-
-        processes_[*pid].name = batarim::get_process_name(*pid);
-        processes_[*pid].after_time = get_process_time_(*pid);
-        processes_[*pid].ram_usage = get_process_ram_usage_(*pid);
-    }
+    platform_specific_update_();
 
     // remove pids that are no longer active
     // cannot delete pid entries while iterating through the map they are
@@ -28,7 +21,8 @@ void RawProcessCollection::update()
     typedef map<unsigned int, ProcessInformation>::iterator Iter;
     vector<unsigned int> pids_to_remove;
     for(Iter pid = processes_.begin(); pid != processes_.end(); ++pid) {
-        bool is_process_valid = pid->second.after_time > 0;
+        bool is_process_valid =
+            pid->second.last_update_run_ == current_update_run_;
         if(!is_process_valid) {
             pids_to_remove.push_back(pid->first);
         }
@@ -38,4 +32,5 @@ void RawProcessCollection::update()
 
         processes_.erase(*pid);
     }
+    ++current_update_run_;
 }

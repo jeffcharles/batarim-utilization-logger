@@ -49,7 +49,14 @@ int main()
         usage_reporter->get_procinfo_for_highest_aggregate_cpu_usage();
     ProcessUsageInfo highest_ram_aggregate =
         usage_reporter->get_procinfo_for_highest_aggregate_ram_usage();
+
+    ProcessUsageInfo highest_cpu_toplevel =
+        usage_reporter->get_procinfo_for_highest_toplevel_cpu_usage();
+    ProcessUsageInfo highest_ram_toplevel =
+        usage_reporter->get_procinfo_for_highest_aggregate_ram_usage();
     
+    cout << endl;
+
     typedef vector<pair<string, int> >::const_iterator ConstIterator;
     for(ConstIterator iter = cpu_usage_percentages->begin();
         iter != cpu_usage_percentages->end(); iter++) {
@@ -57,35 +64,71 @@ int main()
         cout << "CPU " << iter->first << " usage: " << iter->second << "%" 
             << endl;
     }
+
+    cout << endl;
+
     cout << "Current RAM usage: " << ram_usage << "%" << endl;
+
+    cout << endl;
+
     cout << "Active window: " << active_window_name << endl;
     cout << "Active window process: " << active_window_process_name << endl;
     cout << "Active window CPU usage: " << active_window_usage.cpu_usage << "%"
         << endl;
     cout << "Active window RAM usage: " << active_window_usage.ram_usage << "%"
         << endl;
+    
+    cout << endl;
+    
     cout << "Highest CPU usage process name: " 
         << highest_cpu_proc.process_name << endl;
     cout << "Highest CPU usage process CPU usage: "
         << highest_cpu_proc.cpu_usage << "%" << endl;
     cout << "Highest CPU usage process RAM usage: "
         << highest_cpu_proc.ram_usage << "%" << endl;
+
+    cout << endl;
+
     cout << "Highest RAM usage process name: "
         << highest_ram_proc.process_name << endl;
     cout << "Highest RAM usage process CPU usage: "
         << highest_ram_proc.cpu_usage << "%" << endl;
     cout << "Highest RAM usage process RAM usage: "
         << highest_ram_proc.ram_usage << "%" << endl;
+
+    cout << endl;
+
     cout << "Highest aggregate CPU usage process name: "
         << highest_cpu_aggregate.process_name << endl;
     cout << "Highest aggregate CPU usage process CPU usage: "
         << highest_cpu_aggregate.cpu_usage << "%" << endl;
     cout << "Highest aggregate CPU usage process RAM usage: "
         << highest_cpu_aggregate.ram_usage << "%" << endl;
+
+    cout << endl;
+
     cout << "Highest aggregate RAM usage process name: "
         << highest_ram_aggregate.process_name << endl;
     cout << "Highest aggregate RAM usage process CPU usage: "
         << highest_ram_aggregate.cpu_usage << "%" << endl;
     cout << "Highest aggregate RAM usage process RAM usage: "
         << highest_ram_aggregate.ram_usage << "%" << endl;
+
+    cout << endl;
+
+    cout << "Highest top-level CPU usage process name: "
+        << highest_cpu_toplevel.process_name << endl;
+    cout << "Highest top-level CPU usage: "
+        << highest_cpu_toplevel.cpu_usage << "%" << endl;
+    cout << "Highest top-level CPU usage RAM usage: "
+        << highest_cpu_toplevel.ram_usage << "%" << endl;
+
+    cout << endl;
+
+    cout << "Highest top-level RAM usage process name: "
+        << highest_ram_toplevel.process_name << endl;
+    cout << "Highest top-level RAM usage process CPU usage: "
+        << highest_ram_toplevel.cpu_usage << "%" << endl;
+    cout << "Highest top-level RAM usage: "
+        << highest_ram_toplevel.ram_usage << "%" << endl;
 }

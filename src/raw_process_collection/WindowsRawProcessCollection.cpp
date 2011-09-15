@@ -3,11 +3,16 @@
 
 #include <Windows.h>
 #include <Psapi.h>
+#include <TlHelp32.h>
+
+#include "../utilities/utilities.hpp"
 
 #include "WindowsRawProcessCollection.hpp"
 
 using std::shared_ptr;
+using std::string;
 using std::vector;
+using std::wstring;
 
 std::shared_ptr<std::vector<unsigned int>>
 WindowsRawProcessCollection::get_pids_() const
@@ -83,4 +88,41 @@ WindowsRawProcessCollection::get_process_ram_usage_(unsigned int pid) const
         return memory_counters.WorkingSetSize;
     }
     return 0;
+}
+
+void WindowsRawProcessCollection::platform_specific_update_()
+{
+    // Only way to get PPID in Windows is to use CreateToolhelp32Snapshot
+    // and enumerate through each process
+    HANDLE snapshot = CreateToolhelp32Snapshot(
+        TH32CS_SNAPPROCESS,
+        0
+    );
+    if(snapshot == INVALID_HANDLE_VALUE) {
+        return;
+    }
+    
+    PROCESSENTRY32 process;
+    process.dwSize = sizeof(process);
+    if(!Process32First(snapshot, &process)) {
+        CloseHandle(snapshot);
+        return;
+    }
+
+    do {
+        unsigned int pid = process.th32ProcessID;
+
+        ProcessInformation& info = processes_[pid];
+        shared_ptr<string> process_name =
+            get_process_exe_name_(process.szExeFile);
+        info.name = *process_name;
+        info.after_time = get_process_time_(pid);
+        info.ram_usage = get_process_ram_usage_(pid);
+
+        info.ppid = process.th32ParentProcessID;
+
+        set_last_update_run_(&info, current_update_run_);
+    } while(Process32Next(snapshot, &process));
+
+    CloseHandle(snapshot);
 }

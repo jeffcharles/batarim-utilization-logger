@@ -26,6 +26,7 @@ bool UsageReporter::analyze(string& error_message)
     
     processes_->update();
     aggregated_processes_.update(*processes_);
+    process_tree_->update(*processes_);
 
     return true;
 }
