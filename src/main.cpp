@@ -9,6 +9,7 @@
 #include "ram_usage/ram_usage.hpp"
 #include "active_window/active_window_module.hpp"
 #include "active_window/IActiveWindow.hpp"
+#include "uptime/uptime.hpp"
 
 using std::cerr;
 using std::clog;
@@ -54,6 +55,8 @@ int main()
         usage_reporter->get_procinfo_for_highest_toplevel_cpu_usage();
     ProcessUsageInfo highest_ram_toplevel =
         usage_reporter->get_procinfo_for_highest_aggregate_ram_usage();
+
+    unsigned int uptime = get_uptime();
     
     cout << endl;
 
@@ -131,4 +134,8 @@ int main()
         << highest_ram_toplevel.cpu_usage << "%" << endl;
     cout << "Highest top-level RAM usage: "
         << highest_ram_toplevel.ram_usage << "%" << endl;
+
+    cout << endl;
+
+    cout << "Uptime (in seconds): " << uptime << endl;
 }
