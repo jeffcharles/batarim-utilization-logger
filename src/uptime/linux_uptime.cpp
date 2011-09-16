@@ -4,7 +4,7 @@
 
 using std::ifstream;
 
-unsigned long get_uptime()
+unsigned int get_uptime()
 {
     ifstream uptime_file;
     uptime_file.open("/proc/uptime");
