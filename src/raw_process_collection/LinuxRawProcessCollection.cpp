@@ -7,6 +7,8 @@
 #include <dirent.h>
 #include <sys/types.h>
 
+#include "../utilities/utilities.hpp"
+
 #include "LinuxRawProcessCollection.hpp"
 
 using std::ifstream;
@@ -87,4 +89,45 @@ LinuxRawProcessCollection::get_process_ram_usage_(unsigned int pid) const
     
     mem_status.close();
     return ram_usage;
+}
+
+void LinuxRawProcessCollection::platform_specific_update_()
+{
+    shared_ptr<vector<unsigned int>> pids = get_pids_();
+    for(vector<unsigned int>::const_iterator iter = pids->begin();
+        iter != pids->end(); ++iter) {
+
+        ProcessInformation& info = processes_[*iter];
+        info.name = batarim::get_process_name(*iter);
+        info.after_time = get_process_time_(*iter);
+        info.ram_usage = get_process_ram_usage_(*iter);
+        info.ppid = get_process_ppid_(*iter);
+        
+        set_last_update_run_(&info, current_update_run_);
+    }
+}
+
+unsigned int
+LinuxRawProcessCollection::get_process_ppid_(unsigned int pid) const
+{
+    stringstream filepath;
+    filepath << "/proc/" << pid << "/stat";
+    
+    ifstream stat_file;
+    stat_file.open(filepath.str());
+
+    string field;
+    while(stat_file && field != "PPid:") {
+        stat_file >> field;
+    }
+    
+    unsigned int ppid;
+    if(stat_file) {
+        stat_file >> ppid;
+    } else {
+        ppid = 0;
+    }
+
+    stat_file.close();
+    return ppid;
 }

@@ -16,6 +16,12 @@ class LinuxRawProcessCollection : public RawProcessCollection
 
         virtual unsigned long long
         get_process_ram_usage_(unsigned int pid) const;
+
+        virtual void platform_specific_update_();
+
+    private:
+
+        unsigned int get_process_ppid_(unsigned int pid) const;
 };
 
 #endif

@@ -5,7 +5,8 @@ if (WIN32)
     )
 elseif (LINUX)
     add_library (process_tree STATIC
-        ProcessTree.hpp process_tree_module.hpp ProcessTree.cpp
+        ProcessTree.hpp LinuxProcessTree.hpp process_tree_module.hpp
+        ProcessTree.cpp linux_process_tree_module.cpp
     )
 endif ()
 
