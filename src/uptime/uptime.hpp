@@ -1,6 +1,7 @@
 #ifndef GUARD_uptime_h
 #define GUARD_uptime_h
 
-unsigned long get_uptime();
+// Returns system uptime in seconds
+unsigned int get_uptime();
 
 #endif

@@ -1,3 +1,5 @@
 if (LINUX)
     add_library (uptime STATIC uptime.hpp linux_uptime.cpp)
+elseif (WIN32)
+    add_library (uptime STATIC uptime.hpp windows_uptime.cpp)
 endif ()
