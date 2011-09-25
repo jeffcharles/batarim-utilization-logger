@@ -68,6 +68,10 @@ int main()
 
     cout << endl;
 
+    cout << "Uptime (in seconds): " << uptime << endl;
+
+    cout << endl;
+
     typedef vector<pair<string, int> >::const_iterator ConstIterator;
     for(ConstIterator iter = cpu_usage_percentages->begin();
         iter != cpu_usage_percentages->end(); iter++) {
@@ -144,6 +148,4 @@ int main()
         << highest_ram_toplevel.ram_usage << "%" << endl;
 
     cout << endl;
-
-    cout << "Uptime (in seconds): " << uptime << endl;
 }
