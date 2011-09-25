@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 
+#include "timestamp/timestamp.hpp"
 #include "usage_reporter/UsageReporterFactory.hpp"
 #include "usage_reporter/UsageReporter.hpp"
 #include "formatted_process_collection/ProcessUsageInfo.hpp"
@@ -33,6 +34,8 @@ int main()
     shared_ptr<vector<pair<string, int>>> cpu_usage_percentages =
         usage_reporter->get_processor_usages();
 
+    shared_ptr<TimeInfo> time_info = get_time_info();
+
     int ram_usage = get_ram_usage();
 
     shared_ptr<IActiveWindow> active_window = get_active_window();
@@ -58,6 +61,11 @@ int main()
 
     unsigned int uptime = get_uptime();
     
+    cout << endl;
+
+    cout << "Date and time: " << time_info->datetime_str << endl;
+    cout << "Unix timestamp: " << time_info->timestamp << endl;
+
     cout << endl;
 
     typedef vector<pair<string, int> >::const_iterator ConstIterator;

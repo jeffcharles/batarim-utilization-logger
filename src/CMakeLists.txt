@@ -6,10 +6,12 @@ add_subdirectory (process_tree)
 add_subdirectory (usage_reporter)
 add_subdirectory(ram_usage)
 add_subdirectory(active_window)
+add_subdirectory (timestamp)
 add_subdirectory (uptime)
 
 # Main executable
 add_executable (main main.cpp)
 target_link_libraries (main
-    usage_reporter formatted_process_collection ram_usage active_window uptime
+    usage_reporter formatted_process_collection ram_usage active_window
+    timestamp uptime
 )
