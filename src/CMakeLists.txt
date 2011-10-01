@@ -1,17 +1,18 @@
+# data sources
 add_subdirectory (utilities)
 add_subdirectory (raw_process_collection)
 add_subdirectory (formatted_process_collection)
 add_subdirectory (aggregated_process_collection)
 add_subdirectory (process_tree)
 add_subdirectory (usage_reporter)
-add_subdirectory(ram_usage)
-add_subdirectory(active_window)
+add_subdirectory (ram_usage)
+add_subdirectory (active_window)
 add_subdirectory (timestamp)
 add_subdirectory (uptime)
 
-# Main executable
-add_executable (main main.cpp)
-target_link_libraries (main
-    usage_reporter formatted_process_collection ram_usage active_window
-    timestamp uptime
-)
+# view model
+add_subdirectory (viewmodel)
+
+# views
+add_subdirectory (console)
+add_subdirectory (logger)
