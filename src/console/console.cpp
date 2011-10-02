@@ -17,12 +17,13 @@ int main()
     shared_ptr<IDisplayer> displayer(new ConsoleDisplayer());
     shared_ptr<vector<shared_ptr<ViewModelElement>>> viewmodel =
         get_view_model(displayer);
-    
+
+    cout << endl;
+
     typedef vector<shared_ptr<ViewModelElement>>::const_iterator ConstIter;
     for(ConstIter iter = viewmodel->begin();
         iter != viewmodel->end(); ++iter) {
         
-        cout << endl;
         (*iter)->display();
         cout << endl;
     }
