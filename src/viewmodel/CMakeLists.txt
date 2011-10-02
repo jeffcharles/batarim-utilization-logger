@@ -1,5 +1,7 @@
-add_library (viewmodel SHARED viewmodel.hpp IDisplayer.hpp viewmodel.cpp)
-target_link_libraries (viewmodel
+add_library (batarim SHARED viewmodel.hpp IDisplayer.hpp viewmodel.cpp)
+target_link_libraries (batarim
     usage_reporter formatted_process_collection ram_usage active_window
     timestamp uptime
 )
+install (TARGETS batarim
+    LIBRARY DESTINATION lib)
