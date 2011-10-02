@@ -35,7 +35,7 @@ namespace {
     ) {
         shared_ptr<ViewModelElement> process_name(
             new ViewModelExternalNode<string>(
-                "process name",
+                "Process name",
                 info.process_name,
                 displayer
             )
@@ -43,7 +43,7 @@ namespace {
         
         shared_ptr<ViewModelElement> cpu_usage(
             new ViewModelExternalNode<int>(
-                "cpu usage",
+                "CPU usage",
                 info.cpu_usage,
                 displayer
             )
@@ -51,7 +51,7 @@ namespace {
 
         shared_ptr<ViewModelElement> ram_usage(
             new ViewModelExternalNode<int>(
-                "ram usage",
+                "RAM usage",
                 info.ram_usage,
                 displayer
             )
@@ -170,14 +170,14 @@ shared_ptr<vector<shared_ptr<ViewModelElement>>> get_view_model(
         active_window->get_usage(*usage_reporter);
     shared_ptr<ViewModelElement> active_window_name_node(
         new ViewModelExternalNode<string>(
-            "name",
+            "Name",
             active_window_name,
             displayer
         )
     );
     shared_ptr<ViewModelElement> active_window_process_name_node(
         new ViewModelExternalNode<string>(
-            "process name",
+            "Process name",
             active_window_process_name,
             displayer
         )
