@@ -35,11 +35,15 @@ int main()
     std::shared_ptr<IDisplayer> data_displayer(
         new LoggerDataDisplayer()
     );
-    shared_ptr<vector<shared_ptr<ViewModelElement>>> viewmodel2 =
-        get_view_model(data_displayer);
-    
-    for(ConstIter iter = viewmodel2->begin();
-        iter != viewmodel2->end(); ++iter) {
+
+    for(ConstIter iter = viewmodel->begin();
+        iter != viewmodel->end(); ++iter) {
+
+        (*iter)->set_displayer(data_displayer);
+    }
+
+    for(ConstIter iter = viewmodel->begin();
+        iter != viewmodel->end(); ++iter) {
 
         (*iter)->display();
     }

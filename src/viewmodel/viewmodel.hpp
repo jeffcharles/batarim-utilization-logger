@@ -13,6 +13,10 @@ class ViewModelElement
     public:
         std::string name;
         virtual void display() = 0;
+        virtual void set_displayer(std::shared_ptr<IDisplayer> displayer)
+        {
+            displayer_ = displayer;
+        }
 
     protected:
         std::shared_ptr<IDisplayer> displayer_;
@@ -35,6 +39,20 @@ class ViewModelInternalNode : public ViewModelElement
         }
 
         virtual void display() { displayer_->display_internal(this); }
+
+        virtual void set_displayer(std::shared_ptr<IDisplayer> displayer)
+        {
+            displayer_ = displayer;
+
+            typedef
+                std::vector<std::shared_ptr<ViewModelElement>>::const_iterator
+                ConstIter;
+            for(ConstIter iter = children.begin();
+                iter != children.end(); ++iter) {
+                
+                (*iter)->set_displayer(displayer);
+            }
+        }
 };
 
 template <class T>
@@ -59,8 +77,6 @@ class ViewModelExternalNode : public ViewModelElement
         }
 
     private:
-        std::shared_ptr<IDisplayer> displayer_;
-
         std::shared_ptr<std::string> to_string_()
         {
             std::stringstream ss;
