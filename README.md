@@ -15,6 +15,21 @@ Prerequisites
 
 * CMake (version 2.8 or higher)
 
+Installing on Linux
+-------------------
+
+1. Untar the source archive, `tar -xvjf batarim.tar.gz`
+2. Enter the directory, `cd batarim`
+3. Generate a UNIX makefile, `./cmake_scripts/generate.sh`
+4. Enter the release build directory, `cd build/release`
+5. Compile and install the application, `make install`, specify a value for the
+    `DESTDIR` flag if you would like to change the installation directory
+    prefix (not recommendend)
+6. Return to the top of the archive, `cd ../..`
+7. Run `./install_scripts/setup.sh` (preferably as root). If you do not run the
+    script as root, you will need to add the `DESTDIR` path with `lib`
+    appended to your `LD_LIBRARY_PATH` environment variable.
+
 How to set up on Windows
 ------------------------
 
