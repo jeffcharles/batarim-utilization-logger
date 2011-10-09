@@ -18,8 +18,8 @@ Prerequisites
 Installing on Linux
 -------------------
 
-1. Untar the source archive, `tar -xvjf batarim.tar.gz`
-2. Enter the directory, `cd batarim`
+1. Untar the source archive, `tar -xvzf batarim.tar.gz` (or clone the repo)
+2. Enter the project directory, `cd batarim`
 3. Generate a UNIX makefile, `./cmake_scripts/generate.sh`
 4. Enter the release build directory, `cd build/release`
 5. Compile and install the application, `make install`, specify a value for the
@@ -31,7 +31,8 @@ Installing on Linux
     shared library.
 7. If there are any errors that occur after the files have been copied as part
     of `make install`, correct them and re-run `./install_scripts/setup.sh` at
-    the root of the archive (as root if you ran `make install` as root). 
+    the root of the project directory (as root if you ran `make install` as
+    root). 
 
 How to set up on Windows
 ------------------------
