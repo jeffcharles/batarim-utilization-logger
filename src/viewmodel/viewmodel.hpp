@@ -6,9 +6,10 @@
 #include <string>
 #include <vector>
 
+#include "DLLDefines.hpp"
 #include "IDisplayer.hpp"
 
-class ViewModelElement
+class VIEWMODEL_EXPORT ViewModelElement
 {
     public:
         std::string name;
@@ -86,7 +87,7 @@ class ViewModelExternalNode : public ViewModelElement
 };
 
 std::shared_ptr<std::vector<std::shared_ptr<ViewModelElement>>>
-get_view_model(
+VIEWMODEL_EXPORT get_view_model(
     std::shared_ptr<IDisplayer> displayer
 );
 

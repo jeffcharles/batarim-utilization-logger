@@ -3,9 +3,11 @@
 
 #include <memory>
 
+#include "DLLDefines.hpp"
+
 class ViewModelInternalNode;
 
-class IDisplayer
+class VIEWMODEL_EXPORT IDisplayer
 {
     public:
         virtual void display_external(
