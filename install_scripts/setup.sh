@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Get installation directory prefix (path passed as val to DESTDIR)
-destdir=${1:-"/usr/local"} # Default value of "/usr/local"
+DESTDIR=${DESTDIR:-"/usr/local"} # Default value of "/usr/local"
 
 # Refresh shared library cache (if root)
 if [[ $(whoami) = "root" ]]; then
@@ -24,6 +24,6 @@ crontab -l > "$tmpfile"
 # Delete pre-existing entry if it exists
 sed /batarim-logger/d < "$tmpfile" > "$tmpfile"
 # Add entry
-echo "*/5 * * * * ${destdir}/bin/batarim-logger < ${logfile} >> ${logfile}" >> "$tmpfile"
+echo "*/5 * * * * \"${DESTDIR}/bin/batarim-logger\" < \"${logfile}\" >> \"${logfile}\"" >> "$tmpfile"
 crontab - < "$tmpfile"
 rm "$tmpfile"

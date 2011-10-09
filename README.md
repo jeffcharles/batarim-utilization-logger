@@ -25,10 +25,13 @@ Installing on Linux
 5. Compile and install the application, `make install`, specify a value for the
     `DESTDIR` flag if you would like to change the installation directory
     prefix (not recommendend)
-6. Return to the top of the archive, `cd ../..`
-7. Run `./install_scripts/setup.sh` (preferably as root). If you do not run the
-    script as root, you will need to add the `DESTDIR` path with `lib`
-    appended to your `LD_LIBRARY_PATH` environment variable.
+6. If you did not run `make install` as root, you will need to add the
+    `DESTDIR` path with `/usr/local/lib` appended to your `LD_LIBRARY_PATH`
+    environment variable or Batarim will not be able to locate a required
+    shared library.
+7. If there are any errors that occur after the files have been copied as part
+    of `make install`, correct them and re-run `./install_scripts/setup.sh` at
+    the root of the archive (as root if you ran `make install` as root). 
 
 How to set up on Windows
 ------------------------
