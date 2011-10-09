@@ -38,6 +38,7 @@ if(CMAKE_COMPILER_IS_GNUCXX)
 endif ()
 
 add_subdirectory (src)
+add_subdirectory (manpages)
 add_subdirectory (install_scripts)
 
 # uninstall target
