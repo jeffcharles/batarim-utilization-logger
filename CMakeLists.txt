@@ -51,3 +51,13 @@ add_custom_target (uninstall
     COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake
     COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/install_scripts/teardown.sh
 )
+
+# Copy all built files into own directory on Windows
+if (WIN32)
+    add_custom_target (ORGANIZE ALL
+        COMMAND IF NOT EXIST \"${CMAKE_BINARY_DIR}\\dist\\bin\" MKDIR \"${CMAKE_BINARY_DIR}\\dist\\bin\" > nul
+        COMMAND FOR /F \"tokens=*\" %%A IN ('DIR /B /S *.dll') DO (COPY \"%%A\" \"${CMAKE_BINARY_DIR}\\dist\\bin\") > nul
+        COMMAND FOR /F \"tokens=*\" %%A IN ('DIR /B /S *.exe') DO (COPY \"%%A\" \"${CMAKE_BINARY_DIR}\\dist\\bin\") > nul
+        DEPENDS viewmodel console logger
+    )
+endif ()
