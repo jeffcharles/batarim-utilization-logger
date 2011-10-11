@@ -1,4 +1,7 @@
-add_executable (batarim-console ConsoleDisplayer.hpp console.cpp)
-target_link_libraries (batarim-console batarim)
-install (TARGETS batarim-console
+add_executable (console ConsoleDisplayer.hpp console.cpp)
+set_target_properties (console
+    PROPERTIES OUTPUT_NAME batarim-console
+)
+target_link_libraries (console viewmodel)
+install (TARGETS console
     RUNTIME DESTINATION bin)
