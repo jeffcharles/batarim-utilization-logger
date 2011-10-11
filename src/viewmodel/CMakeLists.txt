@@ -8,5 +8,10 @@ target_link_libraries (viewmodel
     usage_reporter formatted_process_collection ram_usage active_window
     timestamp uptime
 )
-install (TARGETS viewmodel
-    LIBRARY DESTINATION lib)
+if (NOT WIN32)
+    install (TARGETS viewmodel
+        LIBRARY DESTINATION lib)
+else ()
+    install (TARGETS viewmodel
+        RUNTIME DESTINATION .)
+endif ()
