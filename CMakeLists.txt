@@ -40,6 +40,7 @@ endif ()
 add_subdirectory (src)
 add_subdirectory (manpages)
 add_subdirectory (install_scripts)
+add_subdirectory (deb_pkg)
 
 # uninstall target
 configure_file (
