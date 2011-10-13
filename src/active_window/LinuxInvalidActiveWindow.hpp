@@ -15,15 +15,17 @@ class LinuxInvalidActiveWindow : public IActiveWindow
         virtual std::string get_name() { return name_; }
         virtual std::string get_process_name() { return process_name_; }
         
-        virtual int get_cpu_usage(IUsageResultGetter& usage_results)
+        virtual
+        const ProcessUsageInfo& get_usage(IUsageResultGetter& usage_results)
         {
-            return 0;
+            info_.process_name = "";
+            info_.cpu_usage = 0;
+            info_.ram_usage = 0;
+            return info_;
         }
-
-        virtual int get_ram_usage(IUsageResultGetter& usage_results)
-        {
-            return 0;
-        }
+    
+    private:
+        ProcessUsageInfo info_;
 };
 
 #endif

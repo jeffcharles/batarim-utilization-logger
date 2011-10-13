@@ -28,6 +28,9 @@ shared_ptr<IActiveWindow> get_active_window()
     shared_ptr<IActiveWindow> invalid_window(new LinuxInvalidActiveWindow());
 
     shared_ptr<Display> display(XOpenDisplay(NULL), XDeleter());
+    if(display.get() == NULL) {
+        return invalid_window;
+    }
 
     Window focused_window;
     int revert_to_return;
