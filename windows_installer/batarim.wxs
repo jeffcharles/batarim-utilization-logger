@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+
+  <?if $(var.Platform) = x64 ?>
+    <?define ProductName = "Batarim (64 bit)" ?>
+    <?define Win64 = "yes" ?>
+    <?define PlatformProgramFilesFolder = "ProgramFiles64Folder" ?>
+  <?else ?>
+    <?define ProductName = "Batarim" ?>
+    <?define Win64 = "no" ?>
+    <?define PlatformProgramFilesFolder = "ProgramFilesFolder" ?>
+  <?endif ?>
+  
+  <Product Id="CE3424E1-81F3-471e-A590-B4CD6F01A78D" Name="$(var.ProductName)"
+    Language="1033" Version="0.8.0.0" Manufacturer="Jeffrey Charles"
+    UpgradeCode="33F1121D-5A08-42a1-9901-BFA871FD4C73">
+      
+    <Package Description="Batarim Installer Package"
+      Comments="This will install Batarim on your computer"
+      Manufacturer="Jeffrey Charles" InstallerVersion="200"
+      Compressed="yes" />
+
+    <Media Id="1" Cabinet="batarim.cab" EmbedCab="yes" />
+
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="$(var.PlatformProgramFilesFolder)" Name="PFiles">
+        <Directory Id="BATARIMDIR" Name="Batarim">
+          <Component Id="Lib" Guid="B7A8ACD8-C447-42b9-A24C-99659CE250F6">
+            <File Id="BatarimDll" Name="batarim.dll" DiskId="1"
+              Source="batarim.dll" />
+          </Component>
+          <Component Id="Console" Guid="6C361CA1-2101-4395-9AAF-0E5407CE2BA4">
+            <File Id="BatarimConsole" Name="batarim-console.exe" DiskId="1"
+              Source="batarim-console.exe" />
+          </Component>
+          <Component Id="Logger" Guid="0F76C77E-2AE1-42d3-82BD-47EE16BCA785">
+            <File Id="BatarimLogger" Name="batarim-logger.exe" DiskId="1"
+              Source="batarim-logger.exe" />
+           </Component>
+           <Component Id="RegistryInstallDir"
+             Guid="6D7DDFFB-42EF-4541-A269-12022F282EAF">
+             <RegistryKey Root="HKLM" Key="SOFTWARE\Batarim"
+               Action="createAndRemoveOnUninstall">
+               <RegistryValue Type="string" Name="InstallDir"
+                 Value="[BATARIMDIR]" />
+             </RegistryKey>
+           </Component>
+        </Directory>
+      </Directory>
+    </Directory>
+      
+    <Feature Id="BatarimMain" Title="Batarim Main" Level="1">
+      <ComponentRef Id="Lib" />
+      <ComponentRef Id="Console" />
+      <ComponentRef Id="Logger" />
+      <ComponentRef Id="RegistryInstallDir" />
+    </Feature>
+
+    <WixVariable Id="WixUILicenseRtf" Value="license.rtf" />
+
+    <UIRef Id="WixUI_InstallDir" />
+    <Property Id="WIXUI_INSTALLDIR" Value="BATARIMDIR" />
+
+    <MajorUpgrade
+      Schedule="afterInstallInitialize"
+      DowngradeErrorMessage="A later version of $(var.ProductName) is already
+      installed. Setup will now exit." />
+
+  </Product>
+</Wix>
