@@ -156,7 +156,7 @@ Patch dialog sequence:
       </Publish>
 
       <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog"
-        Value="InstallDirDlg" Order="1">
+        Value="LogDirDlg" Order="1">
         NOT Installed
       </Publish>
       <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog"
