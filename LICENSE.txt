@@ -1,3 +1,9 @@
+The following license applies on all files in this project with the exception
+of windows_installer/Batarim_LogDirDlg.wxs and
+windows_installer/BatarimUI_Workflow.wxs which are licensed by Microsoft under
+the Common Public License (see
+http://wix.codeplex.com/SourceControl/changeset/view/792e101c5cf7#CPL.TXT):
+
 Copyright (c) 2011, Jeffrey Charles
 All rights reserved.
 

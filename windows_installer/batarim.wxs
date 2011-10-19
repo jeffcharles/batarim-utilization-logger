@@ -43,9 +43,14 @@
                Action="createAndRemoveOnUninstall">
                <RegistryValue Type="string" Name="InstallDir"
                  Value="[BATARIMDIR]" />
+               <RegistryValue Type="string" Name="LogDir"
+                 Value="[BATARIM_LOGDIR]" />
              </RegistryKey>
            </Component>
         </Directory>
+      </Directory>
+      <Directory Id="CommonAppDataFolder">
+        <Directory Id="BATARIM_LOGDIR" Name="Batarim" />
       </Directory>
     </Directory>
       
@@ -55,11 +60,41 @@
       <ComponentRef Id="Logger" />
       <ComponentRef Id="RegistryInstallDir" />
     </Feature>
+    
+    <CustomAction Id="SetCreateLogDir" Property="CreateLogDir"
+      Value="&quot;$(env.Comspec)&quot; /C if not exist &quot;[BATARIM_LOGDIR]&quot; mkdir &quot;[BATARIM_LOGDIR]&quot;" />
+    <CustomAction Id="CreateLogDir" BinaryKey="WixCA" DllEntry="CAQuietExec"
+      Execute="deferred" Return="check" />
+    <CustomAction Id="SetCreateLogFile" Property="CreateLogFile"
+      Value="&quot;$(env.Comspec)&quot; /C type nul >> &quot;[BATARIM_LOGDIR]batarim.csv&quot;" />
+    <CustomAction Id="CreateLogFile" BinaryKey="WixCA" DllEntry="CAQuietExec"
+      Execute="deferred" Return="check" />
+    <CustomAction Id="SetScheduleLogging" Property="ScheduleLogging"
+      Value="&quot;$(env.Comspec)&quot; /C schtasks /create /tn Batarim /tr &quot;\&quot;[BATARIMDIR]batarim-logger.exe\&quot; &lt; \&quot;[BATARIM_LOGDIR]batarim.csv\&quot; &gt;&gt; \&quot;[BATARIM_LOGDIR]batarim.csv\&quot;&quot; /sc MINUTE /mo 5" />
+    <CustomAction Id="ScheduleLogging" BinaryKey="WixCA" DllEntry="CAQuietExec"
+      Execute="deferred" Return="check" />
+    <Property Id="UnscheduleLogging"
+      Value="&quot;$(env.Comspec)&quot; /C schtasks /delete /tn Batarim /f" />
+    <CustomAction Id="UnscheduleLogging" BinaryKey="WixCA"
+      DllEntry="CAQuietExec" Execute="deferred" Return="ignore"
+      Impersonate="no" />
+
+    <InstallExecuteSequence>
+      <Custom Action="SetCreateLogDir" After="InstallInitialize" />
+      <Custom Action="SetCreateLogFile" After="InstallInitialize" />
+      <Custom Action="SetScheduleLogging" After="InstallInitialize" />
+
+      <Custom Action="UnscheduleLogging" Before="InstallFiles" />
+      <Custom Action="CreateLogDir" After="InstallFiles">NOT REMOVE</Custom>
+      <Custom Action="CreateLogFile" After="CreateLogDir">NOT REMOVE</Custom>
+      <Custom Action="ScheduleLogging" After="CreateLogFile">NOT REMOVE</Custom>
+    </InstallExecuteSequence>
 
     <WixVariable Id="WixUILicenseRtf" Value="license.rtf" />
 
-    <UIRef Id="WixUI_InstallDir" />
+    <UIRef Id="BatarimUI_Workflow" />
     <Property Id="WIXUI_INSTALLDIR" Value="BATARIMDIR" />
+    <Property Id="BATARIMUI_LOGDIR" Value="BATARIM_LOGDIR" />
 
     <MajorUpgrade
       Schedule="afterInstallInitialize"

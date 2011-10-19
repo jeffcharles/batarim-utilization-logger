@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="en-US" Codepage="1252"
+  xmlns="http://schemas.microsoft.com/wix/2006/localization">
+
+  <String Id="LogDirDlg_Title" Overridable="yes"><!-- _locID_text="LogDirDlg_Title" _locComment="LogDirDlg_Title" -->[ProductName] Setup</String>
+  <String Id="LogDirDlgChange" Overridable="yes"><!-- _locID_text="LogDirDlgChange" _locComment="LogDirDlgChange" -->&amp;Change...</String>
+  <String Id="LogDirDlgTitle" Overridable="yes"><!-- _locID_text="LogDirDlgTitle" _locComment="LogDirDlgTitle" -->{\WixUI_Font_Title}Log Folder</String>
+  <String Id="LogDirDlgDescription" Overridable="yes"><!-- _locID_text="LogDirDlgDescription" _locComment="LogDirDlgDescription" -->Click Next to batarim.csv in the default folder or click Change to choose another folder for the log file.</String>
+  <String Id="LogDirDlgBannerBitmap" Overridable="yes"><!-- _locID_text="LogDirDlgBannerBitmap" _locComment="LogDirDlgBannerBitmap" -->WixUI_Bmp_Banner</String>
+  <String Id="LogDirDlgFolderLabel" Overridable="yes"><!-- _locID_text="LogDirDlgFolderLabel" _locComment="LogDirDlgFolderLabel" -->Write batarim.csv log to:</String>
+</WixLocalization>
