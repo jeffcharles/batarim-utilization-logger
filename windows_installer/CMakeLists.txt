@@ -38,8 +38,6 @@ endforeach ()
 set (light_cmd
     "\\Windows Installer XML v3.5\\bin\\light\" -ext WixUIExtension -ext WixUtilExtension -cultures:en-us -loc Batarim_en-us.wxl -out batarim.msi ${obj_files_str}")
 
-message (STATUS "if defined PROGRAMFILES(X86) (\"%PROGRAMFILES(X86)%${light_cmd}) else (\"%PROGRAMFILES%${light_cmd})")
-
 add_custom_target (installer ALL
     
     COMMAND cmd /c "if defined PROGRAMFILES(X86) (\"%PROGRAMFILES(X86)%${light_cmd}) else (\"%PROGRAMFILES%${light_cmd})"
