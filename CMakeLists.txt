@@ -41,6 +41,9 @@ add_subdirectory (src)
 add_subdirectory (manpages)
 add_subdirectory (install_scripts)
 add_subdirectory (deb_pkg)
+if (WIN32)
+    add_subdirectory (windows_installer)
+endif ()
 
 # uninstall target
 configure_file (
@@ -53,12 +56,12 @@ add_custom_target (uninstall
     COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/install_scripts/teardown.sh
 )
 
-# Copy all built files into own directory on Windows
+# Copy all built files into installer directory on Windows
 if (WIN32)
-    add_custom_target (ORGANIZE ALL
-        COMMAND IF NOT EXIST \"${CMAKE_BINARY_DIR}\\dist\\bin\" MKDIR \"${CMAKE_BINARY_DIR}\\dist\\bin\" > nul
-        COMMAND FOR /F \"tokens=*\" %%A IN ('DIR /B /S *.dll') DO (COPY \"%%A\" \"${CMAKE_BINARY_DIR}\\dist\\bin\") > nul
-        COMMAND FOR /F \"tokens=*\" %%A IN ('DIR /B /S *.exe') DO (COPY \"%%A\" \"${CMAKE_BINARY_DIR}\\dist\\bin\") > nul
+    add_custom_target (organize ALL
+        COMMAND IF NOT EXIST \"${CMAKE_BINARY_DIR}\\windows_installer\" MKDIR \"${CMAKE_BINARY_DIR}\\windows_installer\"
+        COMMAND FOR /F \"tokens=*\" %%A IN ('DIR /B /S src/*.dll') DO (COPY \"%%A\" \"${CMAKE_BINARY_DIR}\\windows_installer\")
+        COMMAND FOR /F \"tokens=*\" %%A IN ('DIR /B /S src/*.exe') DO (COPY \"%%A\" \"${CMAKE_BINARY_DIR}\\windows_installer\")
         DEPENDS viewmodel console logger
     )
 endif ()
