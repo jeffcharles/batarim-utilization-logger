@@ -8,7 +8,7 @@ set (candle_cmd
     "\\Windows Installer XML v3.5\\bin\\candle\" -arch ${candle_arch} -dPlatform=${candle_arch} -dVersion=${VERSION} *.wxs")
 
 set (light_cmd
-    "\\Windows Installer XML v3.5\\bin\\light\" -ext WixUIExtension -ext WixUtilExtension -cultures:en-us -loc \"${CMAKE_CURRENT_SOURCE_DIR}\\Batarim_en-us.wxl\" -out batarim.msi *.wixobj")
+    "\\Windows Installer XML v3.5\\bin\\light\" -ext WixUIExtension -ext WixUtilExtension -cultures:en-us -loc \"${CMAKE_CURRENT_SOURCE_DIR}\\Batarim_en-us.wxl\" -out batarim_${VERSION}_${candle_arch}.msi *.wixobj")
 
 add_custom_target (installer ALL
     COMMAND copy \"${CMAKE_CURRENT_SOURCE_DIR}\\*.wxs\" .
