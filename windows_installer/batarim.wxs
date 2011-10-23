@@ -92,6 +92,7 @@
 
     <WixVariable Id="WixUILicenseRtf" Value="license.rtf" />
     <WixVariable Id="WixUIBannerBmp" Value="top_banner.bmp" />
+    <WixVariable Id="WixUIDialogBmp" Value="dlg_bkg.bmp" />
 
     <UIRef Id="BatarimUI_Workflow" />
     <Property Id="WIXUI_INSTALLDIR" Value="BATARIMDIR" />
