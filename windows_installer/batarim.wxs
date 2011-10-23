@@ -91,6 +91,7 @@
     </InstallExecuteSequence>
 
     <WixVariable Id="WixUILicenseRtf" Value="license.rtf" />
+    <WixVariable Id="WixUIBannerBmp" Value="top_banner.bmp" />
 
     <UIRef Id="BatarimUI_Workflow" />
     <Property Id="WIXUI_INSTALLDIR" Value="BATARIMDIR" />
