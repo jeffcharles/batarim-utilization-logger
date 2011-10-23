@@ -60,8 +60,8 @@ add_custom_target (uninstall
 if (WIN32)
     add_custom_target (organize ALL
         COMMAND IF NOT EXIST \"${CMAKE_BINARY_DIR}\\windows_installer\" MKDIR \"${CMAKE_BINARY_DIR}\\windows_installer\"
-        COMMAND FOR /F \"tokens=*\" %%A IN ('DIR /B /S src\*.dll') DO (COPY \"%%A\" \"${CMAKE_BINARY_DIR}\\windows_installer\")
-        COMMAND FOR /F \"tokens=*\" %%A IN ('DIR /B /S src\*.exe') DO (COPY \"%%A\" \"${CMAKE_BINARY_DIR}\\windows_installer\")
+        COMMAND FOR /F \"tokens=*\" %%A IN ('DIR /B /S src\\*.dll') DO (COPY \"%%A\" \"${CMAKE_BINARY_DIR}\\windows_installer\")
+        COMMAND FOR /F \"tokens=*\" %%A IN ('DIR /B /S src\\*.exe') DO (COPY \"%%A\" \"${CMAKE_BINARY_DIR}\\windows_installer\")
         DEPENDS viewmodel console logger
     )
 endif ()
