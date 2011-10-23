@@ -90,6 +90,9 @@
       <Custom Action="ScheduleLogging" After="CreateLogFile">NOT REMOVE</Custom>
     </InstallExecuteSequence>
 
+    <Icon Id="batarim.ico" SourceFile="batarim.ico" />
+    <Property Id="ARPPRODUCTICON" Value="batarim.ico" />
+
     <WixVariable Id="WixUILicenseRtf" Value="license.rtf" />
     <WixVariable Id="WixUIBannerBmp" Value="top_banner.bmp" />
     <WixVariable Id="WixUIDialogBmp" Value="dlg_bkg.bmp" />
