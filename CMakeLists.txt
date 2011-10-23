@@ -1,5 +1,6 @@
 cmake_minimum_required (VERSION 2.8)
 project (BatarimUL)
+set (VERSION 0.8.0)
 
 # LINUX is true if compiling on Linux else it is false
 # Originally this used a set command against the below but that set LINUX to a

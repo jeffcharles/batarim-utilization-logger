@@ -12,7 +12,7 @@
   <?endif ?>
   
   <Product Id="CE3424E1-81F3-471e-A590-B4CD6F01A78D" Name="$(var.ProductName)"
-    Language="1033" Version="0.8.0.0" Manufacturer="Jeffrey Charles"
+    Language="1033" Version="$(var.Version).0" Manufacturer="Jeffrey Charles"
     UpgradeCode="33F1121D-5A08-42a1-9901-BFA871FD4C73">
       
     <Package Description="Batarim Installer Package"
