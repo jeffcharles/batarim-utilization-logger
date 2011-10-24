@@ -66,6 +66,7 @@ sed -i "s/Installed-Size:/& ${install_size}/" $control
 postinst="package/DEBIAN/postinst"
 cp "${CMAKE_SOURCE_DIR}/install_scripts/setup.sh" $postinst
 sed -i "s/usr\/local/usr/" $postinst
+sed -i "/mandb/d" $postinst # package manager already runs this anyway
 cp "${CMAKE_SOURCE_DIR}/install_scripts/teardown.sh" package/DEBIAN/prerm
 
 # Build package
