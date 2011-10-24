@@ -1,4 +1,8 @@
-add_executable (console ConsoleDisplayer.hpp console.cpp)
+if (WIN32)
+    add_executable (console ConsoleDisplayer.hpp console.cpp batarim.rc)
+else ()
+    add_executable (console ConsoleDisplayer.hpp console.cpp)
+endif ()
 set_target_properties (console
     PROPERTIES OUTPUT_NAME batarim-console
 )
