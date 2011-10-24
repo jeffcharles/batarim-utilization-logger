@@ -8,8 +8,8 @@ Depends: coreutils, cron, grep, libc-bin, libc6, libstdc++6, libx11-6, libx11-xc
 Installed-Size:
 Maintainer: Jeffrey Charles <jeff@beyondtechnicallycorrect.com>
 Provides: batarim
-Description: Batarim-logger polls system usage metrics and dumps them into a
-    csv file at regularly scheduled intervals. These metrics include date and
-    time, uptime, processor usage, RAM usage, currently focused window along
-    with its process CPU and RAM usage, and the processes with the highest CPU
-    and RAM usages.
+Description: Polls system usage metrics
+    Batarim-logger polls system usage metrics and dumps them into a csv file at
+    regularly scheduled intervals. These metrics include date and time, uptime,
+    processor usage, RAM usage, currently focused window along with its process
+    CPU and RAM usage, and the processes with the highest CPU and RAM usages.
