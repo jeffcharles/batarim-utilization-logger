@@ -39,15 +39,15 @@ if(CMAKE_COMPILER_IS_GNUCXX)
 endif ()
 
 add_subdirectory (src)
-add_subdirectory (manpages)
-add_subdirectory (install_scripts)
+
+if (LINUX)
+    add_subdirectory (manpages)
+    add_subdirectory (install_scripts)
+    add_subdirectory (linux_deb_pkg)
+endif ()
 
 if (WIN32)
     add_subdirectory (windows_installer)
-endif ()
-
-if (LINUX)
-    add_subdirectory (linux_deb_pkg)
 endif ()
 
 # uninstall target
