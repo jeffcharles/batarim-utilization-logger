@@ -5,6 +5,7 @@
 
 CMAKE_SOURCE_DIR="$1"
 VERSION="$2"
+LOGFILE_POSTFIX="$3"
 
 # Populate debian-binary
 mkdir package
@@ -68,6 +69,7 @@ sed -i "s/Installed-Size:/& ${install_size}/" $control
 # Copy post-install and pre-remove scripts (amended with correct install paths)
 postinst="package/DEBIAN/postinst"
 cp "${CMAKE_SOURCE_DIR}/install_scripts/setup.sh" $postinst
+sed -i "s/\(log_postfix=\).*/\1\"${LOGFILE_POSTFIX}\"/" $postinst
 sed -i "s/usr\/local/usr/" $postinst
 sed -i "/mandb/d" $postinst # package manager already runs this anyway
 cp "${CMAKE_SOURCE_DIR}/install_scripts/teardown.sh" package/DEBIAN/prerm
