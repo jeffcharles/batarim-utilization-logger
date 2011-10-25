@@ -4,6 +4,7 @@
 # been run
 
 CMAKE_SOURCE_DIR="$1"
+VERSION="$2"
 
 # Populate debian-binary
 mkdir package
@@ -53,6 +54,8 @@ md5sum $logger_manpage | sed "s/package\///" >> $md5sums
 control="package/DEBIAN/control"
 cp control $control
 
+sed -i "s/Version:/& ${VERSION}/" $control
+
 arch=$(arch)
 if [[ $arch = "i686" ]]; then # Debian packages do not permit i686
     arch="i386"
@@ -71,7 +74,7 @@ cp "${CMAKE_SOURCE_DIR}/install_scripts/teardown.sh" package/DEBIAN/prerm
 
 # Build package
 dpkg-deb --build package
-mv package.deb "batarim_0.8.0_${arch}.deb"
+mv package.deb "batarim_${VERSION}_${arch}.deb"
 
 # Clean up directory
 rm -r package
