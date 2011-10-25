@@ -66,11 +66,11 @@
     <CustomAction Id="CreateLogDir" BinaryKey="WixCA" DllEntry="CAQuietExec"
       Execute="deferred" Return="check" />
     <CustomAction Id="SetCreateLogFile" Property="CreateLogFile"
-      Value="&quot;$(env.Comspec)&quot; /C type nul >> &quot;[BATARIM_LOGDIR]batarim.csv&quot;" />
+      Value="&quot;$(env.Comspec)&quot; /C type nul >> &quot;[BATARIM_LOGDIR]batarim_$(var.LogFilePostfix).csv&quot;" />
     <CustomAction Id="CreateLogFile" BinaryKey="WixCA" DllEntry="CAQuietExec"
       Execute="deferred" Return="check" />
     <CustomAction Id="SetScheduleLogging" Property="ScheduleLogging"
-      Value="&quot;$(env.Comspec)&quot; /C schtasks /create /tn Batarim /tr &quot;\&quot;[BATARIMDIR]batarim-logger.exe\&quot; &lt; \&quot;[BATARIM_LOGDIR]batarim.csv\&quot; &gt;&gt; \&quot;[BATARIM_LOGDIR]batarim.csv\&quot;&quot; /sc MINUTE /mo 5" />
+      Value="&quot;$(env.Comspec)&quot; /C schtasks /create /tn Batarim /tr &quot;\&quot;[BATARIMDIR]batarim-logger.exe\&quot; &lt; \&quot;[BATARIM_LOGDIR]batarim_$(var.LogFilePostfix).csv\&quot; &gt;&gt; \&quot;[BATARIM_LOGDIR]batarim_$(var.LogFilePostfix).csv\&quot;&quot; /sc MINUTE /mo 5" />
     <CustomAction Id="ScheduleLogging" BinaryKey="WixCA" DllEntry="CAQuietExec"
       Execute="deferred" Return="check" />
     <Property Id="UnscheduleLogging"
