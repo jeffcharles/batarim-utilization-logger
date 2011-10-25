@@ -41,9 +41,13 @@ endif ()
 add_subdirectory (src)
 add_subdirectory (manpages)
 add_subdirectory (install_scripts)
-add_subdirectory (deb_pkg)
+
 if (WIN32)
     add_subdirectory (windows_installer)
+endif ()
+
+if (LINUX)
+    add_subdirectory (linux_deb_pkg)
 endif ()
 
 # uninstall target

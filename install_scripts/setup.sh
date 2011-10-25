@@ -8,6 +8,11 @@ if [[ $(whoami) = "root" ]]; then
     ldconfig
 fi
 
+# Update mandb
+if [[ $(whoami) = "root" ]]; then
+    mandb -pq
+fi
+
 # Set up log file
 if [[ $(whoami) = "root" ]]; then
     logfile="/var/log/batarim.csv"
