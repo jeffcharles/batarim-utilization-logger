@@ -42,7 +42,7 @@ add_subdirectory (manpages)
 add_subdirectory (install_scripts)
 
 if (LINUX)
-    add_subdirectory (deb_pkg)
+    add_subdirectory (linux_deb_pkg)
 endif ()
 
 # uninstall target
