@@ -48,6 +48,11 @@ class LoggerDataDisplayer : public IDisplayer
     public:
         LoggerDataDisplayer(): prefix('\0') { }
 
+#ifdef WIN32
+#pragma warning(disable: 4100)
+#endif
+// Disable unreferenced formal parameter warning since name is used in the
+// other IDisplayers and we do not its value here
         virtual void display_external(
             const std::string& name,
             const std::shared_ptr<std::string> data_str
@@ -55,6 +60,9 @@ class LoggerDataDisplayer : public IDisplayer
             std::cout << prefix << '"' << *data_str << '"';
             prefix = ',';
         }
+#ifdef WIN32
+#pragma warning(default: 4100)
+#endif
 
         virtual void display_internal(
             const ViewModelInternalNode* node
