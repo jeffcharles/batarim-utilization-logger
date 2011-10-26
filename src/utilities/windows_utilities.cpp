@@ -19,6 +19,9 @@ namespace batarim {
         // See
         // http://msdn.microsoft.com/en-us/library/dd374130(v=vs.85).aspx
         // for details.
+#pragma warning(disable: 4267)
+        // disable conversion from 'size_t' to 'int' warning since we can't
+        // change either API
         const int buffer_size = WideCharToMultiByte(
             CP_UTF8, // encoding to convert to (i.e., UTF-16 to UTF-8)
             0, // conversion flags (none look necessary)
@@ -40,6 +43,7 @@ namespace batarim {
             NULL,
             NULL
         );
+#pragma warning(default: 4267)
         return string(multibyte_buffer.get());
     }
 
