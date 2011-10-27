@@ -6,17 +6,18 @@
 class LoggerFieldNameDisplayer : public IDisplayer
 {
     public:
-        LoggerFieldNameDisplayer(): prefix('\0'), field_prefix("") { }
+        LoggerFieldNameDisplayer(std::ofstream& log_file):
+            prefix('\0'), field_prefix(""), log_file_(log_file) { }
 
         virtual void display_external(
             const std::string& name,
             const std::shared_ptr<std::string> data_str
         ) {
-            std::cout << prefix << '"';
+            log_file_ << prefix << '"';
             if(field_prefix != "") { 
-                std::cout << field_prefix << ' ';
+                log_file_ << field_prefix << ' ';
             }
-            std::cout << name << '"'; 
+            log_file_ << name << '"'; 
             
             prefix = ',';
         }
@@ -41,12 +42,14 @@ class LoggerFieldNameDisplayer : public IDisplayer
     private:
         char prefix;
         std::string field_prefix;
+        std::ofstream& log_file_;
 };
 
 class LoggerDataDisplayer : public IDisplayer
 {
     public:
-        LoggerDataDisplayer(): prefix('\0') { }
+        LoggerDataDisplayer(std::ofstream& log_file):
+            prefix('\0'), log_file_(log_file) { }
 
 #ifdef WIN32
 #pragma warning(disable: 4100)
@@ -57,7 +60,7 @@ class LoggerDataDisplayer : public IDisplayer
             const std::string& name,
             const std::shared_ptr<std::string> data_str
         ) {
-            std::cout << prefix << '"' << *data_str << '"';
+            log_file_ << prefix << '"' << *data_str << '"';
             prefix = ',';
         }
 #ifdef WIN32
@@ -79,6 +82,7 @@ class LoggerDataDisplayer : public IDisplayer
 
     private:
         char prefix;
+        std::ofstream& log_file_;
 };
 
 #endif
