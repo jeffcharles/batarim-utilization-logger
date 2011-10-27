@@ -51,6 +51,15 @@ int main(int argc, char** argv)
     log_file_out.open(log_file_path, ios_base::app);
     
     if(!is_content) {
+        // output UTF-8 BOM on Windows
+        // a lot of Windows applications need the BOM to correctly read
+        // unicode characters in a file
+        // Linux applications usually assume UTF-8 encoding when reading files
+#ifdef WIN32
+        char bom[] = { 0xEF, 0xBB, 0xBF, '\0' };
+        log_file_out << bom;
+#endif
+
         for(ConstIter iter = viewmodel->begin();
             iter != viewmodel->end(); ++iter) {
 
