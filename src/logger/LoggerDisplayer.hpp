@@ -13,7 +13,11 @@ class LoggerFieldNameDisplayer : public IDisplayer
             const std::string& name,
             const std::shared_ptr<std::string> data_str
         ) {
-            log_file_ << prefix << '"';
+            if(prefix) {
+                log_file_ << prefix;
+            }
+            log_file_ << '"';
+
             if(field_prefix != "") { 
                 log_file_ << field_prefix << ' ';
             }
@@ -60,7 +64,10 @@ class LoggerDataDisplayer : public IDisplayer
             const std::string& name,
             const std::shared_ptr<std::string> data_str
         ) {
-            log_file_ << prefix << '"' << *data_str << '"';
+            if(prefix) {
+                log_file_ << prefix;
+            }
+            log_file_ << '"' << *data_str << '"';
             prefix = ',';
         }
 #ifdef WIN32
