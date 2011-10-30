@@ -2,7 +2,9 @@
 
 set -e
 
-log_postfix=$1
+# <_postfix_> should be substituted with a string by sed before running the
+# script
+log_postfix=<_postfix_>
 
 # Get installation directory prefix (path passed as val to DESTDIR)
 DESTDIR=${DESTDIR:-"/usr/local"} # Default value of "/usr/local"
