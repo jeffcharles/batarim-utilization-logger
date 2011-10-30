@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 # Remove root xhost entry if present
 xhost -SI:localuser:root
 

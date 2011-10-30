@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 log_postfix=$1
 
 # Get installation directory prefix (path passed as val to DESTDIR)

@@ -3,6 +3,8 @@
 # Intended to run after this has been copied into build directory and make has
 # been run
 
+set -e
+
 CMAKE_SOURCE_DIR="$1"
 VERSION="$2"
 LOGFILE_POSTFIX="$3"
