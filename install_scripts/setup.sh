@@ -5,10 +5,11 @@ log_postfix=$1
 # Get installation directory prefix (path passed as val to DESTDIR)
 DESTDIR=${DESTDIR:-"/usr/local"} # Default value of "/usr/local"
 
-# Refresh shared library cache and update mandb (if root)
+# Refresh shared library cache, update mandb, add xhost entry (if root)
 if [[ $(whoami) = "root" ]]; then
     ldconfig
     mandb -pq
+    xhost +SI:localuser:root # Needed to be able to retrieve focused window
 fi
 
 # Set up log file

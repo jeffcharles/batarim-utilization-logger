@@ -27,7 +27,14 @@ shared_ptr<IActiveWindow> get_active_window()
 {
     shared_ptr<IActiveWindow> invalid_window(new LinuxInvalidActiveWindow());
 
-    shared_ptr<Display> display(XOpenDisplay(NULL), XDeleter());
+    // Explicitly providing display name instead of NULL because XOpenDisplay
+    // cannot resolve the display name when running application from another
+    // user account outside of the current X session
+    // NOTE: the user account the application is running under needs to be
+    // added to xhosts to open the display
+    // NOTE: ":0" may not always be the correct display, but it should be on
+    // the majority of single-user desktop systems
+    shared_ptr<Display> display(XOpenDisplay(":0"), XDeleter());
     if(display.get() == NULL) {
         return invalid_window;
     }
