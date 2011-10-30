@@ -27,6 +27,6 @@ crontab -l > "$tmpfile"
 # Delete pre-existing entry if it exists
 sed /batarim-logger/d < "$tmpfile" > "$tmpfile"
 # Add entry
-echo "*/5 * * * * \"${DESTDIR}/bin/batarim-logger\" < \"${logfile}\" >> \"${logfile}\"" >> "$tmpfile"
+echo "*/5 * * * * \"${DESTDIR}/bin/batarim-logger\" \"${logfile}\"" >> "$tmpfile"
 crontab - < "$tmpfile"
 rm "$tmpfile"
