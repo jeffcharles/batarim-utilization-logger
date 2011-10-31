@@ -9,11 +9,13 @@ log_postfix=<_postfix_>
 # Get installation directory prefix (path passed as val to DESTDIR)
 DESTDIR=${DESTDIR:-"/usr/local"} # Default value of "/usr/local"
 
-# Refresh shared library cache, update mandb, add xhost entry (if root)
+# Refresh shared library cache, update mandb, add user, and add xhost entry
+# (if root)
 if [[ $(whoami) = "root" ]]; then
     ldconfig
     mandb -pq
-    xhost +SI:localuser:root # Needed to be able to retrieve focused window
+    adduser --system --no-create-home --group --quiet batarim
+    xhost +SI:localuser:batarim # Needed to be able to retrieve focused window
 fi
 
 # Set up log file
@@ -23,15 +25,26 @@ else
     read -p "Enter path to where you want to place log file (not including filename): " logpath
     logfile="${logpath}/batarim_${log_postfix}.csv"
 fi
-touch "$logfile" || exit 1 # Exit if can't create log file
+touch "$logfile"
+if [[ $(whoami) = "root" ]]; then
+    chown batarim:batarim "$logfile" 
+fi
 chmod 0644 $logfile
 
 # Set up crontab entry
 tmpfile=mktemp # NOTE: mktemp is Linux-specific
-crontab -l > "$tmpfile"
+if [[ $(whoami) = "root" ]]; then
+    crontab -u batarim -l > "$tmpfile" || : # noop if no crontab
+else
+    crontab -l > "$tmpfile" || : # noop if no crontab
+fi
 # Delete pre-existing entry if it exists
-sed /batarim-logger/d < "$tmpfile" > "$tmpfile"
+sed -i /batarim-logger/d "$tmpfile"
 # Add entry
 echo "*/5 * * * * \"${DESTDIR}/bin/batarim-logger\" \"${logfile}\"" >> "$tmpfile"
-crontab - < "$tmpfile"
+if [[ $(whoami) = "root" ]]; then
+    crontab -u batarim - < "$tmpfile"
+else
+    crontab - < "$tmpfile"
+fi
 rm "$tmpfile"
