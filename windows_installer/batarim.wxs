@@ -113,5 +113,9 @@
       DowngradeErrorMessage="A later version of $(var.ProductName) is already
       installed. Setup will now exit." />
 
+    <Condition Message="This application is only supported on Windows Vista, Windows Server 2008, or higher.">
+      <![CDATA[Installed OR (VersionNT >=  600)]]>
+    </Condition>
+
   </Product>
 </Wix>
