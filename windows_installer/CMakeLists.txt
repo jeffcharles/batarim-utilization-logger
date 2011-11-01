@@ -12,6 +12,7 @@ set (light_cmd
 
 add_custom_target (installer ALL
     COMMAND copy \"${CMAKE_CURRENT_SOURCE_DIR}\\*.wxs\" .
+    COMMAND copy \"${CMAKE_CURRENT_SOURCE_DIR}\\task.vbs\" .
     COMMAND copy \"${CMAKE_SOURCE_DIR}\\batarim.ico\" .
     COMMAND copy \"${CMAKE_CURRENT_SOURCE_DIR}\\license.rtf\" .
     COMMAND copy \"${CMAKE_CURRENT_SOURCE_DIR}\\top_banner.bmp\" .

@@ -45,8 +45,14 @@
                  Value="[BATARIMDIR]" />
                <RegistryValue Type="string" Name="LogDir"
                  Value="[BATARIM_LOGDIR]" />
+               <RegistryValue Type="string" Name="MajorVersion"
+                 Value="$(var.LogFilePostfix)" />
              </RegistryKey>
            </Component>
+          <Component Id="Task" Guid="512AD890-5E31-4f03-80BD-CF325E9CAEDF">
+            <File Id="BatarimTask" Name="task.vbs" DiskId="1"
+              Source="task.vbs" />
+          </Component>
         </Directory>
       </Directory>
       <Directory Id="CommonAppDataFolder">
@@ -59,6 +65,7 @@
       <ComponentRef Id="Console" />
       <ComponentRef Id="Logger" />
       <ComponentRef Id="RegistryInstallDir" />
+      <ComponentRef Id="Task" />
     </Feature>
     
     <CustomAction Id="SetCreateLogDir" Property="CreateLogDir"
@@ -70,11 +77,11 @@
     <CustomAction Id="CreateLogFile" BinaryKey="WixCA" DllEntry="CAQuietExec"
       Execute="deferred" Return="check" />
     <CustomAction Id="SetScheduleLogging" Property="ScheduleLogging"
-      Value="&quot;$(env.Comspec)&quot; /C schtasks /create /tn Batarim /tr &quot;\&quot;[BATARIMDIR]batarim-logger.exe\&quot; \&quot;[BATARIM_LOGDIR]batarim_$(var.LogFilePostfix).csv\&quot;&quot; /sc MINUTE /mo 5" />
+      Value="&quot;$(env.Comspec)&quot; /C schtasks /create /tn Batarim\Batarim /tr &quot;\&quot;[BATARIMDIR]task.vbs\&quot;&quot; /sc MINUTE /mo 5" />
     <CustomAction Id="ScheduleLogging" BinaryKey="WixCA" DllEntry="CAQuietExec"
       Execute="deferred" Return="check" />
     <Property Id="UnscheduleLogging"
-      Value="&quot;$(env.Comspec)&quot; /C schtasks /delete /tn Batarim /f" />
+      Value="&quot;$(env.Comspec)&quot; /C schtasks /delete /tn Batarim\Batarim /f" />
     <CustomAction Id="UnscheduleLogging" BinaryKey="WixCA"
       DllEntry="CAQuietExec" Execute="deferred" Return="ignore"
       Impersonate="no" />
