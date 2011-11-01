@@ -62,7 +62,7 @@ sed -i "s/Version:/& ${VERSION}/" $control
 arch=$(arch)
 if [[ $arch = "i686" ]]; then # Debian packages do not permit i686
     arch="i386"
-elif [[ $arch = "x64_86" ]]; then # Debian packages do not permit x64_86
+elif [[ $arch = "x86_64" ]]; then # Debian packages do not permit x64_86
     arch="amd64"
 fi
 sed -i "s/Architecture:/& ${arch}/" $control
