@@ -1,6 +1,6 @@
 cmake_minimum_required (VERSION 2.8)
 project (BatarimUL)
-set (LOG_FILENAME_POSTFIX 0.8)
+set (LOG_FILENAME_POSTFIX 0.7)
 set (VERSION "${LOG_FILENAME_POSTFIX}.0")
 
 # LINUX is true if compiling on Linux else it is false
