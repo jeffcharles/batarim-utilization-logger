@@ -7,7 +7,7 @@ set -e
 log_postfix=<_postfix_>
 
 # Get installation directory prefix (path passed as val to DESTDIR)
-DESTDIR=${DESTDIR:-"/usr/local"} # Default value of "/usr/local"
+DESTDIR="${DESTDIR}/usr/local" # Default value of "/usr/local"
 
 # Refresh shared library cache, update mandb, add user, and add xhost entry
 # (if root)
