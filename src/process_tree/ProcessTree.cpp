@@ -85,7 +85,11 @@ const unsigned int ProcessTree::climb_tree_and_build_lookup_table_(
         if(cyclic_relationship_present) {
             break;
         }
+#ifdef WIN32
         intermediate_pids.emplace(current_pid);
+#else
+        intermediate_pids.insert(current_pid);
+#endif
 
         current_pid = processes.get_ppid(current_pid);
     }
