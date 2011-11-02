@@ -1,5 +1,6 @@
 #include <map>
 #include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
 #include "../formatted_process_collection/FormattedProcessCollection.hpp"
@@ -8,6 +9,7 @@
 
 using std::map;
 using std::unordered_map;
+using std::unordered_set;
 using std::vector;
 
 void ProcessTree::update(const FormattedProcessCollection& processes)
@@ -66,7 +68,7 @@ const unsigned int ProcessTree::climb_tree_and_build_lookup_table_(
 ) const {
     
     // build list of intermediate PIDs as the tree is climbed
-    vector<unsigned int> intermediate_pids;
+    unordered_set<unsigned int> intermediate_pids;
     unsigned int current_pid = processes.get_ppid(pid);
     while(!process_is_top_level_(current_pid, processes)) {
         bool pid_in_lookup =
@@ -75,8 +77,16 @@ const unsigned int ProcessTree::climb_tree_and_build_lookup_table_(
             current_pid = lookup_table.at(current_pid);
             break;
         }
-                    
-        intermediate_pids.push_back(current_pid);
+        
+        // cyclic relationships can occur with the current Windows
+        // implementation of finding parent process
+        bool cyclic_relationship_present = 
+            intermediate_pids.count(current_pid) > 0;
+        if(cyclic_relationship_present) {
+            break;
+        }
+        intermediate_pids.emplace(current_pid);
+
         current_pid = processes.get_ppid(current_pid);
     }
     unsigned int top_level_pid = current_pid;
@@ -85,7 +95,7 @@ const unsigned int ProcessTree::climb_tree_and_build_lookup_table_(
     // intermediate ones
     lookup_table[pid] = top_level_pid;
                 
-    typedef vector<unsigned int>::const_iterator Iter;
+    typedef unordered_set<unsigned int>::const_iterator Iter;
     for(Iter iter = intermediate_pids.begin();
         iter != intermediate_pids.end(); ++iter) {
 
