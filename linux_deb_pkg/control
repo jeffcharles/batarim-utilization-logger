@@ -4,10 +4,9 @@ Section: Utilities
 Priority: optional
 Architecture:
 Essential: no
-Depends: coreutils, cron, grep, libc-bin, libc6, libstdc++6, libx11-6, libx11-xcb1, libxcb-atom1, libxcb1, procps, sed
+Depends: coreutils, cron, grep, libc-bin, libc6, libstdc++6, libx11-6, procps, sed
 Installed-Size:
 Maintainer: Jeffrey Charles <jeff@beyondtechnicallycorrect.com>
-Provides: batarim
 Description: Polls system usage metrics
     Batarim-logger polls system usage metrics and dumps them into a csv file at
     regularly scheduled intervals. These metrics include date and time, uptime,
