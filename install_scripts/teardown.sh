@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -e
-
 # Remove cron entry
 tmpfile=mktemp # NOTE: mktemp is Linux-specific
 if [[ $(whoami) = "root" ]]; then
