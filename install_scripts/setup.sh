@@ -17,14 +17,21 @@ if [[ $(whoami) = "root" ]]; then
     adduser --system --no-create-home --group --quiet batarim
     
     # Need to get access to main user's X session to allow batarim access
-    # Assume this is the first non-root currently logged in user
-    main_user=""
-    for user in $(users); do
-        if [[ $user != "root" ]]; then
-            main_user=$user
-            break
-        fi
-    done
+    main_user=$SUDO_USER # First check to see which user is sudo-ing (if any)
+
+    # If no one is sudo-ing, assume this is the first currently logged in
+    # non-root user
+    if [ -z $main_user ]; then
+        for user in $(users); do
+            if [[ $user != "root" ]]; then
+                main_user=$user
+                break
+            fi
+        done
+    fi
+    
+    main_user=${main_user:-"root"} # If still no user, then assume root
+    
     export DISPLAY=":0" # NOTE: assumption that this is the correct display
     su -c "xhost +SI:localuser:batarim" $main_user # Needed to be able to retrieve focused window
 fi
