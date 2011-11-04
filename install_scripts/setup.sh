@@ -15,7 +15,18 @@ if [[ $(whoami) = "root" ]]; then
     ldconfig
     mandb -pq
     adduser --system --no-create-home --group --quiet batarim
-    xhost +SI:localuser:batarim # Needed to be able to retrieve focused window
+    
+    # Need to get access to main user's X session to allow batarim access
+    # Assume this is the first non-root currently logged in user
+    main_user=""
+    for user in $(users); do
+        if [[ $user != "root" ]]; then
+            main_user=$user
+            break
+        fi
+    done
+    export DISPLAY=":0" # NOTE: assumption that this is the correct display
+    su -c "xhost +SI:localuser:batarim" $main_user # Needed to be able to retrieve focused window
 fi
 
 # Set up log file
