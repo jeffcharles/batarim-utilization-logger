@@ -32,10 +32,14 @@ if (MSVC)
     # Use unicode instead of multi-byte (i.e., ANSI)
     add_definitions (-DUNICODE -D_UNICODE)
     set (CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /W4")
+
+    # Statically compile in runtime library
+    set (CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
 endif ()
 
 if(CMAKE_COMPILER_IS_GNUCXX)
     set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC") # Fixes x64 build break
     set (CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall")
 endif ()
 
