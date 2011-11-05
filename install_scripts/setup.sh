@@ -65,7 +65,7 @@ fi
 # Delete pre-existing entry if it exists
 sed -i /batarim-logger/d "$tmpfile"
 # Add entry
-echo "*/5 * * * * \"${DESTDIR}/bin/batarim-logger\" \"${logfile}\"" >> "$tmpfile"
+echo "*/15 * * * * \"${DESTDIR}/bin/batarim-logger\" \"${logfile}\"" >> "$tmpfile"
 if [[ $(whoami) = "root" ]]; then
     crontab -u batarim - < "$tmpfile"
 else

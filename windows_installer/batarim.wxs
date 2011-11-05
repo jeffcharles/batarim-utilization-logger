@@ -77,7 +77,7 @@
     <CustomAction Id="CreateLogFile" BinaryKey="WixCA" DllEntry="CAQuietExec"
       Execute="deferred" Return="check" />
     <CustomAction Id="SetScheduleLogging" Property="ScheduleLogging"
-      Value="&quot;$(env.Comspec)&quot; /C schtasks /create /tn Batarim\Batarim /tr &quot;\&quot;[BATARIMDIR]task.vbs\&quot;&quot; /sc MINUTE /mo 5" />
+      Value="&quot;$(env.Comspec)&quot; /C schtasks /create /tn Batarim\Batarim /tr &quot;\&quot;[BATARIMDIR]task.vbs\&quot;&quot; /sc MINUTE /mo 15" />
     <CustomAction Id="ScheduleLogging" BinaryKey="WixCA" DllEntry="CAQuietExec"
       Execute="deferred" Return="check" />
     <Property Id="UnscheduleLogging"
