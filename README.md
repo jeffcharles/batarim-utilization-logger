@@ -1,8 +1,6 @@
 Batarim Utilization Logger
 ==========================
 
-Version 0.7.0
-
 Purpose
 -------
 
