@@ -15,3 +15,9 @@ generate a png file of the dependency graph.
 
 If you have any questions or want some clarification about the project, feel
 free to send me an email at jeff@beyondtechnicallycorrect.com.
+
+## If You Don't Want to Use Git ##
+
+If you would prefer to not use Git, you can use Mercurial with the `hg-git` and `bookmarks` extensions enabled to interact with Git repositories. I would also
+recommend using the `eol` extension while working on this project if you are
+using a Windows environment.
