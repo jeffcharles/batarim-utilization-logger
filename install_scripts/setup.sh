@@ -39,7 +39,13 @@ if [[ $(whoami) = "root" ]]; then
     if [[ $main_user == "root" ]]; then
         homedir="/root"
     fi
-    echo "${xhostcmd}" >> $homedir/.gnomerc # NOTE: assumes Gnome desktop env
+
+    filepath="${homedir}/.gnomerc" # NOTE: assumes Gnome desktop environment
+    if [[ -z $(grep xhost.*batarim ${filepath}) ]]; then
+        touch $filepath
+        chown $main_user:$main_user $filepath
+        echo "${xhostcmd}" >> $filepath
+    fi
 fi
 
 # Set up log file
