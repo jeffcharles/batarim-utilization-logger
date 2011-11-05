@@ -32,8 +32,14 @@ if [[ $(whoami) = "root" ]]; then
     
     main_user=${main_user:-"root"} # If still no user, then assume root
     
+    xhostcmd="xhost +SI:localuser:batarim"
     export DISPLAY=":0" # NOTE: assumption that this is the correct display
-    su -c "xhost +SI:localuser:batarim" $main_user # Needed to be able to retrieve focused window
+    su -c "${xhostcmd}" $main_user # Needed to be able to retrieve focused window
+    homedir="/home/${main_user}"
+    if [[ $main_user == "root" ]]; then
+        homedir="/root"
+    fi
+    echo "${xhostcmd}" >> $homedir/.gnomerc # NOTE: assumes Gnome desktop env
 fi
 
 # Set up log file

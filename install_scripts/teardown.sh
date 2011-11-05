@@ -40,6 +40,11 @@ if $user_exists; then
 
     export DISPLAY=":0" # NOTE: Assumes this is the correct display
     su -c "xhost -SI:localuser:batarim" $main_user
+    homedir="/home/${main_user}"
+    if [[ $main_user == "root" ]]; then
+        homedir="/root"
+    fi
+    sed -i /batarim/d $homedir/.gnomerc # NOTE: Assumes Gnome desktop env
 fi
 
 # Remove batarim user and group account (except when upgrading)
