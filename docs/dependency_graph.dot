@@ -1,0 +1,188 @@
+digraph batarim {
+
+    ranksep=1.25
+
+    subgraph cluster_console {
+        node [style=filled];
+        style=filled;
+        color=green;
+        label = "console";
+        console -> ConsoleDisplayer;
+    }
+
+    subgraph cluster_logger {
+        node [style=filled];
+        style=filled;
+        color=green;
+        label = "logger";
+        logger -> LoggerFieldNameDisplayer;
+        logger -> LoggerDataDisplayer;
+    }
+
+    subgraph cluster_viewmodel {
+        node [style=filled];
+        style=filled;
+        color=yellow;
+        label = "viewmodel";
+        IDisplayer -> ViewModelInternalNode;
+        ViewModelInternalNode -> IDisplayer;
+        ViewModelInternalNode -> ViewModelElement;
+        ViewModelExternalNode -> ViewModelElement;
+        viewmodel -> ViewModelElement;
+        viewmodel -> ViewModelInternalNode;
+        viewmodel -> ViewModelExternalNode;
+    }
+
+    subgraph cluster_usage_reporter {
+        node [style=filled];
+        style=filled;
+        color=orange;
+        label = "usage reporter";
+        UsageReporter -> IUsageResultGetter;
+        LinuxUsageReporter -> UsageReporter;
+        WindowsUsageReporter -> UsageReporter;
+        UsageReporterFactory -> UsageReporter;
+        UsageReporterFactory -> LinuxUsageReporter;
+        UsageReporterFactory -> WindowsUsageReporter;
+    }
+
+    subgraph cluster_aggregated_process_collection {
+        node [style=filled];
+        style=filled;
+        color=aquamarine3;
+        label = "aggregated process collection";
+        AggregatedProcessCollection;
+    }
+
+    subgraph cluster_process_tree {
+        node [style=filled];
+        style=filled;
+        color=aquamarine3;
+        label = "process tree";
+        LinuxProcessTree -> ProcessTree;
+        WindowsProcessTree -> ProcessTree;
+        process_tree_module -> ProcessTree;
+        process_tree_module -> LinuxProcessTree;
+        process_tree_module -> WindowsProcessTree;
+    }
+
+    subgraph cluster_formatted_process_collection {
+        node [style=filled];
+        style=filled;
+        color=aquamarine3;
+        label = "formatted process collection";
+        LinuxFormattedProcessCollection -> FormattedProcessCollection;
+        WindowsFormattedProcessCollection -> FormattedProcessCollection;
+        FormattedProcessCollectionFactory -> FormattedProcessCollection;
+        FormattedProcessCollectionFactory -> LinuxFormattedProcessCollection;
+        FormattedProcessCollectionFactory -> WindowsFormattedProcessCollection;
+        FormattedProcessCollection -> ProcessUsageInfo;
+    }
+
+    subgraph cluster_raw_process_collection {
+        node [style=filled];
+        style=filled;
+        color=aquamarine3;
+        label = "raw process collection";
+        LinuxRawProcessCollection -> RawProcessCollection;
+        WindowsRawProcessCollection -> RawProcessCollection;
+        RawProcessCollectionFactory -> RawProcessCollection;
+        RawProcessCollectionFactory -> LinuxRawProcessCollection;
+        RawProcessCollectionFactory -> WindowsRawProcessCollection;
+    }
+    
+    subgraph cluster_active_window {
+        node [style=filled];
+        style=filled;
+        color=beige;
+        label = "active window";
+        LinuxActiveWindow -> IActiveWindow;
+        LinuxInvalidActiveWindow -> IActiveWindow;
+        WindowsActiveWindow -> IActiveWindow;
+        active_window_module -> IActiveWindow;
+        linux_active_window_module -> active_window_module;
+        linux_active_window_module -> LinuxActiveWindow;
+        linux_active_window_module -> LinuxInvalidActiveWindow;
+        windows_active_window_module -> active_window_module;
+        windows_active_window_module -> WindowsActiveWindow;
+    }
+
+    subgraph cluster_ram_usage {
+        node [style=filled];
+        style=filled;
+        color=beige;
+        label = "ram usage";
+        linux_ram_usage -> ram_usage;
+        windows_ram_usage -> ram_usage;
+    }
+
+    subgraph cluster_timestamp {
+        node [style=filled];
+        style=filled;
+        color=beige;
+        label = "timestamp";
+        timestamp;
+    }
+
+    subgraph cluster_uptime {
+        node [style=filled];
+        style=filled;
+        color=beige;
+        label = "uptime";
+        linux_uptime -> uptime;
+        windows_uptime -> uptime;
+    }
+
+    subgraph cluster_utilities {
+        node [style=filled];
+        style=filled;
+        color=azure2;
+        label = "utilities";
+        linux_utilities -> utilities;
+        windows_utilities -> utilities;
+    }
+
+    ConsoleDisplayer -> IDisplayer;
+    ConsoleDisplayer -> ViewModelInternalNode;
+    console -> viewmodel;
+
+    LoggerFieldNameDisplayer -> IDisplayer;
+    LoggerFieldNameDisplayer -> ViewModelInternalNode;
+    LoggerDataDisplayer -> IDisplayer;
+    LoggerDataDisplayer -> ViewModelInternalNode;
+    logger -> viewmodel;
+
+    viewmodel -> timestamp;
+    viewmodel -> UsageReporterFactory;
+    viewmodel -> UsageReporter;
+    viewmodel -> ProcessUsageInfo;
+    viewmodel -> ram_usage;
+    viewmodel -> active_window_module;
+    viewmodel -> IActiveWindow;
+    viewmodel -> uptime;
+
+    IUsageResultGetter -> ProcessUsageInfo;
+    UsageReporter -> FormattedProcessCollection;
+    UsageReporter -> FormattedProcessCollectionFactory;
+    UsageReporter -> AggregatedProcessCollection;
+    UsageReporter -> ProcessTree;
+    UsageReporter -> process_tree_module;
+    UsageReporter -> utilities;
+    UsageReporter -> Pdh;
+
+    AggregatedProcessCollection -> FormattedProcessCollection;
+    AggregatedProcessCollection -> ProcessUsageInfo;
+
+    ProcessTree -> FormattedProcessCollection;
+    ProcessTree -> ProcessUsageInfo;
+
+    FormattedProcessCollection -> utilities;
+    FormattedProcessCollection -> RawProcessCollectionFactory;
+    FormattedProcessCollection -> RawProcessCollection;
+
+    IActiveWindow -> IUsageResultGetter;
+    IActiveWindow -> ProcessUsageInfo;
+    linux_active_window_module -> Xlib;
+    LinuxActiveWindow -> Xlib;
+
+}
