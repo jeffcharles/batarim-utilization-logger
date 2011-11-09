@@ -10,7 +10,7 @@ using std::string;
 
 std::shared_ptr<TimeInfo> get_time_info()
 {
-    const time_t timestamp = time(NULL);
+    const time_t timestamp = time(nullptr);
     
     const size_t datetime_cstr_length = 50; // may need to be increased
     char datetime_cstr[datetime_cstr_length];
