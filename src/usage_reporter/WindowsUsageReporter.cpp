@@ -27,7 +27,7 @@ using std::wstring;
 bool WindowsUsageReporter::initial_cpu_sweep_(PdhData& pdh_data)
 {
     PDH_STATUS pdh_status = PdhOpenQuery(
-        nullptr, // name of log file (NULL = use real-time data)
+        NULL, // name of log file (NULL = use real-time data)
         NULL, // user-defined value to associate with query
         &(pdh_data.query) // handle to query
     );

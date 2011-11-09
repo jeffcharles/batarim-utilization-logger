@@ -27,10 +27,10 @@ namespace batarim {
             0, // conversion flags (none look necessary)
             wide_str.c_str(), // UTF-16 buffer to convert from
             wide_str.length()+1, // size of UTF-16 buffer
-            nullptr, // buffer receiving UTF-8 string
+            NULL, // buffer receiving UTF-8 string
             0, // size of UTF-8 buffer (0 means calculate required size)
-            nullptr, // default character (must be NULL for UTF-8)
-            nullptr // ptr to indicate if default char used (NULL for UTF-8)
+            NULL, // default character (must be NULL for UTF-8)
+            NULL // ptr to indicate if default char used (NULL for UTF-8)
         );
         unique_ptr<char> multibyte_buffer(new char[buffer_size]);
         WideCharToMultiByte(
@@ -40,8 +40,8 @@ namespace batarim {
             wide_str.length()+1,
             multibyte_buffer.get(), // buffer receiving UTF-8 string
             buffer_size, // size of UTF-8 buffer
-            nullptr,
-            nullptr
+            NULL,
+            NULL
         );
 #pragma warning(default: 4267)
         return string(multibyte_buffer.get());
