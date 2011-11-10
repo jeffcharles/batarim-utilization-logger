@@ -14,7 +14,7 @@ class ConsoleDisplayer : public IDisplayer
     public:
         virtual void display_external(
             const std::string& name,
-            const std::shared_ptr<std::string> data_str
+            const std::unique_ptr<std::string> data_str
         ) {
             std::cout << name << ": " << *data_str << std::endl;
         }

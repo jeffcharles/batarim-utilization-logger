@@ -9,12 +9,12 @@
 
 #include "WindowsRawProcessCollection.hpp"
 
-using std::shared_ptr;
+using std::unique_ptr;
 using std::string;
 using std::vector;
 using std::wstring;
 
-std::shared_ptr<std::vector<unsigned int>>
+std::unique_ptr<std::vector<unsigned int>>
 WindowsRawProcessCollection::get_pids_() const
 {
     const DWORD pid_array_length = 0x10000;
@@ -25,7 +25,7 @@ WindowsRawProcessCollection::get_pids_() const
     }
     const DWORD num_pids = bytes_returned / sizeof(DWORD);
 
-    shared_ptr<vector<unsigned int>> ret(new vector<unsigned int>);
+    unique_ptr<vector<unsigned int>> ret(new vector<unsigned int>);
     ret->resize(num_pids);
     for(DWORD i = 0; i < num_pids; ++i) {
         ret->push_back(pids[i]);
@@ -113,7 +113,7 @@ void WindowsRawProcessCollection::platform_specific_update_()
         unsigned int pid = process.th32ProcessID;
 
         ProcessInformation& info = processes_[pid];
-        shared_ptr<string> process_name =
+        unique_ptr<string> process_name =
             get_process_exe_name_(process.szExeFile);
         info.name = *process_name;
         info.after_time = get_process_time_(pid);

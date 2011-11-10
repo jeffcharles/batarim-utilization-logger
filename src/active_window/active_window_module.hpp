@@ -5,6 +5,6 @@
 
 #include "IActiveWindow.hpp"
 
-std::shared_ptr<IActiveWindow> get_active_window();
+std::unique_ptr<IActiveWindow> get_active_window();
 
 #endif

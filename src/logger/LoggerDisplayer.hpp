@@ -11,7 +11,7 @@ class LoggerFieldNameDisplayer : public IDisplayer
 
         virtual void display_external(
             const std::string& name,
-            const std::shared_ptr<std::string> data_str
+            const std::unique_ptr<std::string> data_str
         ) {
             if(prefix) {
                 log_file_ << prefix;
@@ -62,7 +62,7 @@ class LoggerDataDisplayer : public IDisplayer
 // other IDisplayers and we do not its value here
         virtual void display_external(
             const std::string& name,
-            const std::shared_ptr<std::string> data_str
+            const std::unique_ptr<std::string> data_str
         ) {
             if(prefix) {
                 log_file_ << prefix;

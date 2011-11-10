@@ -11,17 +11,17 @@
 #include "LinuxFormattedProcessCollection.hpp"
 #endif
 
-using std::shared_ptr;
+using std::unique_ptr;
 
-shared_ptr<FormattedProcessCollection> get_formatted_process_collection()
+unique_ptr<FormattedProcessCollection> get_formatted_process_collection()
 {
 #ifdef WIN32
-    return shared_ptr<FormattedProcessCollection>(
+    return unique_ptr<FormattedProcessCollection>(
         new WindowsFormattedProcessCollection());
 #endif
 
 #ifdef LINUX
-    return shared_ptr<FormattedProcessCollection>(
+    return unique_ptr<FormattedProcessCollection>(
         new LinuxFormattedProcessCollection());
 #endif
 }

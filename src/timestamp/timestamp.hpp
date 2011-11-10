@@ -9,4 +9,4 @@ struct TimeInfo
     std::string datetime_str;
 };
 
-std::shared_ptr<TimeInfo> get_time_info();
+std::unique_ptr<TimeInfo> get_time_info();

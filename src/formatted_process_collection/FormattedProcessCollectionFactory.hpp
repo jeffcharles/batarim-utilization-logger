@@ -5,6 +5,6 @@
 
 #include "FormattedProcessCollection.hpp"
 
-std::shared_ptr<FormattedProcessCollection> get_formatted_process_collection();
+std::unique_ptr<FormattedProcessCollection> get_formatted_process_collection();
 
 #endif

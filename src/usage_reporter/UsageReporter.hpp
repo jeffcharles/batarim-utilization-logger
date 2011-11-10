@@ -33,10 +33,10 @@ class UsageReporter : public IUsageResultGetter
     public:
         UsageReporter()
         {
-            std::shared_ptr<std::vector<std::pair<std::string, int>>> pu(
-                new std::vector<std::pair<std::string, int>>);
-            processor_usages_ = pu;
-
+            processor_usages_ =
+                std::shared_ptr<std::vector<std::pair<std::string, int>>>(
+                    new std::vector<std::pair<std::string, int>>
+                );
             processes_ = get_formatted_process_collection();
             aggregated_processes_ = AggregatedProcessCollection();
             process_tree_ = get_process_tree();
@@ -88,9 +88,7 @@ class UsageReporter : public IUsageResultGetter
         virtual std::shared_ptr<std::vector<std::pair<std::string, int>>>
         get_processor_usages()
         {
-            std::shared_ptr<std::vector<std::pair<std::string, int>>>
-                proc_usage(processor_usages_);
-            return proc_usage;
+            return processor_usages_;
         }
 
         virtual const ProcessUsageInfo&
@@ -103,9 +101,9 @@ class UsageReporter : public IUsageResultGetter
         std::shared_ptr<std::vector<std::pair<std::string, int>>>
         processor_usages_;
         
-        std::shared_ptr<FormattedProcessCollection> processes_;
+        std::unique_ptr<FormattedProcessCollection> processes_;
         AggregatedProcessCollection aggregated_processes_;
-        std::shared_ptr<ProcessTree> process_tree_;
+        std::unique_ptr<ProcessTree> process_tree_;
 
         virtual bool initial_cpu_sweep_(BATARIM_CPU_INFO_DATA_STRUCTURE&) = 0;
         

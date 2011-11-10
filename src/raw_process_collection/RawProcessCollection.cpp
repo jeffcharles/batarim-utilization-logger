@@ -8,7 +8,7 @@
 
 using std::map;
 using std::pair;
-using std::shared_ptr;
+using std::unique_ptr;
 using std::vector;
 
 void RawProcessCollection::update()

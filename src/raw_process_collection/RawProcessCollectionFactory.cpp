@@ -10,15 +10,15 @@
 #include "LinuxRawProcessCollection.hpp"
 #endif
 
-using std::shared_ptr;
+using std::unique_ptr;
 
-shared_ptr<RawProcessCollection> get_raw_process_collection()
+unique_ptr<RawProcessCollection> get_raw_process_collection()
 {
 #ifdef WIN32
-    return shared_ptr<RawProcessCollection>(new WindowsRawProcessCollection());
+    return unique_ptr<RawProcessCollection>(new WindowsRawProcessCollection());
 #endif
 
 #ifdef LINUX
-    return shared_ptr<RawProcessCollection>(new LinuxRawProcessCollection());
+    return unique_ptr<RawProcessCollection>(new LinuxRawProcessCollection());
 #endif
 }

@@ -17,6 +17,7 @@ using std::ofstream;
 using std::shared_ptr;
 using std::string;
 using std::stringstream;
+using std::unique_ptr;
 using std::vector;
 
 int main(int argc, char** argv)
@@ -34,10 +35,10 @@ int main(int argc, char** argv)
     log_file_in.open(log_file_path);
 
     // initialize view model
-    std::shared_ptr<IDisplayer> field_name_displayer(
+    shared_ptr<IDisplayer> field_name_displayer(
         new LoggerFieldNameDisplayer(log_file_out)
     );
-    shared_ptr<vector<shared_ptr<ViewModelElement>>> viewmodel =
+    unique_ptr<vector<shared_ptr<ViewModelElement>>> viewmodel =
         get_view_model(field_name_displayer);
 
     typedef vector<shared_ptr<ViewModelElement>>::const_iterator ConstIter;
@@ -71,7 +72,7 @@ int main(int argc, char** argv)
 
     // set the view model displayer to the log data one and print the view
     // model data
-    std::shared_ptr<IDisplayer> data_displayer(
+    shared_ptr<IDisplayer> data_displayer(
         new LoggerDataDisplayer(log_file_out)
     );
 

@@ -5,6 +5,6 @@
 
 #include "ProcessTree.hpp"
 
-std::shared_ptr<ProcessTree> get_process_tree();
+std::unique_ptr<ProcessTree> get_process_tree();
 
 #endif

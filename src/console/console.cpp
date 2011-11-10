@@ -10,12 +10,13 @@ using std::cout;
 using std::endl;
 using std::shared_ptr;
 using std::stringstream;
+using std::unique_ptr;
 using std::vector;
 
 int main()
 {
     shared_ptr<IDisplayer> displayer(new ConsoleDisplayer());
-    shared_ptr<vector<shared_ptr<ViewModelElement>>> viewmodel =
+    unique_ptr<vector<shared_ptr<ViewModelElement>>> viewmodel =
         get_view_model(displayer);
 
     cout << endl;

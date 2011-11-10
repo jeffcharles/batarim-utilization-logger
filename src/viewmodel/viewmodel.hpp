@@ -78,15 +78,15 @@ class ViewModelExternalNode : public ViewModelElement
         }
 
     private:
-        std::shared_ptr<std::string> to_string_()
+        std::unique_ptr<std::string> to_string_()
         {
             std::stringstream ss;
             ss << data;
-            return std::shared_ptr<std::string>(new std::string(ss.str()));
+            return std::unique_ptr<std::string>(new std::string(ss.str()));
         }
 };
 
-std::shared_ptr<std::vector<std::shared_ptr<ViewModelElement>>>
+std::unique_ptr<std::vector<std::shared_ptr<ViewModelElement>>>
 VIEWMODEL_EXPORT get_view_model(
     std::shared_ptr<IDisplayer> displayer
 );

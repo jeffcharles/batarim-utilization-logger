@@ -24,6 +24,7 @@ using std::pair;
 using std::shared_ptr;
 using std::string;
 using std::stringstream;
+using std::unique_ptr;
 using std::vector;
 
 namespace {
@@ -74,7 +75,7 @@ namespace {
     }
 }
 
-shared_ptr<vector<shared_ptr<ViewModelElement>>> get_view_model(
+unique_ptr<vector<shared_ptr<ViewModelElement>>> get_view_model(
     shared_ptr<IDisplayer> displayer
 ) {
     shared_ptr<UsageReporter> usage_reporter = get_usage_reporter();
@@ -85,7 +86,7 @@ shared_ptr<vector<shared_ptr<ViewModelElement>>> get_view_model(
         clog << analyze_error_message << endl;
     }
 
-    shared_ptr<vector<shared_ptr<ViewModelElement>>> viewmodel(
+    unique_ptr<vector<shared_ptr<ViewModelElement>>> viewmodel(
         new vector<shared_ptr<ViewModelElement>>
     );
 

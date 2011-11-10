@@ -15,7 +15,7 @@ class WindowsRawProcessCollection : public RawProcessCollection
 {
     protected:
 
-        virtual std::shared_ptr<std::vector<unsigned int>>
+        virtual std::unique_ptr<std::vector<unsigned int>>
         get_pids_() const;
 
         virtual unsigned long long get_process_time_(unsigned int pid) const;
@@ -35,7 +35,7 @@ class WindowsRawProcessCollection : public RawProcessCollection
             return uli.QuadPart;
         }
 
-        std::shared_ptr<std::string>
+        std::unique_ptr<std::string>
         WindowsRawProcessCollection::get_process_exe_name_(
             const WCHAR* exe_file
         ) const {
@@ -43,7 +43,7 @@ class WindowsRawProcessCollection : public RawProcessCollection
             std::wstring base_file = (full_file.length() > 4) ?
                 full_file.substr(0, full_file.length() - 4) :
                 full_file;
-            std::shared_ptr<std::string> utf8_base_file(new std::string( 
+            std::unique_ptr<std::string> utf8_base_file(new std::string( 
                 batarim::convert_wstring_to_string(base_file)));
             return utf8_base_file;
         }

@@ -17,7 +17,6 @@
 
 using batarim::convert_wstring_to_string;
 using std::pair;
-using std::shared_ptr;
 using std::string;
 using std::stringstream;
 using std::unique_ptr;

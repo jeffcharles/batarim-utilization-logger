@@ -5,6 +5,6 @@
 
 #include "RawProcessCollection.hpp"
 
-std::shared_ptr<RawProcessCollection> get_raw_process_collection();
+std::unique_ptr<RawProcessCollection> get_raw_process_collection();
 
 #endif

@@ -32,7 +32,7 @@ class RawProcessCollection
         // NOTE: must call init followed by update after a one second delay
         void init()
         {
-            std::shared_ptr<std::vector<unsigned int>> pids = get_pids_();
+            std::unique_ptr<std::vector<unsigned int>> pids = get_pids_();
             for(std::vector<unsigned int>::const_iterator pid = pids->begin();
                 pid != pids->end(); ++pid) {
 
@@ -69,7 +69,7 @@ class RawProcessCollection
             return info->last_update_run_ = last_update_run;
         }
 
-        virtual std::shared_ptr<std::vector<unsigned int>>
+        virtual std::unique_ptr<std::vector<unsigned int>>
         get_pids_() const = 0;
 
         virtual unsigned long long get_process_time_(unsigned int pid)

@@ -5,9 +5,9 @@
 
 #include "active_window_module.hpp"
 
-using std::shared_ptr;
+using std::unique_ptr;
 
-shared_ptr<IActiveWindow> get_active_window()
+unique_ptr<IActiveWindow> get_active_window()
 {
-    return shared_ptr<IActiveWindow>(new WindowsActiveWindow());
+    return unique_ptr<IActiveWindow>(new WindowsActiveWindow());
 }

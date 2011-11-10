@@ -92,7 +92,7 @@ class FormattedProcessCollection
 
     private:
         
-        std::shared_ptr<RawProcessCollection> raw_process_info_;
+        std::unique_ptr<RawProcessCollection> raw_process_info_;
         std::map<unsigned int, ProcessUsageInfo> usage_info_;
 
         unsigned long long before_system_time_;

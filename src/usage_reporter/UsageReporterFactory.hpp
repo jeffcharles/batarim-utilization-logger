@@ -5,6 +5,6 @@
 
 #include "UsageReporter.hpp"
 
-std::shared_ptr<UsageReporter> get_usage_reporter();
+std::unique_ptr<UsageReporter> get_usage_reporter();
 
 #endif
