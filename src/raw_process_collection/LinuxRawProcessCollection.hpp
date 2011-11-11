@@ -10,7 +10,7 @@ class LinuxRawProcessCollection : public RawProcessCollection
 {
     protected:
         
-        virtual std::shared_ptr<std::vector<unsigned int>> get_pids_() const;
+        virtual std::unique_ptr<std::vector<unsigned int>> get_pids_() const;
 
         virtual unsigned long long get_process_time_(unsigned int pid) const;
 

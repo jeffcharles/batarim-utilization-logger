@@ -8,7 +8,6 @@
 
 #include "active_window_module.hpp"
 
-using std::shared_ptr;
 using std::unique_ptr;
 
 namespace {
@@ -23,9 +22,9 @@ namespace {
     };
 }
 
-shared_ptr<IActiveWindow> get_active_window()
+unique_ptr<IActiveWindow> get_active_window()
 {
-    shared_ptr<IActiveWindow> invalid_window(new LinuxInvalidActiveWindow());
+    unique_ptr<IActiveWindow> invalid_window(new LinuxInvalidActiveWindow());
 
     // Explicitly providing display name instead of NULL because XOpenDisplay
     // cannot resolve the display name when running application from another
@@ -34,7 +33,7 @@ shared_ptr<IActiveWindow> get_active_window()
     // added to xhosts to open the display
     // NOTE: ":0" may not always be the correct display, but it should be on
     // the majority of single-user desktop systems
-    shared_ptr<Display> display(XOpenDisplay(":0"), XDeleter());
+    unique_ptr<Display, XDeleter> display(XOpenDisplay(":0"));
     if(display.get() == NULL) {
         return invalid_window;
     }
@@ -107,8 +106,8 @@ shared_ptr<IActiveWindow> get_active_window()
     
     XFree(property);
 
-    shared_ptr<IActiveWindow> active_window(
-        new LinuxActiveWindow(display, parent, pid)
+    unique_ptr<IActiveWindow> active_window(
+        new LinuxActiveWindow(move(display), parent, pid)
     );
     return active_window;
 }

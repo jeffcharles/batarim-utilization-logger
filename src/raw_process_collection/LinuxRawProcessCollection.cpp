@@ -12,14 +12,14 @@
 #include "LinuxRawProcessCollection.hpp"
 
 using std::ifstream;
-using std::shared_ptr;
 using std::string;
 using std::stringstream;
+using std::unique_ptr;
 using std::vector;
 
-shared_ptr<vector<unsigned int>> LinuxRawProcessCollection::get_pids_() const
+unique_ptr<vector<unsigned int>> LinuxRawProcessCollection::get_pids_() const
 {
-    shared_ptr<vector<unsigned int>> pids(new vector<unsigned int>);
+    unique_ptr<vector<unsigned int>> pids(new vector<unsigned int>);
     
     DIR* proc_dir;
     struct dirent* dir_entry;
@@ -93,7 +93,7 @@ LinuxRawProcessCollection::get_process_ram_usage_(unsigned int pid) const
 
 void LinuxRawProcessCollection::platform_specific_update_()
 {
-    shared_ptr<vector<unsigned int>> pids = get_pids_();
+    unique_ptr<vector<unsigned int>> pids = get_pids_();
     for(vector<unsigned int>::const_iterator iter = pids->begin();
         iter != pids->end(); ++iter) {
 
