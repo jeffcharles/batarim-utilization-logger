@@ -11,15 +11,17 @@ set (light_cmd
     "\\Windows Installer XML v3.5\\bin\\light\" -ext WixUIExtension -ext WixUtilExtension -cultures:en-us -loc \"${CMAKE_CURRENT_SOURCE_DIR}\\Batarim_en-us.wxl\" -out batarim_${VERSION}_${candle_arch}.msi *.wixobj")
 
 add_custom_target (installer ALL
-    COMMAND copy \"${CMAKE_CURRENT_SOURCE_DIR}\\*.wxs\" .
-    COMMAND copy \"${CMAKE_CURRENT_SOURCE_DIR}\\task.vbs\" .
-    COMMAND copy \"${CMAKE_SOURCE_DIR}\\batarim.ico\" .
-    COMMAND copy \"${CMAKE_CURRENT_SOURCE_DIR}\\license.rtf\" .
-    COMMAND copy \"${CMAKE_CURRENT_SOURCE_DIR}\\top_banner.bmp\" .
-    COMMAND copy \"${CMAKE_CURRENT_SOURCE_DIR}\\dlg_bkg.bmp\" .
-    COMMAND cmd /c "if defined PROGRAMFILES(X86) (\"%PROGRAMFILES(X86)%${candle_cmd}\) else \(\"%PROGRAMFILES%${candle_cmd}\)"
-    COMMAND cmd /c "if defined PROGRAMFILES(X86) (\"%PROGRAMFILES(X86)%${light_cmd}) else (\"%PROGRAMFILES%${light_cmd})"
+    COMMAND if exist Release copy \"${CMAKE_CURRENT_SOURCE_DIR}\\*.wxs\" Release\\
+    COMMAND if exist Release copy \"${CMAKE_CURRENT_SOURCE_DIR}\\task.vbs\" Release\\
+    COMMAND if exist Release copy \"${CMAKE_SOURCE_DIR}\\batarim.ico\" Release\\
+    COMMAND if exist Release copy \"${CMAKE_CURRENT_SOURCE_DIR}\\license.rtf\" Release\\
+    COMMAND if exist Release copy \"${CMAKE_CURRENT_SOURCE_DIR}\\top_banner.bmp\" Release\\
+    COMMAND if exist Release copy \"${CMAKE_CURRENT_SOURCE_DIR}\\dlg_bkg.bmp\" Release\\
+    COMMAND cmd /c "\"if exist Release if defined PROGRAMFILES(X86) (cd Release & \"%PROGRAMFILES(X86)%${candle_cmd} & cd ..)\""
+    COMMAND cmd /c "\"if exist Release if not defined PROGRAMFILES(X86) (cd Release & \"%PROGRAMFILES%${candle_cmd} & cd ..)\""
+    COMMAND cmd /c "\"if exist Release if defined PROGRAMFILES(X86) (cd Release & \"%PROGRAMFILES(X86)%${light_cmd} & cd ..)\""
+    COMMAND cmd /c "\"if exist Release if not defined PROGRAMFILES(X86) (cd Release & \"%PROGRAMFILES%${light_cmd} & cd ..)\""
     
-    DEPENDS organize
-    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    DEPENDS viewmodel console logger
+    WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
 )

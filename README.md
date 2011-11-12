@@ -116,8 +116,8 @@ How to Set Up a Build on Windows
     root of the repository
 9. If you wish to clear the build, you can either delete the `build` directory
     or run `clear.bat` under `cmake_scripts`
-10. Building the solution will result in an MSI file being generated in
-    `build\windows_installer` alongside all DLL and EXE files
+10. Building the solution in the `Release` configuration will result in an MSI
+    file being generated in `build\bin\release` alongside all DLL and EXE files
 
 Project Documentation (including information on contributing code)
 ------------------------------------------------------------------

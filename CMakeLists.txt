@@ -43,6 +43,10 @@ if(CMAKE_COMPILER_IS_GNUCXX)
     set (CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall")
 endif ()
 
+if (MSVC)
+    set (CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
+endif ()
+
 add_subdirectory (src)
 
 if (LINUX)
@@ -65,13 +69,3 @@ add_custom_target (uninstall
     COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake
     COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/install_scripts/teardown.sh
 )
-
-# Copy all built files into installer directory on Windows
-if (WIN32)
-    add_custom_target (organize ALL
-        COMMAND IF NOT EXIST \"${CMAKE_BINARY_DIR}\\windows_installer\" MKDIR \"${CMAKE_BINARY_DIR}\\windows_installer\"
-        COMMAND FOR /F \"tokens=*\" %%A IN ('DIR /B /S src\\*.dll') DO (COPY \"%%A\" \"${CMAKE_BINARY_DIR}\\windows_installer\")
-        COMMAND FOR /F \"tokens=*\" %%A IN ('DIR /B /S src\\*.exe') DO (COPY \"%%A\" \"${CMAKE_BINARY_DIR}\\windows_installer\")
-        DEPENDS viewmodel console logger
-    )
-endif ()
