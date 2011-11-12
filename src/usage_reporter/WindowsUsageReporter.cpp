@@ -96,7 +96,7 @@ bool WindowsUsageReporter::populate_processors_usage_(
             get_human_readable_name_for_processor_entry_(name),
             (int)processor_utilizations.get()[i].FmtValue.largeValue
         );
-        processor_usages_->push_back(processor_utilization);
+        processor_usages_.push_back(processor_utilization);
     }
 
     return true;

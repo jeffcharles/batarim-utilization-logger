@@ -38,7 +38,7 @@ WindowsActiveWindow::WindowsActiveWindow()
     process_name_ = "";
 }
 
-string WindowsActiveWindow::get_process_name()
+string& WindowsActiveWindow::get_process_name()
 {
     if(process_name_ != "") {
         return process_name_;

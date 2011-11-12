@@ -10,8 +10,8 @@ class WindowsActiveWindow : public IActiveWindow
     public:
         WindowsActiveWindow();
 
-        virtual std::string get_name() { return name_; }
-        virtual std::string get_process_name();
+        virtual std::string& get_name() { return name_; }
+        virtual std::string& get_process_name();
 };
 
 #endif

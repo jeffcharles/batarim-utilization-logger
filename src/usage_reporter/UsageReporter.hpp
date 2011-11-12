@@ -33,10 +33,6 @@ class UsageReporter : public IUsageResultGetter
     public:
         UsageReporter()
         {
-            processor_usages_ =
-                std::shared_ptr<std::vector<std::pair<std::string, int>>>(
-                    new std::vector<std::pair<std::string, int>>
-                );
             processes_ = get_formatted_process_collection();
             aggregated_processes_ = AggregatedProcessCollection();
             process_tree_ = get_process_tree();
@@ -85,7 +81,7 @@ class UsageReporter : public IUsageResultGetter
             return process_tree_->get_highest_ram_using_process_set();
         }
 
-        virtual std::shared_ptr<std::vector<std::pair<std::string, int>>>
+        virtual const std::vector<std::pair<std::string, int>>&
         get_processor_usages()
         {
             return processor_usages_;
@@ -98,7 +94,7 @@ class UsageReporter : public IUsageResultGetter
         }
     
     protected:
-        std::shared_ptr<std::vector<std::pair<std::string, int>>>
+        std::vector<std::pair<std::string, int>>
         processor_usages_;
         
         std::unique_ptr<FormattedProcessCollection> processes_;

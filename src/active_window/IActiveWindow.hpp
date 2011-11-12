@@ -11,8 +11,8 @@ class IActiveWindow
     public:    
         virtual ~IActiveWindow() { } 
 
-        virtual std::string get_name() = 0;
-        virtual std::string get_process_name() = 0;
+        virtual std::string& get_name() = 0;
+        virtual std::string& get_process_name() = 0;
 
         virtual
         const ProcessUsageInfo& get_usage(IUsageResultGetter& usage_results)

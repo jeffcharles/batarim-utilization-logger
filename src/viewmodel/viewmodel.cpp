@@ -127,12 +127,12 @@ unique_ptr<vector<shared_ptr<ViewModelElement>>> get_view_model(
     );
     viewmodel->push_back(uptime_node);
     
-    shared_ptr<vector<pair<string, int>>> cpu_usage_percentages =
+    vector<pair<string, int>> cpu_usage_percentages =
         usage_reporter->get_processor_usages();
     vector<shared_ptr<ViewModelElement>> cpu_usages_content;
     typedef vector<pair<string, int>>::const_iterator ConstIter;
-    for(ConstIter iter = cpu_usage_percentages->begin();
-        iter != cpu_usage_percentages->end(); ++iter) {
+    for(ConstIter iter = cpu_usage_percentages.begin();
+        iter != cpu_usage_percentages.end(); ++iter) {
         
         stringstream cpu_name;
         cpu_name << "CPU " << iter->first << " usage";
@@ -164,7 +164,7 @@ unique_ptr<vector<shared_ptr<ViewModelElement>>> get_view_model(
     );
     viewmodel->push_back(ram_usage_node);
 
-    shared_ptr<IActiveWindow> active_window = get_active_window();
+    unique_ptr<IActiveWindow> active_window = get_active_window();
     string active_window_name = active_window->get_name();
     string active_window_process_name = active_window->get_process_name();
     ProcessUsageInfo active_window_usage =
