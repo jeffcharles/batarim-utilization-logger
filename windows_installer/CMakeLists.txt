@@ -10,7 +10,9 @@ set (candle_cmd
 set (light_cmd
     "\\Windows Installer XML v3.5\\bin\\light\" -ext WixUIExtension -ext WixUtilExtension -cultures:en-us -loc \"${CMAKE_CURRENT_SOURCE_DIR}\\Batarim_en-us.wxl\" -out batarim_${VERSION}_${candle_arch}.msi *.wixobj")
 
-add_custom_target (installer ALL
+add_custom_command (
+    OUTPUT ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}\\batarim_${VERSION}_${candle_arch}.msi
+    
     COMMAND if exist Release copy \"${CMAKE_CURRENT_SOURCE_DIR}\\*.wxs\" Release\\
     COMMAND if exist Release copy \"${CMAKE_CURRENT_SOURCE_DIR}\\task.vbs\" Release\\
     COMMAND if exist Release copy \"${CMAKE_SOURCE_DIR}\\batarim.ico\" Release\\
@@ -24,4 +26,8 @@ add_custom_target (installer ALL
     
     DEPENDS viewmodel console logger
     WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+)
+
+add_custom_target (installer ALL
+    DEPENDS ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}\\batarim_${VERSION}_${candle_arch}.msi
 )
