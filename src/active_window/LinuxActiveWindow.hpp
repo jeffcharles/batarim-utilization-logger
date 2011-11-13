@@ -25,8 +25,8 @@ class LinuxActiveWindow : public IActiveWindow
             process_name_ = "";
         }
 
-        virtual std::string get_name();
-        virtual std::string get_process_name();
+        virtual std::string& get_name();
+        virtual std::string& get_process_name();
     
     private:
         std::shared_ptr<Display> display_;

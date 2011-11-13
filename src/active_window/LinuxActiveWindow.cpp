@@ -20,7 +20,7 @@ using std::string;
 using std::stringstream;
 using std::unique_ptr;
 
-string LinuxActiveWindow::get_name()
+string& LinuxActiveWindow::get_name()
 {
     if(name_ != "") {
         return name_;
@@ -31,11 +31,13 @@ string LinuxActiveWindow::get_name()
         if(window_name != NULL) {
             XFree(window_name);
         }
-        return "";
+        name_= "";
+        return name_; 
     }
     
     if(window_name == NULL) {
-        return "";
+        name_ = "";
+        return name_;
     }
     
     name_ = window_name;
@@ -44,7 +46,7 @@ string LinuxActiveWindow::get_name()
     return name_;
 }
 
-string LinuxActiveWindow::get_process_name()
+string& LinuxActiveWindow::get_process_name()
 {
     if(process_name_ != "") {
         return process_name_;

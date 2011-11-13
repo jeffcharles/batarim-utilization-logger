@@ -110,7 +110,7 @@ bool LinuxUsageReporter::populate_processors_usage_(stringstream& before_stream)
             raw_identifier);
         pair<string, int> usage_percentage(
             cpu_identifier, utilization);
-        processor_usages_->push_back(usage_percentage);
+        processor_usages_.push_back(usage_percentage);
     }
     
     return true;

@@ -12,8 +12,8 @@ class LinuxInvalidActiveWindow : public IActiveWindow
             process_name_ = "";
         }
 
-        virtual std::string get_name() { return name_; }
-        virtual std::string get_process_name() { return process_name_; }
+        virtual std::string& get_name() { return name_; }
+        virtual std::string& get_process_name() { return process_name_; }
         
         virtual
         const ProcessUsageInfo& get_usage(IUsageResultGetter& usage_results)
