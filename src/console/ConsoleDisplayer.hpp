@@ -30,8 +30,10 @@ class ConsoleDisplayer : public IDisplayer
             for(ConstIter iter = node->children.begin();
                 iter != node->children.end(); ++iter) {
 
-                (*iter)->display();
+                (*iter)->display(this);
             }
+
+            std::cout << std::endl;
         }
 };
 

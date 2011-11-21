@@ -35,13 +35,7 @@ int main(int argc, char** argv)
     log_file_in.open(log_file_path);
 
     // initialize view model
-    shared_ptr<IDisplayer> field_name_displayer(
-        new LoggerFieldNameDisplayer(log_file_out)
-    );
-    unique_ptr<vector<shared_ptr<ViewModelElement>>> viewmodel =
-        get_view_model(field_name_displayer);
-
-    typedef vector<shared_ptr<ViewModelElement>>::const_iterator ConstIter;
+    unique_ptr<IViewModelViewer> viewmodel = get_view_model();
     
     // check if there's anything in the log file, if there isn't print the
     // headers
@@ -61,32 +55,15 @@ int main(int argc, char** argv)
         log_file_out << bom;
 #endif
 
-        for(ConstIter iter = viewmodel->begin();
-            iter != viewmodel->end(); ++iter) {
-
-            (*iter)->display();
-        }
+        LoggerFieldNameDisplayer field_name_displayer(log_file_out);
+        viewmodel->display(&field_name_displayer);
 
         log_file_out << endl;
     }
 
-    // set the view model displayer to the log data one and print the view
-    // model data
-    shared_ptr<IDisplayer> data_displayer(
-        new LoggerDataDisplayer(log_file_out)
-    );
-
-    for(ConstIter iter = viewmodel->begin();
-        iter != viewmodel->end(); ++iter) {
-
-        (*iter)->set_displayer(data_displayer);
-    }
-
-    for(ConstIter iter = viewmodel->begin();
-        iter != viewmodel->end(); ++iter) {
-
-        (*iter)->display();
-    }
+    // print the view model data
+    LoggerDataDisplayer data_displayer(log_file_out);
+    viewmodel->display(&data_displayer);
 
     log_file_out << endl;
     log_file_out.close();

@@ -9,18 +9,41 @@
 #include "DLLDefines.hpp"
 #include "IDisplayer.hpp"
 
-class VIEWMODEL_EXPORT ViewModelElement
+class ViewModelElement
 {
     public:
         std::string name;
-        virtual void display() = 0;
-        virtual void set_displayer(std::shared_ptr<IDisplayer> displayer)
+        virtual void display(IDisplayer* displayer) = 0;
+};
+
+class VIEWMODEL_EXPORT IViewModelViewer
+{
+    public:
+        virtual void display(IDisplayer* displayer) = 0;
+};
+
+class ViewModel : public IViewModelViewer
+{
+    public:
+        virtual void display(IDisplayer* displayer)
         {
-            displayer_ = displayer;
+            typedef
+                std::vector<std::shared_ptr<ViewModelElement>>::const_iterator
+                Iter;
+            for(Iter iter = elements_.begin();
+                iter != elements_.end(); ++iter) {
+                
+                (*iter)->display(displayer);
+            }
         }
 
-    protected:
-        std::shared_ptr<IDisplayer> displayer_;
+        void push_back(std::shared_ptr<ViewModelElement> element)
+        {
+            elements_.push_back(element);
+        }
+
+    private:
+        std::vector<std::shared_ptr<ViewModelElement>> elements_;
 };
 
 class ViewModelInternalNode : public ViewModelElement
@@ -31,28 +54,15 @@ class ViewModelInternalNode : public ViewModelElement
         ViewModelInternalNode(
             const std::string name,
             const std::vector<std::shared_ptr<ViewModelElement>>
-                children,
-            std::shared_ptr<IDisplayer> displayer
+                children
         ): children(children)
         {
             this->name = name;
-            displayer_ = displayer;
         }
 
-        virtual void display() { displayer_->display_internal(this); }
-
-        virtual void set_displayer(std::shared_ptr<IDisplayer> displayer)
+        virtual void display(IDisplayer* displayer)
         {
-            displayer_ = displayer;
-
-            typedef
-                std::vector<std::shared_ptr<ViewModelElement>>::const_iterator
-                ConstIter;
-            for(ConstIter iter = children.begin();
-                iter != children.end(); ++iter) {
-                
-                (*iter)->set_displayer(displayer);
-            }
+            displayer->display_internal(this);
         }
 };
 
@@ -64,17 +74,15 @@ class ViewModelExternalNode : public ViewModelElement
     
         ViewModelExternalNode(
             const std::string name,
-            const T data,
-            std::shared_ptr<IDisplayer> displayer
+            const T data
         ): data(data)
         {
             this->name = name;
-            displayer_ = displayer;
         }
 
-        virtual void display()
+        virtual void display(IDisplayer* displayer)
         {
-            displayer_->display_external(name, to_string_());
+            displayer->display_external(name, to_string_());
         }
 
     private:
@@ -86,9 +94,6 @@ class ViewModelExternalNode : public ViewModelElement
         }
 };
 
-std::unique_ptr<std::vector<std::shared_ptr<ViewModelElement>>>
-VIEWMODEL_EXPORT get_view_model(
-    std::shared_ptr<IDisplayer> displayer
-);
+std::unique_ptr<IViewModelViewer> VIEWMODEL_EXPORT get_view_model();
 
 #endif

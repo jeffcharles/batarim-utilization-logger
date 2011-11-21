@@ -37,7 +37,7 @@ class LoggerFieldNameDisplayer : public IDisplayer
             for(ConstIter iter = node->children.begin();
                 iter != node->children.end(); ++iter) {
 
-                (*iter)->display();
+                (*iter)->display(this);
             }
 
             field_prefix = "";
@@ -83,7 +83,7 @@ class LoggerDataDisplayer : public IDisplayer
             for(ConstIter iter = node->children.begin();
                 iter != node->children.end(); ++iter) {
 
-                (*iter)->display();
+                (*iter)->display(this);
             }
         }
 

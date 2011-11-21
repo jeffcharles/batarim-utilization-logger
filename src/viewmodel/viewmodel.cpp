@@ -31,30 +31,26 @@ namespace {
 
     shared_ptr<ViewModelElement> convert_process_usage_to_element(
         const string field_group_name,
-        const ProcessUsageInfo& info,
-        shared_ptr<IDisplayer> displayer
+        const ProcessUsageInfo& info
     ) {
         shared_ptr<ViewModelElement> process_name(
             new ViewModelExternalNode<string>(
                 "Process name",
-                info.process_name,
-                displayer
+                info.process_name
             )
         );
         
         shared_ptr<ViewModelElement> cpu_usage(
             new ViewModelExternalNode<int>(
                 "CPU usage",
-                info.cpu_usage,
-                displayer
+                info.cpu_usage
             )
         );
 
         shared_ptr<ViewModelElement> ram_usage(
             new ViewModelExternalNode<int>(
                 "RAM usage",
-                info.ram_usage,
-                displayer
+                info.ram_usage
             )
         );
 
@@ -66,8 +62,7 @@ namespace {
         shared_ptr<ViewModelInternalNode> ret(
             new ViewModelInternalNode(
                 field_group_name,
-                elements,
-                displayer
+                elements
             )
         );
 
@@ -75,10 +70,9 @@ namespace {
     }
 }
 
-unique_ptr<vector<shared_ptr<ViewModelElement>>> get_view_model(
-    shared_ptr<IDisplayer> displayer
-) {
-    shared_ptr<UsageReporter> usage_reporter = get_usage_reporter();
+unique_ptr<IViewModelViewer> get_view_model()
+{
+    unique_ptr<UsageReporter> usage_reporter = get_usage_reporter();
 
     string analyze_error_message;
     if(!usage_reporter->analyze(analyze_error_message)) {
@@ -86,23 +80,21 @@ unique_ptr<vector<shared_ptr<ViewModelElement>>> get_view_model(
         clog << analyze_error_message << endl;
     }
 
-    unique_ptr<vector<shared_ptr<ViewModelElement>>> viewmodel(
-        new vector<shared_ptr<ViewModelElement>>
+    unique_ptr<ViewModel> viewmodel(
+        new ViewModel()
     );
 
     shared_ptr<TimeInfo> time_info = get_time_info();
     shared_ptr<ViewModelElement> datetime_str(
         new ViewModelExternalNode<string>(
             "Date and time",
-            time_info->datetime_str,
-            displayer
+            time_info->datetime_str
         )
     );
     shared_ptr<ViewModelElement> timestamp(
         new ViewModelExternalNode<time_t>(
             "Unix timestamp",
-            time_info->timestamp,
-            displayer
+            time_info->timestamp
         )
     );
     vector<shared_ptr<ViewModelElement>> time_node_contents;
@@ -111,8 +103,7 @@ unique_ptr<vector<shared_ptr<ViewModelElement>>> get_view_model(
     shared_ptr<ViewModelElement> time_node(
         new ViewModelInternalNode(
             "Time information",
-            time_node_contents,
-            displayer
+            time_node_contents
         )
     );
     viewmodel->push_back(time_node);
@@ -121,8 +112,7 @@ unique_ptr<vector<shared_ptr<ViewModelElement>>> get_view_model(
     shared_ptr<ViewModelElement> uptime_node(
         new ViewModelExternalNode<unsigned int>(
             "Uptime",
-            uptime,
-            displayer
+            uptime
         )
     );
     viewmodel->push_back(uptime_node);
@@ -139,8 +129,7 @@ unique_ptr<vector<shared_ptr<ViewModelElement>>> get_view_model(
         shared_ptr<ViewModelElement> cpu_usage_node(
             new ViewModelExternalNode<int>(
                 cpu_name.str(),
-                iter->second,
-                displayer
+                iter->second
             )
         );
         cpu_usages_content.push_back(cpu_usage_node);
@@ -148,8 +137,7 @@ unique_ptr<vector<shared_ptr<ViewModelElement>>> get_view_model(
     shared_ptr<ViewModelElement> cpu_usages(
         new ViewModelInternalNode(
             "CPU usages",
-            cpu_usages_content,
-            displayer
+            cpu_usages_content
         )
     );
     viewmodel->push_back(cpu_usages);
@@ -158,8 +146,7 @@ unique_ptr<vector<shared_ptr<ViewModelElement>>> get_view_model(
     shared_ptr<ViewModelElement> ram_usage_node(
         new ViewModelExternalNode<int>(
             "RAM usage",
-            ram_usage,
-            displayer
+            ram_usage
         )
     );
     viewmodel->push_back(ram_usage_node);
@@ -172,29 +159,25 @@ unique_ptr<vector<shared_ptr<ViewModelElement>>> get_view_model(
     shared_ptr<ViewModelElement> active_window_name_node(
         new ViewModelExternalNode<string>(
             "Name",
-            active_window_name,
-            displayer
+            active_window_name
         )
     );
     shared_ptr<ViewModelElement> active_window_process_name_node(
         new ViewModelExternalNode<string>(
             "Process name",
-            active_window_process_name,
-            displayer
+            active_window_process_name
         )
     );
     shared_ptr<ViewModelElement> active_window_cpu_node(
         new ViewModelExternalNode<int>(
             "CPU usage",
-            active_window_usage.cpu_usage,
-            displayer
+            active_window_usage.cpu_usage
         )
     );
     shared_ptr<ViewModelElement> active_window_ram_node(
         new ViewModelExternalNode<int>(
             "RAM usage",
-            active_window_usage.ram_usage,
-            displayer
+            active_window_usage.ram_usage
         )
     );
     vector<shared_ptr<ViewModelElement>> active_window_node_content;
@@ -205,8 +188,7 @@ unique_ptr<vector<shared_ptr<ViewModelElement>>> get_view_model(
     shared_ptr<ViewModelInternalNode> active_window_node(
         new ViewModelInternalNode(
             "Focused window",
-            active_window_node_content,
-            displayer
+            active_window_node_content
         )
     );
     viewmodel->push_back(active_window_node);
@@ -217,13 +199,11 @@ unique_ptr<vector<shared_ptr<ViewModelElement>>> get_view_model(
         usage_reporter->get_procinfo_for_highest_ram_usage();
     viewmodel->push_back(convert_process_usage_to_element(
         "Highest CPU usage process",
-        highest_cpu_proc,
-        displayer
+        highest_cpu_proc
     ));
     viewmodel->push_back(convert_process_usage_to_element(
         "Highest RAM usage process",
-        highest_ram_proc,
-        displayer
+        highest_ram_proc
     ));
 
     ProcessUsageInfo highest_cpu_aggregate =
@@ -232,13 +212,11 @@ unique_ptr<vector<shared_ptr<ViewModelElement>>> get_view_model(
         usage_reporter->get_procinfo_for_highest_aggregate_ram_usage();
     viewmodel->push_back(convert_process_usage_to_element(
         "Highest aggregate CPU usage process",
-        highest_cpu_aggregate,
-        displayer
+        highest_cpu_aggregate
     ));
     viewmodel->push_back(convert_process_usage_to_element(
         "Highest aggregate RAM usage process",
-        highest_ram_aggregate,
-        displayer
+        highest_ram_aggregate
     ));
 
     ProcessUsageInfo highest_cpu_toplevel =
@@ -247,14 +225,12 @@ unique_ptr<vector<shared_ptr<ViewModelElement>>> get_view_model(
         usage_reporter->get_procinfo_for_highest_aggregate_ram_usage();
     viewmodel->push_back(convert_process_usage_to_element(
         "Highest top-level CPU usage process",
-        highest_cpu_toplevel,
-        displayer
+        highest_cpu_toplevel
     ));
     viewmodel->push_back(convert_process_usage_to_element(
         "Highest top-level RAM usage process",
-        highest_ram_toplevel,
-        displayer
+        highest_ram_toplevel
     ));
 
-    return viewmodel;
+    return move(viewmodel);
 }

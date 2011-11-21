@@ -15,18 +15,11 @@ using std::vector;
 
 int main()
 {
-    shared_ptr<IDisplayer> displayer(new ConsoleDisplayer());
-    unique_ptr<vector<shared_ptr<ViewModelElement>>> viewmodel =
-        get_view_model(displayer);
+    unique_ptr<IViewModelViewer> viewmodel = get_view_model();
+    ConsoleDisplayer displayer;
 
     cout << endl;
+    viewmodel->display(&displayer);
 
-    typedef vector<shared_ptr<ViewModelElement>>::const_iterator ConstIter;
-    for(ConstIter iter = viewmodel->begin();
-        iter != viewmodel->end(); ++iter) {
-        
-        (*iter)->display();
-        cout << endl;
-    }
     return 0;
 }
