@@ -25,7 +25,7 @@ class ConsoleDisplayer : public IDisplayer
             std::cout << node->name << ':' << std::endl;
 
             typedef
-                std::vector<std::shared_ptr<ViewModelElement>>::const_iterator
+                std::vector<std::unique_ptr<ViewModelElement>>::const_iterator
                 ConstIter;
             for(ConstIter iter = node->children.begin();
                 iter != node->children.end(); ++iter) {

@@ -22,40 +22,16 @@ class VIEWMODEL_EXPORT IViewModelViewer
         virtual void display(IDisplayer* displayer) = 0;
 };
 
-class ViewModel : public IViewModelViewer
-{
-    public:
-        virtual void display(IDisplayer* displayer)
-        {
-            typedef
-                std::vector<std::shared_ptr<ViewModelElement>>::const_iterator
-                Iter;
-            for(Iter iter = elements_.begin();
-                iter != elements_.end(); ++iter) {
-                
-                (*iter)->display(displayer);
-            }
-        }
-
-        void push_back(std::shared_ptr<ViewModelElement> element)
-        {
-            elements_.push_back(element);
-        }
-
-    private:
-        std::vector<std::shared_ptr<ViewModelElement>> elements_;
-};
-
 class ViewModelInternalNode : public ViewModelElement
 {
     public:
-        std::vector<std::shared_ptr<ViewModelElement>> children;
+        std::vector<std::unique_ptr<ViewModelElement>> children;
 
         ViewModelInternalNode(
             const std::string name,
-            const std::vector<std::shared_ptr<ViewModelElement>>
+            std::vector<std::unique_ptr<ViewModelElement>>
                 children
-        ): children(children)
+        ): children(move(children))
         {
             this->name = name;
         }
@@ -92,6 +68,30 @@ class ViewModelExternalNode : public ViewModelElement
             ss << data;
             return std::unique_ptr<std::string>(new std::string(ss.str()));
         }
+};
+
+class ViewModel : public IViewModelViewer
+{
+    public:
+        virtual void display(IDisplayer* displayer)
+        {
+            typedef
+                std::vector<std::unique_ptr<ViewModelInternalNode>>::const_iterator
+                Iter;
+            for(Iter iter = elements_.begin();
+                iter != elements_.end(); ++iter) {
+                
+                (*iter)->display(displayer);
+            }
+        }
+
+        void push_back(std::unique_ptr<ViewModelInternalNode> element)
+        {
+            elements_.push_back(move(element));
+        }
+
+    private:
+        std::vector<std::unique_ptr<ViewModelInternalNode>> elements_;
 };
 
 std::unique_ptr<IViewModelViewer> VIEWMODEL_EXPORT get_view_model();

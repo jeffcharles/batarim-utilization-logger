@@ -32,7 +32,7 @@ class LoggerFieldNameDisplayer : public IDisplayer
             field_prefix = node->name;
 
             typedef
-                std::vector<std::shared_ptr<ViewModelElement>>::const_iterator
+                std::vector<std::unique_ptr<ViewModelElement>>::const_iterator
                 ConstIter;
             for(ConstIter iter = node->children.begin();
                 iter != node->children.end(); ++iter) {
@@ -78,7 +78,7 @@ class LoggerDataDisplayer : public IDisplayer
             const ViewModelInternalNode* node
         ) {
             typedef
-                std::vector<std::shared_ptr<ViewModelElement>>::const_iterator
+                std::vector<std::unique_ptr<ViewModelElement>>::const_iterator
                 ConstIter;
             for(ConstIter iter = node->children.begin();
                 iter != node->children.end(); ++iter) {
