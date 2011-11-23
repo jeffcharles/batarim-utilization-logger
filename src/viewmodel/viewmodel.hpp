@@ -25,13 +25,15 @@ class VIEWMODEL_EXPORT IViewModelViewer
 class ViewModelInternalNode : public ViewModelElement
 {
     public:
-        std::vector<std::unique_ptr<ViewModelElement>> children;
+        
+        typedef std::vector<std::unique_ptr<ViewModelElement>>::const_iterator
+            const_iterator;
 
         ViewModelInternalNode(
             const std::string name,
             std::vector<std::unique_ptr<ViewModelElement>>
                 children
-        ): children(move(children))
+        ): children_(move(children))
         {
             this->name = name;
         }
@@ -40,6 +42,20 @@ class ViewModelInternalNode : public ViewModelElement
         {
             displayer->display_internal(this);
         }
+
+        const_iterator begin() const
+        {
+            return children_.begin();
+        }
+
+        const_iterator end() const
+        {
+            return children_.end();
+        }
+
+    private:
+        
+        std::vector<std::unique_ptr<ViewModelElement>> children_;
 };
 
 template <class T>
