@@ -28,9 +28,14 @@ digraph batarim {
         ViewModelInternalNode -> IDisplayer;
         ViewModelInternalNode -> ViewModelElement;
         ViewModelExternalNode -> ViewModelElement;
+        IViewModelViewer -> IDisplayer;
+        ViewModel -> IViewModelViewer;
+        ViewModel -> ViewModelInternalNode;
+        ViewModel -> IDisplayer;
         viewmodel -> ViewModelElement;
         viewmodel -> ViewModelInternalNode;
         viewmodel -> ViewModelExternalNode;
+        viewmodel -> ViewModel;
     }
 
     subgraph cluster_usage_reporter {
@@ -144,12 +149,14 @@ digraph batarim {
 
     ConsoleDisplayer -> IDisplayer;
     ConsoleDisplayer -> ViewModelInternalNode;
+    console -> ViewModel;
     console -> viewmodel;
 
     LoggerFieldNameDisplayer -> IDisplayer;
     LoggerFieldNameDisplayer -> ViewModelInternalNode;
     LoggerDataDisplayer -> IDisplayer;
     LoggerDataDisplayer -> ViewModelInternalNode;
+    logger -> ViewModel;
     logger -> viewmodel;
 
     viewmodel -> timestamp;

@@ -56,9 +56,7 @@ grouping related data together, and assigning a human readable name for each
 piece of data and grouping. It takes a displayer and when told to display, it
 iterates over itself and displays each grouping and piece of data using the
 provided displayer. This component's design will probably be subject to review
-and change in a future version to reduce the number of hard dependencies,
-simplify the display interface, and simplify the way data is packaged for the
-views.
+and change in a future version to reduce the number of hard dependencies.
 
 ## Views ##
 
