@@ -22,7 +22,9 @@ class ConsoleDisplayer : public IDisplayer
         void display_internal(
             const ViewModelInternalNode* node
         ) {
-            std::cout << node->name << ':' << std::endl;
+            if(node->name.length() > 0) {
+                std::cout << node->name << ':' << std::endl;
+            }
 
             for(ViewModelInternalNode::const_iterator iter = node->begin();
                 iter != node->end(); ++iter) {
